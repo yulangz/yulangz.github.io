@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>《数据库系统概念》--数据库恢复技术 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="《数据库系统概念》--数据库恢复技术" />
+  <meta name="keywords" content="数据库" />
 </head>
 
 <body>
@@ -255,8 +255,12 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%82%A8">数据转储</a>
+<ul>
+<li><a href="#%E6%B5%B7%E9%87%8F%E5%85%A8%E9%87%8F%E8%BD%AC%E5%82%A8%E4%B8%8E%E5%A2%9E%E9%87%8F%E8%BD%AC%E5%82%A8">海量（全量）转储与增量转储</a></li>
+</ul>
+</li>
+<li><a href="#%E6%97%A5%E5%BF%97">日志</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +528,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/dxuyyg_gledvl/">
+      《数据库系统概念》--数据库恢复技术
     </a>
   </h1>
   <div class="post-meta">
@@ -533,9 +537,22 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-03-16 09:19:28">2021-03-16</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
+    
+    <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/">
+        <span>数据库</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
     
     <span class="meta-item">
       <i class="fa fa-clock-o"></i>
@@ -544,26 +561,59 @@
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>78<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h2 id="数据转储">数据转储</h2>
+<p>简而言之，就是备份。</p>
+<h3 id="海量全量转储与增量转储">海量（全量）转储与增量转储</h3>
+<p>全量就是全备份，增量就是增量备份。</p>
+<h2 id="日志">日志</h2>
+<p>如MySql的Binlog，就是以记录为单位的日志，每一个事务都会被记录（不一定刷新到磁盘，<code>sync_binlog</code> 的设置相关）</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/dxuyyg_gledvl/" title="《数据库系统概念》--数据库恢复技术">https://yulangz.github.io/post/dxuyyg_gledvl/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/"># 数据库</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="红黑树" href="https://yulangz.github.io/post/sw67dr_aapnau/">红黑树</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="红黑树" href="https://yulangz.github.io/post/sw67dr_aapnau/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="《数据库系统概念》--第八章" href="https://yulangz.github.io/post/dxuyyg_lh2wgf/">《数据库系统概念》--第八章</a>
+        <a class="nav-mobile-next" title="《数据库系统概念》--第八章" href="https://yulangz.github.io/post/dxuyyg_lh2wgf/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

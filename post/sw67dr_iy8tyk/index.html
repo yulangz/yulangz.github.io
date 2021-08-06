@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>PAT1026 Table Tennis (30分)时间戳法 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="PAT1026 Table Tennis (30分)时间戳法" />
+  <meta name="keywords" content="PAT,数据结构" />
 </head>
 
 <body>
@@ -175,8 +175,7 @@
       <div class="sidebar-body gemini" id="sidebar_body">
         
           
-            <div class="post-side-meta" id="post_side_meta">
-              
+            
 <div class="sidebar-wrapper box-shadow-wrapper bg-color">
   <div class="sidebar-item">
     <img class="site-author-image right-motion" src="/images/avatar.png"/>
@@ -247,196 +246,6 @@
 
 
 </div>
-            </div>
-            <div class="post-toc sidebar-body-active" id="post_toc" style="opacity: 1;">
-              <div class="toc-box right-motion">
-  <div class="toc-wrapper auto-number auto"
-    id="toc_wrapper">
-    <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
-</ul>
-</li>
-</ul>
-
-  </div>
-</div>
-
-<script>
-
-  let lastTop = 0, lList = [], hList = [], postBody, lastIndex = -1;
-  let active = 'active-show', activeClass = 'active-current';
-  let tocWrapper = document.querySelector('#toc_wrapper');
-  let tocContent = tocWrapper.children[0];
-  let autoNumber = tocWrapper && tocWrapper.classList.contains('auto-number');
-
-  function addTocNumber(elem, deep) {
-    if (!elem) {
-      return;
-    }
-    let prop = elem.__proto__;
-
-    if (prop === HTMLUListElement.prototype) {
-      for (let i = 0; i < elem.children.length; i++) {
-        addTocNumber(elem.children[i], deep + (i + 1) + '.');
-      }
-    } else if (prop === HTMLLIElement.prototype) {
-      // 保存li元素
-      if (elem.children[0] && elem.children[0].__proto__ === HTMLAnchorElement.prototype) {
-        lList.push(elem);
-      }
-      for (let i = 0; i < elem.children.length; i++) {
-        let cur = elem.children[i];
-        if (cur.__proto__ === HTMLAnchorElement.prototype) {
-          if (autoNumber) {
-            cur.text = deep + ' ' + cur.text;
-          }
-        } else if (cur.__proto__ === HTMLUListElement.prototype) {
-          addTocNumber(cur, deep);
-        }
-      }
-    }
-  }
-
-  function removeParentActiveClass() {
-    let parents = tocContent.querySelectorAll('.' + active)
-    parents.forEach(function (elem) {
-      elem.classList.remove(active);
-    });
-  }
-
-  function addActiveClass(index) {
-    if (index >= 0 && index < hList.length) {
-      lList[index].classList.add(activeClass);
-    }
-  }
-
-  function removeActiveClass(index) {
-    if (index >= 0 && index < hList.length) {
-      lList[index].classList.remove(activeClass);
-    }
-  }
-
-  function addActiveLiElemment(elem, parent) {
-    if (!elem || elem === parent) {
-      return;
-    } else {
-      if (elem.__proto__ === HTMLLIElement.prototype) {
-        elem.classList.add(active);
-      }
-      addActiveLiElemment(elem.parentElement, parent);
-    }
-  }
-
-  function showToc() {
-    if (tocWrapper) {
-      postBody = document.querySelector('#post_body');
-      for (let i = 0; i < postBody.children.length; i++) {
-        if (postBody.children[i].__proto__ === HTMLHeadingElement.prototype) {
-          hList.push(postBody.children[i]);
-        }
-      }
-      if (tocWrapper.classList.contains('compress')) {
-        tocContent.classList.add('closed');
-      } else if (tocWrapper.classList.contains('no_compress')) {
-        tocContent.classList.add('expanded');
-      } else {
-        if (hList.length > 10) {
-          active = 'active-hidden'
-          tocContent.classList.add('closed');
-        } else {
-          tocContent.classList.add('expanded');
-        }
-      }
-    }
-  }
-
-  (function () {
-    // 处理不是从#一级标题开始目录
-    if (tocContent.children.length === 1 && tocContent.children[0].__proto__ === HTMLLIElement.prototype) {
-      let con = tocContent.children[0].children[0];
-      tocContent.innerHTML = con.innerHTML;
-    }
-    let markdownItTOC = document.querySelector('.markdownIt-TOC');
-    let innerHeight = window.innerHeight;
-    markdownItTOC.style = `max-height: ${innerHeight - 80 > 0 ? innerHeight - 80 : innerHeight}px`
-    addTocNumber(tocContent, '');
-  })();
-
-  document.addEventListener('scroll', function (e) {
-    if (lList.length <= 0) {
-      return;
-    }
-    let scrollTop = document.scrollingElement.scrollTop + 10;
-    let dir;
-
-    if (lastTop - scrollTop > 0) {
-      dir = 'up';
-    } else {
-      dir = 'down';
-    }
-
-    lastTop = scrollTop;
-    if (scrollTop <= 0) {
-      if (lastIndex >= 0 && lastIndex < hList.length) {
-        lList[lastIndex].classList.remove(activeClass);
-      }
-      return;
-    }
-
-    let current = 0, hasFind = false;
-    for (let i = 0; i < hList.length; i++) {
-      if (hList[i].offsetTop > scrollTop) {
-        current = i;
-        hasFind = true;
-        break;
-      }
-    }
-    if (!hasFind && scrollTop > lList[lList.length - 1].offsetTop) {
-      current = hList.length - 1;
-    } else {
-      current--;
-    }
-    if (dir === 'down') {
-      if (current > lastIndex) {
-        addActiveClass(current);
-        removeActiveClass(lastIndex)
-        lastIndex = current;
-        removeParentActiveClass();
-        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
-      }
-    } else {
-      if (current < lastIndex) {
-        addActiveClass(current);
-        removeActiveClass(lastIndex);
-        lastIndex = current;
-        removeParentActiveClass();
-        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
-      }
-    }
-  });
-
-
-  window.addEventListener('load', function () {
-    showToc();
-    document.querySelector('#sidebar').style = 'display: block;';
-    tocWrapper.classList.add('toc-active');
-    setTimeout(function () {
-      if ("createEvent" in document) {
-        let evt = document.createEvent("HTMLEvents");
-        evt.initEvent("scroll", false, true);
-        document.dispatchEvent(evt);
-      }
-      else {
-        document.fireEvent("scroll");
-      }
-    }, 500)
-  })
-
-</script>
-            </div>
           
         
       </div>
@@ -524,8 +333,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/sw67dr_iy8tyk/">
+      PAT1026 Table Tennis (30分)时间戳法
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +342,317 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:50:59">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/OY40LDPLO/">
+        <span>PAT</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/">
+        <span>数据结构</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>7<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1469<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <p><a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805472333250560">题目链接</a><br>
+题目不难读懂，并且不涉及什么算法，但是逻辑上非常繁琐，算法笔记上有非常详细的题意解释，这里就不赘述了。</p>
+<p>这里主要是写我用的一种模拟时间滴答的方法，逻辑上可能要简单一些。<br>
+主要就是将题目中的时间 <code>08:00:00</code> - <code>21:00:00</code> 以每秒一个间隔，总共 <code>13*60*60=46800</code> 个时钟滴答，在每一个始终滴答到来的时候，依次处理玩家到达事件、桌子使用计时减1事件、空桌子安排玩家使用事件。<br>
+这样思考总体上逻辑简洁一些。</p>
+<p><strong>具体的看代码</strong> ：</p>
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define MAXPEOPLE 10005
+#define MAXTABLE 105
+#define TIME2SECOND(h,m,s) ((((h) - 8) * 3600) + ((m) * 60) + (s))
+#define MINUTE2SECOND(m) ((m) * 60)
+#define MAXTIMESTAMP 46800
+
+
+int second2minute(int s)
+{
+	//秒数转分钟，并且舍入
+	int m = s / 60;
+	if ((s % 60) &gt;= 30)
+		m++;
+	return m;
+}
+
+void printTime(int second)
+{
+	//根据秒数打印时间
+	int h, m, s;
+	h = second / 3600 + 8;
+	second = second % 3600;
+	m = second / 60;
+	second = second % 60;
+	s = second;
+	printf(&quot;%02d:%02d:%02d &quot;, h, m, s);
+}
+
+struct People
+{
+	int arrTime = 0;	//到达时间
+	int needTime = 0;	//需要的时间
+	int serverTime = -1;	//服务开始时间
+	bool VIP = false;		//是否是VIP
+	bool servered = false;	//是否已被服务
+};
+
+int n, tableNum, viptableNum, minemptytable;	//记录数、桌子总数，vip桌子总数，索引号最小的空桌子的索引
+int timeStamp;	//时间戳,8:00:00为0,21:00:00为46800
+int serverIndex, arriveIndex;	//当前未服务玩家的索引、当前可服务玩家索引  [serverIndex,arriveIndex)为当前时间
+								//可服务但尚未服务的玩家
+queue&lt;int&gt; VIPwaitIndex;		//在等待中的vip玩家
+People playpairs[MAXPEOPLE];	//玩家记录
+int tables[MAXTABLE] = { 0 };	//当前桌子还要用多久，0代表空桌子
+
+bool isVIP[MAXTABLE] = { false };	//记录桌子是不是VIP桌
+int serverNum[MAXTABLE] = { 0 };	//每个桌子服务过的人数
+vector&lt;int&gt; VIPtable;		//记录vip桌子的索引
+
+void dealServerIndex();
+void handelTableUse()
+{
+	//在每一个时钟滴答到来时，将正在使用的桌子的使用时间减少1，如果减少后为0，则该桌子为空，考虑更新minemptytable
+	int i;
+	for (i = 0; i &lt; tableNum; i++) {
+		if (tables[i] &gt; 0)
+			tables[i]--;
+		if (tables[i] == 0)
+			if (i &lt; minemptytable)	//考虑更新minemptytable
+				minemptytable = i;
+	}
+}
+
+void serverPeople(int peopleIndex, int tableIndex)
+{
+	//服务playpairs中索引号为peopleIndex的玩家，使用的桌子为tableIndex
+	playpairs[peopleIndex].servered = true;	//标记已服务
+	playpairs[peopleIndex].serverTime = timeStamp;	//记录服务时间
+	tables[tableIndex] = playpairs[peopleIndex].needTime;	//开始桌子时间的倒计时
+	serverNum[tableIndex]++;	//记录该桌子的服务人数
+	while (minemptytable &lt; tableNum &amp;&amp; tables[minemptytable]&gt;0) {
+		//更新minemptytable，这里一定要用while，因为空桌子不是连续的
+		minemptytable++;
+	}
+	dealServerIndex();
+}
+
+void dealServerIndex()
+{
+	//更新待服务玩家索引serverIndex，这里一定要用while，因为可能存在有的玩家因为VIP插队的原因已经被服务了
+	while (playpairs[serverIndex].servered) {
+		serverIndex++;
+	}
+}
+
+void dealVIPtable()
+{
+	//处理空的VIP专属桌子
+	for (int t : VIPtable) {
+		if (tables[t] == 0 &amp;&amp; !VIPwaitIndex.empty()) {
+			//桌子为空且有VIP玩家在等待，则服务这个玩家
+			int p = VIPwaitIndex.front();
+			VIPwaitIndex.pop();
+			serverPeople(p, t);
+		}
+	}
+}
+
+void handelEmptyTable()
+{
+	//在每一个时钟滴答，把桌子的使用倒计时-1后，处理所有的空桌子
+	dealVIPtable();	//首先处理VIP桌子，因为如果等待队列中的第一人是VIP，
+					//且同时存在VIP桌子和普通桌子时，优先选择VIP桌子
+
+	//按序处理所有空桌子
+	while (minemptytable &lt; tableNum &amp;&amp; serverIndex &lt; arriveIndex) {
+		if (playpairs[serverIndex].VIP) {
+			//如果排在第一的是一个VIP玩家，则他一定没有VIP桌子可用了，所以他用了一个普通桌子，
+			//因此不会在dealVIPtable()中出对，故要移出VIP等待队列
+			VIPwaitIndex.pop();
+		}
+		serverPeople(serverIndex, minemptytable);
+	}
+}
+
+void handelPeopleArrive()
+{
+	//在每一个时钟滴答，如果到了下一个玩家到来的时间，就将arriveIndex++，代表到达了
+	//一个新的玩家，并考虑他是不是VIP，是则加入VIP等待队列
+	if (playpairs[arriveIndex].arrTime == timeStamp) {
+		if (playpairs[arriveIndex].VIP) {
+			VIPwaitIndex.push(arriveIndex);
+		}
+		arriveIndex++;
+	}
+}
+
+int main() {
+	int h, m, s, i, need, tag;
+	scanf(&quot;%d&quot;, &amp;n);
+	for (i = 0; i &lt; n; i++) {
+		//玩家信息输入
+		scanf(&quot;%d:%d:%d %d %d&quot;, &amp;h, &amp;m, &amp;s, &amp;need, &amp;tag);
+		if (need &gt; 120) {
+			need = 120;
+		}
+		playpairs[i].arrTime = TIME2SECOND(h, m, s);
+		playpairs[i].needTime = MINUTE2SECOND(need);
+		if (tag == 1)
+			playpairs[i].VIP = true;
+	}
+	scanf(&quot;%d %d&quot;, &amp;tableNum,&amp;viptableNum);
+	for (i = 0; i &lt; viptableNum; i++) {
+		//桌子信息输入
+		int v;
+		scanf(&quot;%d&quot;, &amp;v);
+		VIPtable.push_back(--v);	//将桌子索引转为0开始
+		isVIP[v] = true;
+	}
+
+	//按照玩家到达时间升序排列
+	sort(playpairs, playpairs + n, [](People&amp; a, People&amp; b) {return a.arrTime &lt; b.arrTime; });
+
+	serverIndex = 0;
+	minemptytable = 0;
+	arriveIndex = 0;
+	for (timeStamp = 0; timeStamp &lt; MAXTIMESTAMP; timeStamp++) {
+		//每一个时间戳，首先处理玩家到达事件，再处理桌子使用计时减1事件，最后处理
+		//空桌子使用事件，三者的顺序不能颠倒
+		handelPeopleArrive();
+		handelTableUse();
+		handelEmptyTable();
+		if (serverIndex == arriveIndex == n)	
+			//所有玩家都已经服务了
+			break;
+	}
+
+	for (i = serverIndex; i &lt; arriveIndex; i++) {
+		//在[serverIndex,arriveIndex)中，可能存在因为VIP插队而已被服务的玩家，故要
+		//把该玩家提前，这样最后在[0,serverIndex)中的就是全部服务过的玩家
+		if (playpairs[i].servered) {
+			playpairs[serverIndex++] = playpairs[i];
+		}
+	}
+
+	//根据服务时间升序排列
+	sort(playpairs, playpairs + serverIndex, [](People&amp; a, People&amp; b) {return a.serverTime &lt; b.serverTime; });
+	
+	//答案输出
+	for (i = 0; i &lt; serverIndex; i++) {
+		printTime(playpairs[i].arrTime);
+		printTime(playpairs[i].serverTime);
+		printf(&quot;%d\n&quot;, second2minute(playpairs[i].serverTime - playpairs[i].arrTime));
+	}
+	printf(&quot;%d&quot;, serverNum[0]);
+	for (i = 1; i &lt; tableNum; i++) {
+		printf(&quot; %d&quot;, serverNum[i]);
+	}
+
+	return 0;
+}
+
+
+/*
+//input
+2
+08:00:00 10 1
+08:05:00 10 1
+3 2
+2 3
+
+//output
+08:00:00 08:00:00 0
+08:05:00 08:05:00 0
+0 1 1
+*/
+
+
+/*
+//input
+2
+20:00:00 60 0
+20:30:00 10 1
+1 1
+1
+
+//output
+20:00:00 20:00:00 0
+1
+*/
+</code></pre>
+<p>最下面是算法笔记上给出的几组测试数据。<br>
+<img src="http://static.yulan.net.cn/image/_fd5b180732b660f13e5fc326933e6bb1.png" alt="" loading="lazy"><br>
+这种方法虽然外层循环有46800次，但是内层大部分时间只是一个简单的判断，没有实际操作，所以耗时并不高。</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/sw67dr_iy8tyk/" title="PAT1026 Table Tennis (30分)时间戳法">https://yulangz.github.io/post/sw67dr_iy8tyk/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/OY40LDPLO/"># PAT</a>
+    
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/"># 数据结构</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="PAT 2020年秋考解答" href="https://yulangz.github.io/post/sw67dr_kb5gab/">PAT 2020年秋考解答</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="PAT 2020年秋考解答" href="https://yulangz.github.io/post/sw67dr_kb5gab/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="Dijkstra算法与SPFA算法" href="https://yulangz.github.io/post/sw67dr_hpnu4t/">Dijkstra算法与SPFA算法</a>
+        <a class="nav-mobile-next" title="Dijkstra算法与SPFA算法" href="https://yulangz.github.io/post/sw67dr_hpnu4t/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

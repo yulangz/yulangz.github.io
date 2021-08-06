@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>CSAPP: cachelab | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="CSAPP: cachelab" />
+  <meta name="keywords" content="CSAPP" />
 </head>
 
 <body>
@@ -255,8 +255,20 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#part-a">Part A</a>
+<ul>
+<li><a href="#%E5%85%88%E4%B8%8A%E4%BB%A3%E7%A0%81">先上代码</a></li>
+</ul>
+</li>
+<li><a href="#part-b">Part B</a>
+<ul>
+<li><a href="#3232">32*32</a></li>
+<li><a href="#6464">64*64</a></li>
+<li><a href="#6167">61*67</a></li>
+<li><a href="#%E6%BB%A1%E5%88%86%E5%90%88%E5%BD%B1">满分合影</a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81">完整代码</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -524,8 +536,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/uscxh7_mezrog/">
+      CSAPP: cachelab
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +545,466 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:41:41">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/">
+        <span>CSAPP</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>12<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>2192<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
               <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+<p><a href="http://csapp.cs.cmu.edu/3e/cachelab.pdf">实验手册</a>：包含了实验指导和评分规则<br>
+<a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">实验ppt</a>对上课内容的回顾和对实验细节的讲解，很值得一看</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+<h2 id="part-a">Part A</h2>
+<p>这一部分是要实现一个cache模拟器，需要记录命中次数，不命中次数和替换次数，通过这个可以让我们更加了解cache的运行方式，同时也可以更加了解LRU的替换策略。<br>
+这一部分需要了解的两个函数<code>getopt()</code> 和 <code>fscanf()</code> 在开头的<a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">ppt</a>中有讲解。</p>
+<h3 id="先上代码">先上代码</h3>
+<pre><code class="language-c">#include &quot;cachelab.h&quot;
+#include &lt;unistd.h&gt;
+#include &lt;getopt.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+int h, v, s, S, E, b, B;    //定义全局变量方便调用
+char t[200];
+int hits, misses, evictions;
+long stempnow = 0;
+typedef struct
+{
+    int valid;  //有效位
+    int tag;    //标记位
+    long LRU_stemp; //LRU替换的标记
+} cacheline, *cache_set, **_cache;
+_cache cache;
+
+//这一部分是为了实现-v下的回显，最终的测试并不要求这个
+typedef int result_tag;
+#define MISS 0
+#define HIT 1
+#define EVICTION 2
+
+
+void printUsage();  //-h打印使用方法
+void init_cache();  //初始化cache
+void close_cache(); //free掉cache
+void printverbose(char oper, unsigned int address, int size, char *opresult);  //-v下打印回显
+void do_trace();  //解析trace并以此执行
+result_tag access_cache(char oper, unsigned int address, int size); //访问cache
+
+int main(int argc, char **argv)
+{
+
+    int opt;
+    while (-1 != (opt = (getopt(argc, argv, &quot;hvs:E:b:t:&quot;))))
+    {
+        switch (opt)
+        {
+        case 'h':
+            h = 1;
+            printUsage();
+            break;
+        case 'v':
+            v = 1;
+            break;
+        case 's':
+            s = atoi(optarg);
+            break;
+        case 'E':
+            E = atoi(optarg);
+            break;
+        case 'b':
+            b = atoi(optarg);
+            break;
+        case 't':
+            strcpy(t, optarg);
+            break;
+        default:
+            printUsage();
+            break;
+        }
+    }
+    if (s &lt;= 0 || E &lt;= 0 || b &lt;= 0 || t == NULL) // 如果选项参数不合格就退出
+        return -1;
+    S = 1 &lt;&lt; s;
+    B = 1 &lt;&lt; b;
+    init_cache();
+    do_trace();
+    close_cache();
+    printSummary(hits, misses, evictions);
+    return 0;
+}
+
+void printUsage()
+{
+    printf(&quot;Usage: ./csim-ref [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;
+&quot;
+           &quot;Options:
+&quot;
+           &quot;  -h         Print this help message.
+&quot;
+           &quot;  -v         Optional verbose flag.
+&quot;
+           &quot;  -s &lt;num&gt;   Number of set index bits.
+&quot;
+           &quot;  -E &lt;num&gt;   Number of lines per set.
+&quot;
+           &quot;  -b &lt;num&gt;   Number of block offset bits.
+&quot;
+           &quot;  -t &lt;file&gt;  Trace file.
+
+&quot;
+           &quot;Examples:
+&quot;
+           &quot;  linux&gt;  ./csim-ref -s 4 -E 1 -b 4 -t traces/yi.trace
+&quot;
+           &quot;  linux&gt;  ./csim-ref -v -s 8 -E 2 -b 4 -t traces/yi.trace
+&quot;);
+}
+
+void init_cache()
+{
+    cache = (_cache)malloc(sizeof(cache_set) * S);
+    int i, j;
+    for (i = 0; i &lt; S; i++)
+    {
+        cache[i] = (cache_set)malloc(sizeof(cacheline) * E);
+        for (j = 0; j &lt; E; j++)
+        {
+            cache[i][j].tag = 0;
+            cache[i][j].valid = 0;
+            cache[i][j].LRU_stemp = 0;
+        }
+    }
+}
+
+void close_cache()
+{
+    int i;
+    for (i = 0; i &lt; S; i++)
+        free(cache[i]);
+    free(cache);
+}
+
+void printverbose(char oper, unsigned int address, int size, char *opresult)
+{
+    printf(&quot;%c %x,%d %s
+&quot;, oper, address, size, opresult);
+}
+
+void do_trace()
+{
+    FILE *fp = fopen(t, &quot;r&quot;); // 读取文件
+    if (fp == NULL)
+    {
+        printf(&quot;open error&quot;);
+        exit(-1);
+    }
+
+    char operation;       // 命令开头的 I L M S
+    unsigned int address; // 地址参数
+    int size;             // 大小
+    while (fscanf(fp, &quot; %c %xu,%d
+&quot;, &amp;operation, &amp;address, &amp;size) &gt; 0)
+    {
+        size = 1;
+        result_tag r;
+        switch (operation)
+        {
+        case 'I':
+            break;
+        case 'L':
+            r = access_cache(operation, address, size);
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction&quot;);
+            }
+            break;
+        case 'S':
+            r = access_cache(operation, address, size);
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction&quot;);
+            }
+            break;
+        case 'M':
+            r = access_cache(operation, address, size);
+            hits++;         //M的第二次一定命中
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss hit&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction hit&quot;);
+            }
+            break;
+        }
+    }
+    fclose(fp);
+}
+
+result_tag access_cache(char oper, unsigned int address, int size)
+{
+    int access_tag, access_set;
+    int tag_mask, set_mask;
+    set_mask = ((1 &lt;&lt; (b + s)) - 1) - ((1 &lt;&lt; b) - 1); //组号掩码
+    access_set = ((set_mask &amp; address) &gt;&gt; b) % S;     //组号
+    tag_mask = -1 &lt;&lt; (b + s);                //tag的掩码
+    access_tag = tag_mask &amp; address;         //tag值 
+    int i;
+    for (i = 0; i &lt; E; i++)
+    {
+        if (cache[access_set][i].valid &amp;&amp; cache[access_set][i].tag == access_tag) //命中
+        {
+            hits++;
+            cache[access_set][i].LRU_stemp = stempnow++;
+            return HIT;
+        }
+    }
+
+    for (i = 0; i &lt; E; i++)
+    {
+        if (!cache[access_set][i].valid) //未命中找到空行
+        {
+            cache[access_set][i].valid = 1;
+            cache[access_set][i].tag = access_tag;
+            cache[access_set][i].LRU_stemp = stempnow++;
+            misses++;
+            return MISS;
+        }
+    }
+
+    //未命中且需要进行行替换
+    //寻找时间戳最小（最少最近使用）的行
+    int eviction_line = 0;
+    long maxstemp = ~((long)1 &lt;&lt; 63);
+    for (i = 0; i &lt; E; i++)
+    {
+        if (cache[access_set][i].LRU_stemp &lt; maxstemp)
+        {
+            eviction_line = i;
+            maxstemp = cache[access_set][i].LRU_stemp;
+        }
+    }
+    //行替换
+    cache[access_set][eviction_line].valid = 1;
+    cache[access_set][eviction_line].tag = access_tag;
+    cache[access_set][eviction_line].LRU_stemp = stempnow++;
+    misses++;
+    evictions++;
+    return EVICTION;
+}
+</code></pre>
+<p>为了实现LRU的替换策略，我的方法是维持一个stempnow的自建时间戳，每次对行有更新时就讲这个时间戳记录进去，同时时间戳自加1，这样替换时就只需要寻找时间戳最小的那一行替换就行。<br>
+这一部分总体上不难，主要困难在于理解cache的工作方式和设计如何去提取出组号与tag值。</p>
+<h2 id="part-b">Part B</h2>
+<p>这一部分需要我们实现矩阵的转置，要求尽可能地利用cache，即减少miss，总共有三道题。</p>
+<h3 id="3232">32*32</h3>
+<p>我们首先看一下示例的蛮力法<br>
+<img src="http://static.yulan.net.cn/image/_8db52d3dc29d6cd32b26b3a02bfc52b5.png" alt="" loading="lazy"><br>
+miss高达1183，远大于300的目标。<br>
+我们知道的是cache 大小为 s=5,E=1,b=5,即32组_1行_32字节，共256个int。<br>
+所以我们需要对矩阵进行分块，我们在转置的过程中尽量让块小于cache大小，因为cache可以装256个int，所以块大小定为8*8。<br>
+（这一步的代码没保存，就不贴了）<br>
+结果是<br>
+<img src="http://static.yulan.net.cn/image/_cbdf4366e62a6c8c3e7a4e59490e533c.png" alt="" loading="lazy"><br>
+仍没达到要求。<br>
+下一步我选择每次把每一行的8个数一次性读取，然后再一次性存到矩阵B中，这样可以进一步减少cache的替换，从而减少miss。</p>
+<pre><code class="language-c">if (M == 32)
+    {
+        int i, j, block_i;
+        int t0, t1, t2, t3, t4, t5, t6, t7;
+        for (i = 0; i &lt; N; i += 8)
+        {
+            for (j = 0; j &lt; M; j += 8)
+            {
+                for (block_i = 0; block_i &lt; 8; block_i++)
+                {
+                    t0 = A[i + block_i][j + 0];
+                    t1 = A[i + block_i][j + 1];
+                    t2 = A[i + block_i][j + 2];
+                    t3 = A[i + block_i][j + 3];
+                    t4 = A[i + block_i][j + 4];
+                    t5 = A[i + block_i][j + 5];
+                    t6 = A[i + block_i][j + 6];
+                    t7 = A[i + block_i][j + 7];
+                    B[j + 0][i + block_i] = t0;
+                    B[j + 1][i + block_i] = t1;
+                    B[j + 2][i + block_i] = t2;
+                    B[j + 3][i + block_i] = t3;
+                    B[j + 4][i + block_i] = t4;
+                    B[j + 5][i + block_i] = t5;
+                    B[j + 6][i + block_i] = t6;
+                    B[j + 7][i + block_i] = t7;
+                }
+            }
+        }
+    }
+</code></pre>
+<p>结果是<br>
+<img src="http://static.yulan.net.cn/image/_56c0dd079d3aca587e6d23ed1df3443d.png" alt="" loading="lazy"><br>
+终于通过了</p>
+<h3 id="6464">64*64</h3>
+<p>这是最难的一部分，因为整个cache只能存储数组的四行，所以如果按照8_8分块的话仍然有很高的冲突，然而这一题要求有十分严苛，只能1300，所以需要更精细的方法，先按照8_8分块，在块内在按照4*4划分，同时不追求一次到位，而要求最高的cache重复访问，详细解析可以参考<a href="https://www.cnblogs.com/liqiuhao/p/8026100.html?utm_source=debugrun&amp;utm_medium=referral">这篇博客</a><br>
+<strong>代码：</strong></p>
+<pre><code class="language-c">else if (N == 64)
+    {
+        for (int i = 0; i &lt; N; i += 8)
+        {
+            for (int j = 0; j &lt; M; j += 8)
+            {
+                for (int k = i; k &lt; i + 4; ++k)
+                {
+                    /* 读取1 2，暂时放在左下角1 2 */
+                    int temp_value0 = A[k][j];
+                    int temp_value1 = A[k][j + 1];
+                    int temp_value2 = A[k][j + 2];
+                    int temp_value3 = A[k][j + 3];
+                    int temp_value4 = A[k][j + 4];
+                    int temp_value5 = A[k][j + 5];
+                    int temp_value6 = A[k][j + 6];
+                    int temp_value7 = A[k][j + 7];
+
+                    B[j][k] = temp_value0;
+                    B[j + 1][k] = temp_value1;
+                    B[j + 2][k] = temp_value2;
+                    B[j + 3][k] = temp_value3;
+                    /* 逆序放置 */
+                    B[j][k + 4] = temp_value7;
+                    B[j + 1][k + 4] = temp_value6;
+                    B[j + 2][k + 4] = temp_value5;
+                    B[j + 3][k + 4] = temp_value4;
+                }
+                for (int l = 0; l &lt; 4; ++l)
+                {
+                    /* 按列读取 */
+                    int temp_value0 = A[i + 4][j + 3 - l];
+                    int temp_value1 = A[i + 5][j + 3 - l];
+                    int temp_value2 = A[i + 6][j + 3 - l];
+                    int temp_value3 = A[i + 7][j + 3 - l];
+                    int temp_value4 = A[i + 4][j + 4 + l];
+                    int temp_value5 = A[i + 5][j + 4 + l];
+                    int temp_value6 = A[i + 6][j + 4 + l];
+                    int temp_value7 = A[i + 7][j + 4 + l];
+
+                    /* 从下向上按行转换2到3 */
+                    B[j + 4 + l][i] = B[j + 3 - l][i + 4];
+                    B[j + 4 + l][i + 1] = B[j + 3 - l][i + 5];
+                    B[j + 4 + l][i + 2] = B[j + 3 - l][i + 6];
+                    B[j + 4 + l][i + 3] = B[j + 3 - l][i + 7];
+                    /* 将3 4放到正确的位置 */
+                    B[j + 3 - l][i + 4] = temp_value0;
+                    B[j + 3 - l][i + 5] = temp_value1;
+                    B[j + 3 - l][i + 6] = temp_value2;
+                    B[j + 3 - l][i + 7] = temp_value3;
+                    B[j + 4 + l][i + 4] = temp_value4;
+                    B[j + 4 + l][i + 5] = temp_value5;
+                    B[j + 4 + l][i + 6] = temp_value6;
+                    B[j + 4 + l][i + 7] = temp_value7;
+                }
+            }
+        }
+    }
+</code></pre>
+<p>结果<br>
+<img src="http://static.yulan.net.cn/image/_ffb263a782f4a0423e7194043f170ae6.png" alt="" loading="lazy"><br>
+像这样进行专门的优化，确实可以极大地提高cache的利用率，从而提高程序的效率，但是其缺点也很明显，只能针对专门的矩阵进行优化，不具有普适性，就像我们即将看到的第三题。</p>
+<h3 id="6167">61*67</h3>
+<p>这一题由于矩阵没有什么特别的规律，所以不清楚在cache的映射情况，因此我们只能一步步地尝试分块的大小，最终发现大约在14*14时可以满足题目要求。</p>
+<pre><code class="language-c">else
+    { //没有什么特征，只能试块大小，在14的时候misses为1996，通过了
+        int block_size = 14;
+        int i, j, bl_i, bl_j;
+        for (i = 0; i &lt; N; i += block_size)
+            for (j = 0; j &lt; M; j += block_size)
+                for (bl_i = 0; bl_i &lt; block_size &amp;&amp; bl_i + i &lt; N; bl_i++)
+                    for (bl_j = 0; bl_j &lt; block_size &amp;&amp; bl_j + j &lt; M; bl_j++)
+                        B[j + bl_j][i + bl_i] = A[i + bl_i][j + bl_j];
+    }
+</code></pre>
+<h3 id="满分合影">满分合影</h3>
+<figure data-type="image" tabindex="1"><img src="http://static.yulan.net.cn/image/_b4661e2b2a55344639f67be2127d2350.png" alt="" loading="lazy"></figure>
+<h3 id="完整代码">完整代码</h3>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li><a href="http://static.yulan.net.cn/image/csapp_cachelab_parta.c">Part a</a></li>
+<li><a href="http://static.yulan.net.cn/image/csapp_cachelab_partb.c">Part b</a></li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/uscxh7_mezrog/" title="CSAPP: cachelab">https://yulangz.github.io/post/uscxh7_mezrog/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/"># CSAPP</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="CSAPP: shelllab" href="https://yulangz.github.io/post/uscxh7_mhapqg/">CSAPP: shelllab</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="CSAPP: shelllab" href="https://yulangz.github.io/post/uscxh7_mhapqg/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="CSAPP: Attacklab" href="https://yulangz.github.io/post/uscxh7_ainkg2/">CSAPP: Attacklab</a>
+        <a class="nav-mobile-next" title="CSAPP: Attacklab" href="https://yulangz.github.io/post/uscxh7_ainkg2/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

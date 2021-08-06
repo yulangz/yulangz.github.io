@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>linux服务端--2. epoll 实现回显服务器 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="linux服务端--2. epoll 实现回显服务器" />
+  <meta name="keywords" content="服务器,Linux" />
 </head>
 
 <body>
@@ -255,8 +255,8 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#epoll%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E9%97%AE%E9%A2%98">epoll的一点小问题</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +524,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/xdsvqq_xthbax/">
+      linux服务端--2. epoll 实现回显服务器
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +533,250 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 14:10:25">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/r-KjTzd6_/">
+        <span>服务器</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/cVDXMpo5Q/">
+        <span>Linux</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>5<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>741<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+              <h2 id="代码">代码</h2>
+<pre><code class="language-cpp">#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;sys/epoll.h&gt;
+
+int main()
+{
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (lfd == -1)
+    {
+        perror(&quot;socket error&quot;);
+        exit(1);
+    }
+
+    //设置端口复用
+    int opt = 1;
+    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&amp;opt, sizeof(opt));
+
+    struct sockaddr_in serv_addr;
+    memset(&amp;serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(9317);
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    int ret = bind(lfd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr));
+    if (ret == -1)
+    {
+        perror(&quot;bind error&quot;);
+        exit(1);
+    }
+
+    ret = listen(lfd, 64);
+    if (ret == -1)
+    {
+        perror(&quot;listen error&quot;);
+        exit(1);
+    }
+
+    struct sockaddr_in client_addr;
+    socklen_t cli_addr_len = sizeof(struct sockaddr_in);
+
+    //
+    struct epoll_event events[2000];
+
+    // 创建epoll实例
+    int epfd = epoll_create(2000);
+
+    //把监听事件挂到epoll红黑树上
+    struct epoll_event event_l;
+    event_l.events = EPOLLIN;
+    event_l.data.fd = lfd;
+    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, lfd, &amp;event_l)) &lt; 0)
+    {
+        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+        exit(1);
+    }
+
+    while (1)
+    {
+        // 有事件发送的epoll_event结构体会复制到events上，ret为事件总数
+        int ret = epoll_wait(epfd, events, sizeof(events) / sizeof(events[0]), -1);
+        if (ret &lt; 0)
+        {
+            fprintf(stderr, &quot;epoll wait error: %s\n&quot;, strerror(errno));
+            exit(1);
+        }
+
+        int k;
+        for (k = 0; k &lt; ret; k++)
+        {
+            // 读事件
+            if (events[k].events &amp; EPOLLIN)
+            {
+                // tfd: this fd
+                int tfd = events[k].data.fd;
+
+                if (tfd == lfd)
+                {
+                    // 处理监听套接字的事件
+                    int cfd = accept(lfd, (struct sockaddr *)&amp;client_addr, &amp;cli_addr_len);
+                    if (cfd &lt; 0)
+                    {
+                        fprintf(stderr, &quot;accept error: %s\n&quot;, strerror(errno));
+                    }
+
+                    // 把客户端fd挂到epoll红黑树上
+                    struct epoll_event tmp;
+                    tmp.events = EPOLLIN;
+                    tmp.data.fd = cfd;
+                    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, cfd, &amp;tmp)) &lt; 0)
+                    {
+                        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    // 客户端fd的事件
+                    char buff[1024];
+                    int rec_len, i;
+                    if ((rec_len = recv(tfd, buff, sizeof(buff), 0)) &lt; 0)
+                    {
+                        fprintf(stderr, &quot;read error: %s\n&quot;, strerror(errno));
+                        exit(1);
+                    }
+                    else if (rec_len == 0)
+                    {
+                        // 客户端关闭连接
+                        if ((epoll_ctl(epfd, EPOLL_CTL_DEL, tfd, NULL)) &lt; 0)
+                        {
+                            fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+                            exit(1);
+                        }
+                        close(tfd);
+                    }
+                    else
+                    {
+                        printf(&quot;%s&quot;, buff);
+                        for (i = 0; i &lt; rec_len; ++i)
+                        {
+                            buff[i] = toupper(buff[i]);
+                        }
+                        send(tfd, buff, rec_len, 0);
+                    }
+                }
+            }
+        }
+    }
+    close(epfd);
+    close(lfd);
+    return 0;
+}
+</code></pre>
+<h2 id="epoll的一点小问题">epoll的一点小问题</h2>
+<p>如果某个fd被关闭，并且这次关闭是真正地释放了资源，而不是减少引用技术，那么这个fd会自动从eopll中删除，这时再调用epoll_ctl(EPOLL_CTL_DEL)可能会报错。</p>
+<blockquote>
+<pre><code>   Q6  Will closing a file descriptor cause it  to  be  removed  from  all
+</code></pre>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<pre><code>       epoll sets automatically?
+
+   A6  Yes,  but  be aware of the following point.  A file descriptor is a
+       reference to an open file description (see  [open(2)](http://man.he.net/man2/open)).   Whenever  a
+       descriptor  is duplicated via [dup(2)](http://man.he.net/man2/dup), [dup2(2)](http://man.he.net/man2/dup2), [fcntl(2)](http://man.he.net/man2/fcntl) F_DUPFD, or
+       [fork(2)](http://man.he.net/man2/fork), a new file descriptor referring  to  the  same  open  file
+       description  is  created.   An  open  file description continues to
+       exist until all file descriptors referring to it have been  closed.
+       A  file  descriptor is removed from an epoll set only after all the
+       file descriptors referring to the underlying open file  description
+       have been closed (or before if the descriptor is explicitly removed
+       using [epoll_ctl(2)](http://man.he.net/man2/epoll_ctl) EPOLL_CTL_DEL).  This means that  even  after  a
+       file  descriptor  that  is  part  of  an epoll set has been closed,
+       events may be reported for  that  file  descriptor  if  other  file
+       descriptors  referring  to  the  same  underlying  file description
+       remain open.
+</code></pre>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/xdsvqq_xthbax/" title="linux服务端--2. epoll 实现回显服务器">https://yulangz.github.io/post/xdsvqq_xthbax/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/r-KjTzd6_/"># 服务器</a>
+    
+      <a href="https://yulangz.github.io/tag/cVDXMpo5Q/"># Linux</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="linux服务端--3. libevent实现回显服务器与客户端" href="https://yulangz.github.io/post/xdsvqq_rga2qz/">linux服务端--3. libevent实现回显服务器与客户端</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="linux服务端--3. libevent实现回显服务器与客户端" href="https://yulangz.github.io/post/xdsvqq_rga2qz/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="linux服务端--1. select实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_ymoehs/">linux服务端--1. select实现回显服务器</a>
+        <a class="nav-mobile-next" title="linux服务端--1. select实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_ymoehs/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

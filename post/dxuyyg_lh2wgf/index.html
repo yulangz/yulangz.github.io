@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>《数据库系统概念》--第八章 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="《数据库系统概念》--第八章" />
+  <meta name="keywords" content="数据库" />
 </head>
 
 <body>
@@ -255,8 +255,41 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E4%B8%8D%E9%94%99%E7%9A%84%E5%8F%82%E8%80%83httpswwwzhihucomquestion24696366">不错的参考https://www.zhihu.com/question/24696366</a></li>
+<li><a href="#%E7%A0%81%E5%92%8C%E4%B8%BB%E5%B1%9E%E6%80%A7">码和主属性</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96">函数依赖</a></li>
+<li><a href="#1nf%E7%AC%AC%E4%B8%80%E8%8C%83%E5%BC%8F">1NF，第一范式</a></li>
+<li><a href="#2nf">2NF</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E8%BF%9B%E8%A1%8C%E5%88%86%E8%A7%A3">使用函数依赖进行分解</a>
+<ul>
+<li><a href="#%E7%A0%81%E5%92%8C%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96">码和函数依赖</a></li>
+<li><a href="#bcnf">BCNF</a>
+<ul>
+<li><a href="#%E5%88%86%E8%A7%A3%E4%B8%8D%E5%B1%9E%E4%BA%8Ebcnf%E7%9A%84%E6%A8%A1%E5%BC%8F">分解不属于BCNF的模式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3nf%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F">3NF，第三范式</a><br>
+*
+<ul>
+<li><a href="#%E5%85%B8%E5%9E%8B%E6%A1%88%E4%BE%8B%E5%A4%9A%E5%AF%B9%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%AD%A6%E5%8F%B7-qq%E5%8F%B7-%E5%A7%93%E5%90%8D%E5%81%87%E8%AE%BE%E4%B8%80%E4%B8%AA%E5%AD%A6%E7%94%9F%E5%8F%AA%E8%83%BD%E6%9C%89%E4%B8%80%E4%B8%AAqq%E5%8F%B7">典型案例：多对多对一：学号、qq号、姓名（假设一个学生只能有一个qq号）</a></li>
+</ul>
+</li>
+<li><a href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E7%90%86%E8%AE%BA">函数依赖理论</a>
+<ul>
+<li><a href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E9%9B%86%E7%9A%84%E9%97%AD%E5%8C%85">函数依赖集的闭包</a></li>
+<li><a href="#%E5%B1%9E%E6%80%A7%E9%9B%86%E7%9A%84%E9%97%AD%E5%8C%85">属性集的闭包</a></li>
+<li><a href="#%E6%AD%A3%E5%88%99%E8%A6%86%E7%9B%96">正则覆盖</a></li>
+<li><a href="#%E6%97%A0%E6%8D%9F%E5%88%86%E8%A7%A3">无损分解</a></li>
+<li><a href="#%E4%BF%9D%E6%8C%81%E4%BE%9D%E8%B5%96">保持依赖</a></li>
+</ul>
+</li>
+<li><a href="#4nf">4NF</a>
+<ul>
+<li><a href="#%E5%A4%9A%E5%80%BC%E4%BE%9D%E8%B5%96">多值依赖</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -524,8 +557,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/dxuyyg_lh2wgf/">
+      《数据库系统概念》--第八章
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +566,146 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-03-15 09:53:52">2021-03-15</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/">
+        <span>数据库</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>4<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>925<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+              <h2 id="不错的参考httpswwwzhihucomquestion24696366">不错的参考<a href="https://www.zhihu.com/question/24696366">https://www.zhihu.com/question/24696366</a></h2>
+<h2 id="码和主属性">码和主属性</h2>
+<p>若有X，属性的全集U完全函数依赖与X，则X是一个码。<br>
+全部码的集合是主属性。</p>
+<h2 id="函数依赖">函数依赖</h2>
+<p>如果存在模式 (A,B) ，则A可以作为主键，这就是函数依赖，写作<br>
+<img src="http://static.yulan.net.cn/image/image_56e601e945c388147f033f31511faed5.png" alt="image.png" loading="lazy"><br>
+称作B依赖于A，或A函数确定B</p>
+<h2 id="1nf第一范式">1NF，第一范式</h2>
+<p>如果一个关系模式R的全部属性都是原子的、不可再分的，那么它满足第一范式。<br>
+对于关系course中的属性course_id，我们可能会使用CS-101这样的课程标识号，其中CS代表系，如果在应用程序中通过额外的编程将CS解析为计算机系，那么就认为course_id属性可以再分，不是原子的。<br>
+但是如果单独存储dept_name属性，那么系名就不从course_id中解析，可以认为其是原子的，那么这个关系模式符合第一范式。</p>
+<h2 id="2nf">2NF</h2>
+<p>消除非主属性对码的部分函数依赖</p>
+<h2 id="使用函数依赖进行分解">使用函数依赖进行分解</h2>
+<h3 id="码和函数依赖">码和函数依赖</h3>
+<p>关系模式r（R），r指关系，R指关系中的全部属性。<br>
+<strong>超码</strong> ： 设关系模式r(R)，R的子集K，对于r的实例中的全部元组对t1与t2，若 t1!=t2，则有t1[K] != t2[K]，那么K是关系r的超码。<br>
+<strong>函数依赖</strong> ： 在关系模式r（R）上，<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%871_1d9f00cfb0758e57cb9ab1daff04b6a9.png" alt="图片1.png" loading="lazy">，<br>
+1 r（R）的实例对t1与t2，若t1[a]=t2[a]，则t1[b]=t2[b]，那么满足函数依赖<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%871_dc5e1da00cc02926a9934f3470bcc99e.png" alt="图片1.png" loading="lazy"><br>
+2 对于r（R）的每个合法实例都满足函数依赖<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%871_dc5e1da00cc02926a9934f3470bcc99e.png" alt="图片1.png" loading="lazy">，那么该函数依赖在模式r（R）上成立。<br>
+若K-&gt;R在关系模式r（R）上成立，那么K是一个超码。<br>
+<img src="http://static.yulan.net.cn/image/image_e3c4d77f2396b3da30f690881bc6796e.png" alt="image.png" loading="lazy"><br>
+在上图中，A-&gt;C满足函数依赖，而C-&gt;A不满足。<br>
+在所有关系中都满足的函数依赖是平凡的函数依赖。（例如A-&gt;A）<br>
+F+称为函数依赖F集合的闭包，即F集合可以推导出的所有函数依赖的集合。</p>
+<h3 id="bcnf">BCNF</h3>
+<p>对于F+中所有的函数依赖a-&gt;b,至少满足下面一项：</p>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li>a-&gt;b是平凡的函数依赖。</li>
+<li>a是模式R的一个超码。</li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<p>则满足BCNF</p>
+<h4 id="分解不属于bcnf的模式">分解不属于BCNF的模式</h4>
+<p>在关系模式r（R）中存在至少一个非平凡的函数依赖a-&gt;b，且a不是R的超码，则用以下两个模式取代R：<br>
+1 <img src="http://static.yulan.net.cn/image/image_6dc7315535b996db34fd6bd1ad1ad351.png" alt="image.png" loading="lazy"><br>
+2 <img src="http://static.yulan.net.cn/image/image_3781bb947709648dabd4a52eec7cf656.png" alt="image.png" loading="lazy"></p>
+<h2 id="3nf第三范式">3NF，第三范式</h2>
+<p>一种比BCNF弱的范式，在BCNF的基础上允许保持函数依赖。<br>
+<strong>3NF消除了传递函数依赖。BCNF在3NF的基础上消除了主属性对于码的部分函数依赖。</strong></p>
+<h4 id="典型案例多对多对一学号-qq号-姓名假设一个学生只能有一个qq号">典型案例：多对多对一：学号、qq号、姓名（假设一个学生只能有一个qq号）</h4>
+<p>在BCNF的基础上，允许</p>
+<ul>
+<li>a-&gt;b是平凡的函数依赖 。   （BCNF）</li>
+<li>a是模式R的一个超码。        （BCNF）</li>
+<li>b - a 中的每个属性A都包含于R的一个候选码中。</li>
+</ul>
+<h2 id="函数依赖理论">函数依赖理论</h2>
+<h3 id="函数依赖集的闭包">函数依赖集的闭包</h3>
+<p><strong>逻辑蕴含</strong> ：若每一个满足函数依赖F的实例也满足f，则F逻辑蕴含f。<br>
+F+称为函数依赖F集合的闭包，即F集合可以推导出的所有函数依赖的集合。<br>
+<strong>Armstrong公理</strong> <br>
+<img src="http://static.yulan.net.cn/image/image_8eb5fa4942ec5b3de0d4fbe9ead8ccfc.png" alt="image.png" loading="lazy"></p>
+<h3 id="属性集的闭包">属性集的闭包</h3>
+<p>设a为一个属性集，则在函数依赖F下被a函数确定的属性的集合，称为a的闭包，记作a+。</p>
+<h3 id="正则覆盖">正则覆盖</h3>
+<p><strong>无关属性</strong> <br>
+<img src="http://static.yulan.net.cn/image/image_e48ae77b7f5d496cf68a5dc4ed4797ef.png" alt="image.png" loading="lazy"><br>
+<strong>正则覆盖</strong> <br>
+<img src="http://static.yulan.net.cn/image/image_c261dc58f5be1d8659624a92a2686ae8.png" alt="image.png" loading="lazy"></p>
+<h3 id="无损分解">无损分解</h3>
+<p><img src="http://static.yulan.net.cn/image/image_49ae2f623f318ee5cf3d228f9b7d7945.png" alt="image.png" loading="lazy"><br>
+<img src="http://static.yulan.net.cn/image/image_6ccb6e08840e6bdf4bb5652cfb08fecb.png" alt="image.png" loading="lazy"></p>
+<h3 id="保持依赖">保持依赖</h3>
+<p><img src="http://static.yulan.net.cn/image/image_a4b51c7274dea744638d19dbfe235fcd.png" alt="image.png" loading="lazy"><br>
+算法没看懂。<br>
+BCNF范式可能出现无法保持依赖的情况，3NF允许了保持依赖。</p>
+<h2 id="4nf">4NF</h2>
+<h3 id="多值依赖">多值依赖</h3>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/dxuyyg_lh2wgf/" title="《数据库系统概念》--第八章">https://yulangz.github.io/post/dxuyyg_lh2wgf/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/"># 数据库</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="《数据库系统概念》--数据库恢复技术" href="https://yulangz.github.io/post/dxuyyg_gledvl/">《数据库系统概念》--数据库恢复技术</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="《数据库系统概念》--数据库恢复技术" href="https://yulangz.github.io/post/dxuyyg_gledvl/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="《数据库系统概念》--第十二章" href="https://yulangz.github.io/post/dxuyyg_qiosri/">《数据库系统概念》--第十二章</a>
+        <a class="nav-mobile-next" title="《数据库系统概念》--第十二章" href="https://yulangz.github.io/post/dxuyyg_qiosri/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

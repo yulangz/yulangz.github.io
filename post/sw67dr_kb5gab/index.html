@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>PAT 2020年秋考解答 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="PAT 2020年秋考解答" />
+  <meta name="keywords" content="PAT,数据结构" />
 </head>
 
 <body>
@@ -255,8 +255,14 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li>
+<ul>
+<li><a href="#7-1-panda-and-pp-milk-20%E5%88%86">7-1 Panda and PP Milk (20分)</a></li>
+<li><a href="#7-2-how-many-ways-to-buy-a-piece-of-land-25%E5%88%86">7-2 How Many Ways to Buy a Piece of Land (25分)</a></li>
+<li><a href="#7-3-left-view-of-binary-tree-25%E5%88%86">7-3 Left-View of Binary Tree (25分)</a></li>
+<li><a href="#7-4-professional-ability-test-30%E5%88%86">7-4 Professional Ability Test (30分)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -524,8 +530,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/sw67dr_kb5gab/">
+      PAT 2020年秋考解答
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +539,481 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:52:32">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/OY40LDPLO/">
+        <span>PAT</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/">
+        <span>数据结构</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>8<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1434<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h3 id="7-1-panda-and-pp-milk-20分">7-1 Panda and PP Milk (20分)</h3>
+<p>这道题杀死了不少同学的心态，但是如果想到方法了就特别简单。<br>
+简单说下做法，一共对全表进行两次扫描，第一次从左到右，第二次从右到左，每次扫描时，如果后面熊猫比前面重，则供奶量+1（以2、3、4计，最后统一乘100)如果体重持平，则保持不变，体重减轻，则供奶量恢复为2，从左向右扫描满足所有熊猫看到自己左边的熊猫都会满意，从右向左满足右边熊猫，对每个熊猫取两次扫描中的较大值，即为答案。</p>
+<table>
+<thead>
+<tr>
+<th>体重</th>
+<th>180</th>
+<th>160</th>
+<th>100</th>
+<th>150</th>
+<th>145</th>
+<th>142</th>
+<th>138</th>
+<th>138</th>
+<th>140</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>左向右</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>右向左</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>最终供奶量</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 10005;
+const int WMAX = 205;
+
+int main() {
+    int n, wight[NMAX], milk_l[NMAX], milk_r[NMAX];
+    cin &gt;&gt; n;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; wight[i];
+    }
+    int pre, now_milk;
+    now_milk = 2;
+    pre = WMAX;
+    for (int i = 0; i &lt; n; i++) {
+        // 左向右扫
+        if (wight[i] &gt; pre) {
+            now_milk++;
+        } else if (wight[i] == pre) { ; //体重相等供奶量保持不变
+        } else {
+            now_milk = 2;
+        }
+        milk_l[i] = now_milk;
+        pre = wight[i];
+    }
+
+    now_milk = 2;
+    pre = WMAX;
+    for (int i = n - 1; i &gt;= 0; i--) {
+        // 右向左扫
+        if (wight[i] &gt; pre) {
+            now_milk++;
+        } else if (wight[i] == pre) { ;
+        } else {
+            now_milk = 2;
+        }
+        milk_r[i] = now_milk;
+        pre = wight[i];
+    }
+    int sum = 0;
+    for (int i = 0; i &lt; n; i++) {
+        sum += max(milk_l[i], milk_r[i]); // 取较大者
+    }
+    cout &lt;&lt; sum * 100;
+    return 0;
+}
+</code></pre>
+<p>至于这题是怎么想到的？我也不知道。可能是考场上的灵光一现吧，要是换个时间再来一次，我可能也想不到这样做了。</p>
+<h3 id="7-2-how-many-ways-to-buy-a-piece-of-land-25分">7-2 How Many Ways to Buy a Piece of Land (25分)</h3>
+<p>比较简单</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 10005;
+
+int main() {
+    int n, m;
+    int pieces[NMAX];
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; pieces[i];
+    }
+    int ans = 0;
+    int i = 0, j = 0;
+    int total = 0;
+    while (i &lt; n) {
+        while (j &lt; n &amp;&amp; total + pieces[j] &lt;= m) {
+            total += pieces[j++];
+        }
+        ans += j - i;
+        total -= pieces[i++];
+    }
+    cout &lt;&lt; ans;
+    return 0;
+}
+</code></pre>
+<h3 id="7-3-left-view-of-binary-tree-25分">7-3 Left-View of Binary Tree (25分)</h3>
+<p>先建树，再层序遍历，考基本功了</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 25;
+
+struct TNode {
+    int val;
+    int level;
+    TNode *left;
+    TNode *right;
+};
+
+int pre[NMAX], in[NMAX];
+
+TNode *new_node(int val) {
+    TNode *node = new TNode;
+    node-&gt;val = val;
+    node-&gt;level = -1;
+    node-&gt;left = node-&gt;right = nullptr;
+    return node;
+}
+
+TNode *built_tree(int in_s, int in_e, int pre_s, int pre_e) {
+    if (in_s &gt; in_e)
+        return nullptr;
+    int mid;
+    for (mid = in_s; mid &lt;= in_e; mid++) {
+        if (in[mid] == pre[pre_s])
+            break;
+    }
+
+    TNode *node = new_node(pre[pre_s]);
+    node-&gt;left = built_tree(in_s, mid - 1, pre_s + 1, pre_s + mid - in_s);
+    node-&gt;right = built_tree(mid + 1, in_e, pre_s + mid - in_s + 1, pre_e);
+    return node;
+}
+
+
+vector&lt;int&gt; ans;
+
+void level_travel(TNode *node) {
+    queue&lt;TNode *&gt; q;
+    int now_level = 0;
+    node-&gt;level = 1;
+    q.push(node);
+    while (!q.empty()) {
+        node = q.front();
+        q.pop();
+        if (node-&gt;level != now_level) {
+            ans.push_back(node-&gt;val);
+            now_level = node-&gt;level;
+        }
+
+        if (node-&gt;left) {
+            node-&gt;left-&gt;level = node-&gt;level + 1;
+            q.push(node-&gt;left);
+        }
+        if (node-&gt;right) {
+            node-&gt;right-&gt;level = node-&gt;level + 1;
+            q.push(node-&gt;right);
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; in[i];
+    }
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; pre[i];
+    }
+    TNode *root = built_tree(0, n - 1, 0, n - 1);
+
+    level_travel(root);
+    int l = ans.size();
+    if (l &gt; 0) {
+        cout &lt;&lt; ans[0];
+    }
+    for (int i = 1; i &lt; l; i++) {
+        cout &lt;&lt; &quot; &quot; &lt;&lt; ans[i];
+    }
+    return 0;
+}
+</code></pre>
+<h3 id="7-4-professional-ability-test-30分">7-4 Professional Ability Test (30分)</h3>
+<p>先判断是否有环（推荐拓扑排序，DFS也许），然后djs算法，纯考基本功，代码量有点大</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 1005;
+const int MAX_DIS = 500;
+
+struct Edge {
+    int v;
+    int score, daijinquan;
+
+    Edge() {};
+
+    Edge(int _v, int _score, int _daijinquan) {
+        v = _v;
+        score = _score;
+        daijinquan = _daijinquan;
+    }
+};
+
+vector&lt;Edge&gt; graph[NMAX];
+int in[NMAX], in_buff[NMAX];
+int n, m;
+
+void not_consist() {
+    // 有环，直接判断
+    cout &lt;&lt; &quot;Impossible.&quot; &lt;&lt; endl;
+    int k;
+    cin &gt;&gt; k;
+    while (k--) {
+        int node;
+        cin &gt;&gt; node;
+        if (in[node] == 0)
+            printf(&quot;You may take test %d directly.
+&quot;, node);
+        else
+            printf(&quot;Error.
+&quot;);
+    }
+}
+
+//vector&lt;int&gt; pre[NMAX];
+int pre[NMAX];
+
+void Dijkstra() {
+    bool visited[NMAX];
+    int dis_score[NMAX];
+    int dis_daijinquan[NMAX];
+    fill(visited, visited + NMAX, false);
+    fill(dis_score, dis_score + NMAX, MAX_DIS);
+    fill(dis_daijinquan, dis_daijinquan + NMAX, 0);
+    //dis_score[n]=0;
+    //int node;
+    for (Edge e:graph[n]) {
+        dis_score[e.v] = dis_daijinquan[e.v] = 0;
+        pre[e.v] = n;
+    }
+    while (true) {
+        int min_node = n;
+        int min_dis = MAX_DIS;
+        for (int i = 0; i &lt; n; i++) {
+            if (visited[i])
+                continue;
+
+            if (dis_score[i] &lt; min_dis) {
+                min_dis = dis_score[i];
+                min_node = i;
+            } else if (dis_score[i] == min_dis) {
+                if (dis_daijinquan[i] &gt; dis_daijinquan[min_node])
+                    min_node = i;
+            }
+        }
+        if (min_node == n)
+            break;
+        visited[min_node] = true;
+        for (Edge e:graph[min_node]) {
+            if (min_dis + e.score &lt; dis_score[e.v]) {
+                pre[e.v] = min_node;
+                dis_score[e.v] = min_dis + e.score;
+                dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
+            } else if (min_dis + e.score == dis_score[e.v]) {
+                if (dis_daijinquan[min_node] + e.daijinquan &gt; dis_daijinquan[e.v]) {
+                    pre[e.v] = min_node;
+                    dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
+                }
+            }
+        }
+    }
+}
+
+void consist() {
+    // 无环 Djs算法
+    cout &lt;&lt; &quot;Okay.&quot; &lt;&lt; endl;
+    Dijkstra();
+    int k;
+    cin &gt;&gt; k;
+    for (int i = 0; i &lt; k; i++) {
+        int dst;
+        cin &gt;&gt; dst;
+
+        if (pre[dst] == n) {
+            printf(&quot;You may take test %d directly.
+&quot;, dst);
+        } else {
+            vector&lt;int&gt; path;
+            while (dst != n) {
+                path.push_back(dst);
+                dst = pre[dst];
+            }
+            int l = path.size();
+            printf(&quot;%d&quot;, path[l - 1]);
+            for (int j = l - 2; j &gt;= 0; j--) {
+                printf(&quot;-&gt;%d&quot;, path[j]);
+            }
+            printf(&quot;
+&quot;);
+        }
+    }
+}
+
+bool check() {
+    // 判断是否有环
+    bool visited[NMAX];
+    fill(visited, visited + NMAX, false);
+    for (int i = 0; i &lt; n; i++) {
+        int node = 0;
+        for (; node &lt; n; node++) {
+            if (!visited[node] &amp;&amp; in[node] == 0) {
+                break;
+            }
+        }
+        if (node == n)
+            break;
+        visited[node] = true;
+        for (Edge t:graph[node]) {
+            in[t.v]--;
+        }
+    }
+    for (int i = 0; i &lt; n; i++) {
+        if (in[i])
+            return false;
+    }
+    return true;
+}
+
+int main() {
+
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i = 0; i &lt; m; i++) {
+        int u, v, s, d;
+        cin &gt;&gt; u &gt;&gt; v &gt;&gt; s &gt;&gt; d;
+        in[v]++;
+        in_buff[v]++;// 入读保存两份，一份用来判环，一份判断是否是启示节点（一开始入读就是0的节点）
+        graph[u].push_back(Edge(v, s, d));
+    }
+
+    for (int i = 0; i &lt; n; i++) {
+        if (in[i] == 0) {
+            // 用节点n作为总起始节点，连接所有起始入度为零的节点，将图变成单源的
+            graph[n].push_back(Edge(i, 0, 0));
+        }
+    }
+    if (check())
+        consist();
+    else
+        not_consist();
+    return 0;
+}
+</code></pre>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/sw67dr_kb5gab/" title="PAT 2020年秋考解答">https://yulangz.github.io/post/sw67dr_kb5gab/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/OY40LDPLO/"># PAT</a>
+    
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/"># 数据结构</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="linux服务端--1. select实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_ymoehs/">linux服务端--1. select实现回显服务器</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="linux服务端--1. select实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_ymoehs/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="PAT1026 Table Tennis (30分)时间戳法" href="https://yulangz.github.io/post/sw67dr_iy8tyk/">PAT1026 Table Tennis (30分)时间戳法</a>
+        <a class="nav-mobile-next" title="PAT1026 Table Tennis (30分)时间戳法" href="https://yulangz.github.io/post/sw67dr_iy8tyk/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

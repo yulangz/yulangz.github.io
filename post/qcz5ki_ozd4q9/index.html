@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>clion remote模式无代码补全（找不到Linux头文件） | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="clion remote模式无代码补全（找不到Linux头文件）" />
+  <meta name="keywords" content="开发工具" />
 </head>
 
 <body>
@@ -255,8 +255,8 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95">解决办法</a></li>
+<li><a href="#%E5%8E%9F%E5%9B%A0">原因</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +524,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/qcz5ki_ozd4q9/">
+      clion remote模式无代码补全（找不到Linux头文件）
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +533,89 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-06-02 09:16:52">2021-06-02</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/Tm6VlKr0VA/">
+        <span>开发工具</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>2<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>303<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <p>一直用clion做远程开发，不管是颜值还是自动补全都挺舒服，但是今天遇到一个问题，就是clion找不到Linux中的库文件，所以就没有代码补全，但是编译是正常的。更具体点，找得到 <code>unistd.h</code>但是找不到<code>sys/types.h</code>。<br>
+​</p>
+<h2 id="解决办法">解决办法</h2>
+<p>点击<strong>Help| Find Action</strong>, 输入<strong>Registry</strong>，之后勾选<strong>clion.remote.tar.dereference</strong><br>
+​</p>
+<h2 id="原因">原因</h2>
+<p>clion的remote自动补全是将远程Liunx下的相关头文件缓存到本地，而这个缓存是先使用tar打包，然后下载到本地，然而Linux上的一些头文件实际上是软链接，tar打包的时候会按软链接打包，下载到本地解压后自然无法解析。勾选clion.remote.tar.dereference是让tar命令 Enable dereference (-h) and '--hard-dereference' tar arguments<br>
+<img src="http://static.yulan.net.cn/image/image_300aaae632fed92961e606c0e3a83ccd.png" alt="image.png" loading="lazy"><br>
+这样就可以解析软链接到对应文件，下载到本地的就是文件而不是软链接。<br>
+​</p>
+<p>修改之后再Tool -&gt; Resync with remote hosts，如果还是不行就把本地缓存删掉重新Resync。<br>
+本地缓存一般在<code>C:\Users\用户名\AppData\Local\JetBrains\CLion2021.1\.remote</code>下，在Problems中也可以看到缓存路径（一般是` Cannot open file ***路径，Permission Denied）</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/qcz5ki_ozd4q9/" title="clion remote模式无代码补全（找不到Linux头文件）">https://yulangz.github.io/post/qcz5ki_ozd4q9/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/Tm6VlKr0VA/"># 开发工具</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="CSAPP: datalab" href="https://yulangz.github.io/post/uscxh7_cc7kxq/">CSAPP: datalab</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="CSAPP: datalab" href="https://yulangz.github.io/post/uscxh7_cc7kxq/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="MySQL与Redis的benchmark" href="https://yulangz.github.io/post/dxuyyg_zn7g7o/">MySQL与Redis的benchmark</a>
+        <a class="nav-mobile-next" title="MySQL与Redis的benchmark" href="https://yulangz.github.io/post/dxuyyg_zn7g7o/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

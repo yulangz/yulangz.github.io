@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>Dijkstra算法与SPFA算法 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="Dijkstra算法与SPFA算法" />
+  <meta name="keywords" content="数据结构" />
 </head>
 
 <body>
@@ -255,8 +255,13 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E9%80%9F%E5%BA%A6%E5%AF%B9%E6%AF%94%E9%87%8D%E7%82%B9%E7%9C%8B%E6%B5%8B%E8%AF%95%E7%82%B94">速度对比（重点看测试点4）</a>
+<ul>
+<li><a href="#dijkstra%E9%80%9F%E5%BA%A6">Dijkstra速度</a></li>
+<li><a href="#spfa">SPFA</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B">代码如下</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +529,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/sw67dr_hpnu4t/">
+      Dijkstra算法与SPFA算法
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +538,236 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 13:48:53">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/">
+        <span>数据结构</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>4<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>643<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <p>最近看了《算法笔记》上面关于最短路径的部分，学习了一种之前没见过的算法：<strong>SPFA。</strong><br>
+理论上SPFA算法会比Dijkstra快，顾而找了一题测试一下。<br>
+使用PAT A1072题，因为这题求<strong>最短路径的部分很单纯，没有其他的权，而且测试点的复杂度够高，能够看出时间上的差别。</strong><br>
+<a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805396953219072">题目链接</a></p>
+<h2 id="速度对比重点看测试点4">速度对比（重点看测试点4）</h2>
+<h3 id="dijkstra速度">Dijkstra速度</h3>
+<figure data-type="image" tabindex="1"><img src="http://static.yulan.net.cn/image/image_3dfbda0886ef9d9aefa1315db1cb7f78.png" alt="image.png" loading="lazy"></figure>
+<h3 id="spfa">SPFA</h3>
+<p><img src="http://static.yulan.net.cn/image/image_78d365c8596c6ebefa6224fa455883c0.png" alt="image.png" loading="lazy"><br>
+多次提交对比，Dijkstra算法都在50ms左右，而SPFA一直在10ms左右，可见SPFA确实比Dijkstra快不少，而且思路也不复杂，以后可以多多使用。</p>
+<h2 id="代码如下">代码如下</h2>
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+#include&lt;unordered_map&gt;
+using namespace std;
+#define MAXNODE 1015
+#define INF 0x3ffffff
+#define G2index(G) ((n)+(G))
+#define index2G(index) ((index)-(G))
+
+struct Node
+{
+	int v, dis;//目标与距离
+};
+
+int dis[MAXNODE];
+int n, m, k, dmax;
+bool used[MAXNODE], inqueue[MAXNODE];
+vector&lt;Node&gt; graph[MAXNODE];
+
+void Dijkstra(int start)
+{
+	fill(dis, dis + MAXNODE, INF);
+	fill(used, used + MAXNODE, false);
+	dis[start] = 0;
+
+	for (int i = 0; i &lt; n + m - 1; i++) {
+		int minnode = -1, mindis = INF;
+		for (int j = 1; j &lt;= n + m; j++) {
+			if (!used[j] &amp;&amp; dis[j] &lt; mindis) {
+				minnode = j;
+				mindis = dis[j];
+			}
+		}
+		if (minnode == -1)
+			return;
+
+		used[minnode] = true;
+		int tdis = dis[minnode];
+		for (Node node : graph[minnode]) {
+			if (tdis + node.dis &lt; dis[node.v]) {
+				dis[node.v] = tdis + node.dis;
+			}
+		}
+	}
+}
+
+void SPFA(int start)
+{
+	fill(dis, dis + MAXNODE, INF);
+	fill(inqueue, inqueue + MAXNODE, false);
+	dis[start] = 0;
+
+	int tdis = 0;
+	queue&lt;int&gt; q;
+	for (Node node : graph[start]) {
+		if (tdis + node.dis &lt; dis[node.v]) {
+			dis[node.v] = node.dis + tdis;
+			q.push(node.v);
+			inqueue[node.v] = true;
+		}
+	}
+	while (!q.empty()) {
+		int nodeid = q.front();
+		q.pop();
+		inqueue[nodeid] = false;
+		for (Node node : graph[nodeid]) {
+			tdis = dis[nodeid];
+			if (tdis + node.dis &lt; dis[node.v]) {
+				dis[node.v] = node.dis + tdis;
+				if (!inqueue[node.v]) {
+					q.push(node.v);
+					inqueue[node.v] = true;
+				}
+			}
+		}
+	}
+}
+
+struct Ans
+{
+	int Gid, mindis, totaldis;
+};
+vector&lt;Ans&gt; ans;
+
+void getans(int Gid)
+{
+	int totaldis, mindis;
+	mindis = INF;
+	totaldis = 0;
+	for (int i = 1; i &lt;= n; i++) {
+		if (dis[i] &gt; dmax)
+			return;
+		if (dis[i] &lt; mindis) {
+			mindis = dis[i];
+		}
+		totaldis += dis[i];
+	}
+	ans.push_back(Ans{ Gid,mindis,totaldis });
+}
+
+int main() {
+	scanf(&quot;%d%d%d%d&quot;, &amp;n, &amp;m, &amp;k, &amp;dmax);
+	for (int i = 0; i &lt; k; i++) {
+		int c1, c2, dd;
+		char cs1[10], cs2[10];
+		scanf(&quot;%s%s%d&quot;, cs1, cs2, &amp;dd);
+		if (cs1[0] == 'G') {
+			c1 = G2index(atoi(cs1 + 1));
+		}
+		else {
+			c1 = atoi(cs1);
+		}
+
+		if (cs2[0] == 'G') {
+			c2 = G2index(atoi(cs2 + 1));
+		}
+		else {
+			c2 = atoi(cs2);
+		}
+		graph[c1].push_back(Node{ c2, dd });
+		graph[c2].push_back(Node{ c1, dd });
+	}
+	for (int i = 1; i &lt;= m; i++) {
+		//Dijkstra(G2index(i));
+		SPFA(G2index(i));
+		getans(i);
+	}
+
+	Ans myans;
+	myans.Gid = -1;
+	myans.totaldis = INF;
+	myans.mindis = 0;
+	for (Ans a : ans) {
+		if (a.mindis &gt; myans.mindis)
+			myans = a;
+		else if (a.mindis == myans.mindis) {
+			if (a.totaldis &lt; myans.totaldis)
+				myans = a;
+		}
+	}
+	if (myans.Gid == -1) {
+		printf(&quot;No Solution&quot;);
+		return 0;
+	}
+	printf(&quot;G%d\n%.1lf %.1lf&quot;, myans.Gid, (double)myans.mindis, (double)myans.totaldis / n);
+	return 0;
+}
+</code></pre>
+<p>代码思路就不写了，大家可以看算法笔记。</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/sw67dr_hpnu4t/" title="Dijkstra算法与SPFA算法">https://yulangz.github.io/post/sw67dr_hpnu4t/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/"># 数据结构</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="PAT1026 Table Tennis (30分)时间戳法" href="https://yulangz.github.io/post/sw67dr_iy8tyk/">PAT1026 Table Tennis (30分)时间戳法</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="PAT1026 Table Tennis (30分)时间戳法" href="https://yulangz.github.io/post/sw67dr_iy8tyk/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="CSAPP：proxylab" href="https://yulangz.github.io/post/uscxh7_cwdngk/">CSAPP：proxylab</a>
+        <a class="nav-mobile-next" title="CSAPP：proxylab" href="https://yulangz.github.io/post/uscxh7_cwdngk/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

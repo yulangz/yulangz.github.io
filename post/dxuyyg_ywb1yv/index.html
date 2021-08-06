@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>《数据库系统概念》--第四章 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="《数据库系统概念》--第四章" />
+  <meta name="keywords" content="数据库" />
 </head>
 
 <body>
@@ -255,8 +255,24 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5">连接</a>
+<ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E7%9A%84%E4%BA%A4%E6%8D%A2%E5%BE%8B%E4%B8%8E%E7%BB%93%E5%90%88%E5%BE%8B">连接的交换律与结合律</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%86%E5%9B%BEview">视图（view）</a></li>
+<li><a href="#%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE">物化视图</a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E7%BA%A6%E6%9D%9F">完整性约束</a>
+<ul>
+<li><a href="#primary-key">primary key</a></li>
+<li><a href="#not-null">not null</a></li>
+<li><a href="#unique">unique</a></li>
+<li><a href="#check">check</a></li>
+<li><a href="#%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7%E5%A4%96%E9%94%AE">参照完整性（外键）</a></li>
+<li><a href="#%E6%96%AD%E8%A8%80">断言</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9D%83%E9%99%90">权限</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +540,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/dxuyyg_ywb1yv/">
+      《数据库系统概念》--第四章
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +549,138 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-02-18 04:52:01">2021-02-18</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/">
+        <span>数据库</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>3<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>728<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h2 id="连接">连接</h2>
+<p>语法: table1 (natural) (left)(right) join table2 (on ..)<br>
+左连接保证左边全部一定出现（实际上是在做笛卡尔积的时候给右边加上一行全为null的行）<br>
+右连接同理<br>
+Mysql不支持全外连接，要用UNION</p>
+<h3 id="连接的交换律与结合律">连接的交换律与结合律</h3>
+<p>不考虑属性的顺序，连接是可交换的。<br>
+对于结合律，内连接与全外连接满足，左外连接与又外连接不满足。<br>
+<img src="http://static.yulan.net.cn/image/1_8d998de53edd5194fe9d588bac65048e.jpeg" alt="1.jpg" loading="lazy"></p>
+<h2 id="视图view">视图（view）</h2>
+<p>语法<br>
+<strong>create view</strong> v **as **<query expression><br>
+可以把任意查询语句创造为视图<br>
+视图有独立的权限级别<br>
+视图主要用来查询，用于修改会带来问题。<br>
+<strong>视图维护</strong>有多种方法，sql标准没有指定如何实现。<br>
+视图很适合多表连接。</p>
+<h2 id="物化视图">物化视图</h2>
+<p>视图实际上存储的只是查询语句，每次通过视图查询时会执行查询语句。<br>
+物化视图就是把查询结果缓存起来。<br>
+Mysql没有物化视图，目前只发现Oracle支持。<br>
+1.物化视图刷新的方式:<br>
+fast: 增量刷新.假设前一次刷新的时间为t1,那么使用fast模式刷新物化视图时,只向视图中添加t1到当前时间段内,主表变化过的数据.为了记录这种变化，建立增量刷新物化视图还需要一个物化视图日志表。<br>
+complete:全部刷新。相当于重新执行一次创建视图的查询语句。<br>
+force: 这是默认的数据刷新方式。当可以使用fast模式时，数据刷新将采用fast方式；否则使用complete方式。</p>
+<p>2.MV数据刷新的时间：<br>
+on demand:在用户需要刷新的时候刷新，这里就要求用户自己动手去刷新数据了（也可以使用job定时刷新）<br>
+on commit:当主表中有数据提交的时候，立即刷新MV中的数据；<br>
+start ……：从指定的时间开始，每隔一段时间（由next指定）就刷新一次；</p>
+<h2 id="完整性约束">完整性约束</h2>
+<h3 id="primary-key">primary key</h3>
+<h3 id="not-null">not null</h3>
+<h3 id="unique">unique</h3>
+<h3 id="check">check</h3>
+<p>chenck 可以是任意谓词<br>
+如 <code>check(semester in ('Fall','Winter','Spring',Summer))</code> <br>
+<code>check(budge&gt;0)</code></p>
+<h3 id="参照完整性外键">参照完整性（外键）</h3>
+<p>sql会拒绝破坏参照完整性的插入。<br>
+对于更新（被参照表）导致的破坏，默认是拒绝，但是可以设置</p>
+<pre><code class="language-sql">CREATE TABLE course1 (
+course_id VARCHAR ( 20 ),
+dept_name VARCHAR ( 20 ),
+PRIMARY KEY ( course_id ),
+FOREIGN KEY ( dept_name ) REFERENCES department ( dept_name ) 
+  ON DELETE CASCADE 
+  ON UPDATE CASCADE 
+);
+</code></pre>
+<p><code>on delete cascade</code> 表示级联更新，还可以设置 <code>set null</code> 与 <code>sel default</code> 等操作。</p>
+<h3 id="断言">断言</h3>
+<p>支持复杂的约束，很少有数据库实现，Mysql不支持。</p>
+<h2 id="权限">权限</h2>
+<p>sql允许授权给用户或角色，可以对视图进行授权，可以支持权限转移，以及级联收回。<br>
+基本语法</p>
+<pre><code class="language-sql">grant &lt;权限列表&gt;
+on &lt;关系名或视图名&gt;
+to &lt;用户/角色列表&gt;
+</code></pre>
+<p>收回权限<br>
+revoke on from</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/dxuyyg_ywb1yv/" title="《数据库系统概念》--第四章">https://yulangz.github.io/post/dxuyyg_ywb1yv/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/"># 数据库</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="《数据库系统概念》--第九章" href="https://yulangz.github.io/post/dxuyyg_optq0o/">《数据库系统概念》--第九章</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="《数据库系统概念》--第九章" href="https://yulangz.github.io/post/dxuyyg_optq0o/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="《数据库系统概念》--第七章" href="https://yulangz.github.io/post/dxuyyg_uk37gv/">《数据库系统概念》--第七章</a>
+        <a class="nav-mobile-next" title="《数据库系统概念》--第七章" href="https://yulangz.github.io/post/dxuyyg_uk37gv/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

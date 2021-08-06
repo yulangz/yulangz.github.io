@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>linux服务端--3. libevent实现回显服务器与客户端 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="linux服务端--3. libevent实现回显服务器与客户端" />
+  <meta name="keywords" content="服务器,Linux" />
 </head>
 
 <body>
@@ -255,8 +255,14 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF">服务端</a>
+<ul>
+<li><a href="#severec">severe.c</a></li>
+<li><a href="#callbacksh">callbacks.h</a></li>
+<li><a href="#callbacksc">callbacks.c</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF">客户端</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +530,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/xdsvqq_rga2qz/">
+      linux服务端--3. libevent实现回显服务器与客户端
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +539,401 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 14:12:37">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/r-KjTzd6_/">
+        <span>服务器</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/cVDXMpo5Q/">
+        <span>Linux</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>6<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1022<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h2 id="服务端">服务端</h2>
+<h3 id="severec">severe.c</h3>
+<pre><code class="language-c">// severe.c
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;event2/event.h&gt;
+#include &lt;event2/listener.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+#include &quot;callbacks.h&quot;
+
+int main()
+{
+    // 创建event base
+    struct event_base* base = NULL;
+    base = event_base_new();
+    if(base == NULL){
+        perror(&quot;event base new error&quot;);
+        exit(1);
+    }
+
+    // 填写套接字地址
+    struct sockaddr_in saddr;
+    memset(&amp;saddr,0, sizeof(saddr));
+    saddr.sin_family = AF_INET;
+    saddr.sin_port = htons(9999);
+    saddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    // 创建listern_cb回调函数的参数
+    struct CallBackArgs* args = malloc(sizeof(struct CallBackArgs));
+    args-&gt;base = base;
+
+    // 申请套接字、绑定、监听
+    struct evconnlistener* evl = NULL;
+    evl = evconnlistener_new_bind(base,
+                                  listen_cb,
+                                  (void *)args,
+                                  LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
+                                  -1,
+                                  (struct sockaddr*)&amp;saddr,
+                                  sizeof(saddr));
+    if (evl == NULL){
+        perror(&quot;event listener new bind error&quot;);
+        exit(1);
+    }
+
+    // 开始运行
+    int code;
+    code = event_base_dispatch(base);
+    if(code == -1){
+        perror(&quot;event base dispatch error&quot;);
+        exit(1);
+    }
+
+    // 资源关闭
+    evconnlistener_free(evl);
+    free(args);
+    event_base_free(base);
+    return 0;
+}
+</code></pre>
+<h3 id="callbacksh">callbacks.h</h3>
+<pre><code class="language-c">// callbacks.h
+
+#ifndef CLIBEVENT_CALLBACKS_H
+#define CLIBEVENT_CALLBACKS_H
+
+#include &lt;event2/event.h&gt;
+#include &lt;event2/listener.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+
+/* 自定义回调参数数据结构 */
+struct CallBackArgs
+{
+    struct event_base* base;
+};
+
+/** 监听listen回调函数
+ * type: evconnlistener_cb
+ * */
+void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
+               int socklen, void * args);
+
+/**
+   read回调函数
+   type: bufferevent_data_cb
+*/
+void read_cb(struct bufferevent *bfev, void *args);
+
+/**
+ * write回调函数
+ * type: bufferevent_data_cb
+ * */
+void write_cb(struct bufferevent *bfev, void *args);
+
+/**
+ * event回调函数
+ * type: bufferevent_event_cb
+ * */
+void event_cb(struct bufferevent *bfev, short what, void *args);
+
+#endif //CLIBEVENT_CALLBACKS_H
+
+</code></pre>
+<h3 id="callbacksc">callbacks.c</h3>
+<pre><code class="language-c">// callbacks.c
+
+#include &quot;callbacks.h&quot;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdlib.h&gt;
+void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
+        int socklen, void * args)
+{
+    // 获取参数
+    struct CallBackArgs* cb_args = (struct CallBackArgs*) args;
+
+    // 创建buffer event
+    struct bufferevent* bfev = NULL;
+    bfev = bufferevent_socket_new(cb_args-&gt;base,fd,BEV_OPT_CLOSE_ON_FREE);
+    if(bfev == NULL){
+        perror(&quot;buffer socket new error&quot;);
+        return;
+    }
+
+    // 启用读写事件
+    int code;
+    code = bufferevent_enable(bfev,EV_READ | EV_WRITE);
+    if(code == -1){
+        perror(&quot;buffer event enable error&quot;);
+        bufferevent_free(bfev);
+        return;
+    }
+
+    // 注册回调函数
+    bufferevent_setcb(bfev,
+                      read_cb,
+                      write_cb,
+                      event_cb,
+                      NULL);
+}
+
+void read_cb(struct bufferevent *bfev, void *args)
+{
+    //接收数据
+    char buff[1024] = {0};
+    int len = bufferevent_read(bfev,buff, sizeof(buff));
+    printf(&quot;接收到了数据:%s&quot;,buff);
+
+    // 处理数据
+    int i;
+    for(i = 0;i&lt;len ;++i){
+        buff[i] = toupper(buff[i]);
+    }
+
+    // 发送数据
+    int code;
+    code = bufferevent_write(bfev,buff, strlen(buff)+1);
+    if(code == -1){
+        perror(&quot;buffer write error&quot;);
+        return;
+    }
+    printf(&quot;我发回了数据:%s&quot;,buff);
+}
+
+void write_cb(struct bufferevent *bfev, void *args)
+{
+    printf(&quot;我的数据发送完毕\n&quot;);
+}
+
+void event_cb(struct bufferevent *bfev, short what, void *args)
+{
+    // 出现错误，释放资源，不做额外处理
+    if(args)
+        free(args);
+    bufferevent_free(bfev);
+    printf(&quot;关闭 buffer event\n&quot;);
+}
+</code></pre>
+<h2 id="客户端">客户端</h2>
+<pre><code class="language-c">// 发送一次数据并受到服务器返回后就退出event循环，结束程序
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;event2/event.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+void read_cb(struct bufferevent *bfev, void *args)
+{
+    char buff[1024] = {0};
+    int len = bufferevent_read(bfev, buff, sizeof(buff));
+    printf(&quot;从服务器接收到了数据:%s&quot;, buff);
+    bufferevent_free(bfev);
+}
+
+void write_cb(struct bufferevent *bfev, void *args)
+{
+    printf(&quot;数据已发送&quot;);
+}
+
+void event_cb(struct bufferevent *bfev, short what, void *args)
+{
+    if (what &amp; BEV_EVENT_CONNECTED)
+    {
+        printf(&quot;连接建立完成\n&quot;);
+        return;
+    }
+
+    if (what &amp; BEV_EVENT_ERROR)
+    {
+        printf(&quot;出现错误事件\n&quot;);
+        perror(&quot;&quot;);
+        if (args != NULL)
+            free(args);
+        bufferevent_free(bfev);
+        exit(1);
+    }
+    if (what &amp; BEV_EVENT_EOF)
+    {
+        printf(&quot;连接已断开\n&quot;);
+        if (args != NULL)
+            free(args);
+        bufferevent_free(bfev);
+        exit(0);
+    }
+}
+
+void std_cb(evutil_socket_t fd, short what, void *sock_bev)
+{
+    char buff[1024] = {0};
+    int len = read(fd, buff, sizeof(buff));
+    struct bufferevent *bev = (struct bufferevent *)sock_bev;
+    int code;
+    code = bufferevent_write(bev, buff, strlen(buff) + 1);
+    if (code == -1)
+    {
+        perror(&quot;write to buffer event error&quot;);
+        exit(1);
+    }
+}
+
+int main()
+{
+    struct event_base *base = NULL;
+    base = event_base_new();
+    if (base == NULL)
+    {
+        perror(&quot;base new error&quot;);
+        exit(1);
+    }
+
+    // 要连接的服务器信息
+    struct sockaddr_in serv;
+    memset(&amp;serv, 0, sizeof(serv));
+    serv.sin_family = AF_INET;
+    serv.sin_port = htons(9999);
+    inet_pton(AF_INET, &quot;127.0.0.1&quot;, &amp;serv.sin_addr.s_addr);
+
+    // 创建套接字
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd &lt; 0)
+    {
+        perror(&quot;create socket erroe&quot;);
+        exit(1);
+    }
+    printf(&quot;套接字创建完成\n&quot;);
+    // 创建本次通信的bufferevent
+    struct bufferevent *bev = NULL;
+    bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+
+    int code;
+    code = bufferevent_socket_connect(bev, (struct sockaddr *)&amp;serv, sizeof(serv));
+    if (code == -1)
+    {
+        perror(&quot;connect error&quot;);
+        exit(1);
+    }
+
+    bufferevent_setcb(bev, read_cb, write_cb, event_cb, NULL);
+
+    code = bufferevent_enable(bev, EV_READ | EV_WRITE);
+    if (code == -1)
+    {
+        perror(&quot;enable error&quot;);
+        exit(1);
+    }
+
+    // 创建std输入事件
+    struct event *ev = NULL;
+    ev = event_new(base, STDIN_FILENO, EV_READ, std_cb, (void *)bev);
+    if (ev == NULL)
+    {
+        perror(&quot;创建std event error&quot;);
+        exit(1);
+    }
+
+    code = event_add(ev, NULL);
+    if (code == -1)
+    {
+        perror(&quot;event add error&quot;);
+        exit(1);
+    }
+    // 开始运行
+    code = event_base_dispatch(base);
+    if (code == -1)
+    {
+        perror(&quot;dispatch error&quot;);
+        exit(1);
+    }
+    //printf(&quot;event base start\n&quot;);
+
+    event_base_free(base);
+    printf(&quot;event base free\n&quot;);
+    return 0;
+}
+</code></pre>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/xdsvqq_rga2qz/" title="linux服务端--3. libevent实现回显服务器与客户端">https://yulangz.github.io/post/xdsvqq_rga2qz/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/r-KjTzd6_/"># 服务器</a>
+    
+      <a href="https://yulangz.github.io/tag/cVDXMpo5Q/"># Linux</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="linux服务端--2. epoll 实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_xthbax/">linux服务端--2. epoll 实现回显服务器</a>
+        <a class="nav-mobile-next" title="linux服务端--2. epoll 实现回显服务器" href="https://yulangz.github.io/post/xdsvqq_xthbax/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

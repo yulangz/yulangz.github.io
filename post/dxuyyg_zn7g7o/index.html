@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>MySQL与Redis的benchmark | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="MySQL与Redis的benchmark" />
+  <meta name="keywords" content="数据库,MySQL,Redis" />
 </head>
 
 <body>
@@ -253,12 +253,10 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
-</ul>
-</li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF">环境信息</a></li>
+<li><a href="#mysql">MySQL</a></li>
+<li><a href="#redis">Redis</a></li>
+<li><a href="#%E6%B1%87%E6%80%BB">汇总</a></li>
 </ul>
 
   </div>
@@ -524,8 +522,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/dxuyyg_zn7g7o/">
+      MySQL与Redis的benchmark
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +531,201 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-05-03 07:44:29">2021-05-03</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/">
+        <span>数据库</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/gCA1KI8OvG/">
+        <span>MySQL</span>
+      </a>、
+      
+      
+      
+      <a href="https://yulangz.github.io/tag/zfLIz9Ah6T/">
+        <span>Redis</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>6<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>939<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h1 id="环境信息">环境信息</h1>
+<p>腾讯云学生机，1核Intel(R) Xeon(R) CPU E5-26xx v4 CPU，2G内存<br>
+MySQL版本为 mysql  Ver 8.0.23 for Linux on x86_64 (MySQL Community Server - GPL)<br>
+Redis版本为 Redis server v=4.0.9 sha=00000000:0 malloc=jemalloc-3.6.0 bits=64 build=9435c3c2879311f3</p>
+<h1 id="mysql">MySQL</h1>
+<p>使用自带的工具mysqlslap<br>
+测试命令 ：<br>
+mysqlslap -a --concurrency=10,20,50,100 --number-of-queries=10000 --iterations=2 -uroot -p*** --auto-generate-sql-load-type=key --auto-generate-sql-unique-write-number=100000 --auto-generate-sql-write-number=100000 --auto-generate-sql-guid-primary</p>
+<p>参数解释：<br>
+--concurrency=10,20,50,100 --number-of-queries=10000，分别测试10、20、50、100个并发客户端，每次测试合计进行10000次查询（每个客户端执行100000/--concurrency次）<br>
+--auto-generate-sql-unique-write-number=100000 --auto-generate-sql-write-number=100000组合使用向数据库中插入100000条不同数据<br>
+--auto-generate-sql-guid-primary，生成uuid主键<br>
+--auto-generate-sql-unique-query-number=10000 --auto-generate-sql-load-type=key，每个客户端执行10000条查询，查询模式为主键查询<br>
+--iterations=2，执行2个轮次取平均<br>
+数据采用默认模式，每行一个主键、一个int、一个varchar(128)</p>
+<p>结果：<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_23e142d7eaf6b8142efe50fafe3b6f21.png" alt="图片.png" loading="lazy"></p>
+<pre><code class="language-shell">Benchmark
+        Average number of seconds to run all queries: 1.083 seconds
+        Minimum number of seconds to run all queries: 1.046 seconds
+        Maximum number of seconds to run all queries: 1.121 seconds
+        Number of clients running queries: 10
+        Average number of queries per client: 1000
+
+Benchmark
+        Average number of seconds to run all queries: 1.124 seconds
+        Minimum number of seconds to run all queries: 1.119 seconds
+        Maximum number of seconds to run all queries: 1.129 seconds
+        Number of clients running queries: 20
+        Average number of queries per client: 500
+
+Benchmark
+        Average number of seconds to run all queries: 1.187 seconds
+        Minimum number of seconds to run all queries: 1.164 seconds
+        Maximum number of seconds to run all queries: 1.210 seconds
+        Number of clients running queries: 50
+        Average number of queries per client: 200
+
+Benchmark
+        Average number of seconds to run all queries: 1.371 seconds
+        Minimum number of seconds to run all queries: 1.249 seconds
+        Maximum number of seconds to run all queries: 1.493 seconds
+        Number of clients running queries: 100
+        Average number of queries per client: 100
+</code></pre>
+<p>按平均值计算QPS在7293<sub>9233。按最大最小计算QPS在6697</sub>9560。</p>
+<p>再跑个写的：<br>
+mysqlslap -a --concurrency=10,20,50,100 --number-of-queries=10000 --iterations=2 -uroot -p*** --auto-generate-sql-load-type=write --auto-generate-sql-unique-write-number=0 --auto-generate-sql-write-number=1 --auto-generate-sql-guid-primary</p>
+<p>表不变，预先写1条数据，共计写10000条数据<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_a84af0f955fe00403048789bbe6eb3ef.png" alt="图片.png" loading="lazy"></p>
+<pre><code class="language-bash">Benchmark
+        Average number of seconds to run all queries: 11.773 seconds
+        Minimum number of seconds to run all queries: 11.708 seconds
+        Maximum number of seconds to run all queries: 11.838 seconds
+        Number of clients running queries: 10
+        Average number of queries per client: 1000
+
+Benchmark
+        Average number of seconds to run all queries: 7.843 seconds
+        Minimum number of seconds to run all queries: 7.492 seconds
+        Maximum number of seconds to run all queries: 8.194 seconds
+        Number of clients running queries: 20
+        Average number of queries per client: 500
+
+Benchmark
+        Average number of seconds to run all queries: 4.386 seconds
+        Minimum number of seconds to run all queries: 4.363 seconds
+        Maximum number of seconds to run all queries: 4.409 seconds
+        Number of clients running queries: 50
+        Average number of queries per client: 200
+
+Benchmark
+        Average number of seconds to run all queries: 3.289 seconds
+        Minimum number of seconds to run all queries: 3.268 seconds
+        Maximum number of seconds to run all queries: 3.310 seconds
+        Number of clients running queries: 100
+        Average number of queries per client: 100
+</code></pre>
+<p>在写的场景下，反而是多个并发时QPS更高。QPS范围在849~3040。</p>
+<h1 id="redis">Redis</h1>
+<p>测试命令：<br>
+redis-benchmark -c 100 -r 1000000000 -n 10000 -d 36 -q -t set,get,mset,hset<br>
+100个客户端，共10000个查询，key的大小为36Byte，范围扩大到1000000000，只测试set,get,mset,hset命令<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_2c3a815fd5acb6098401a48094d9d39f.png" alt="图片.png" loading="lazy">ubuntu@VM-0-7-ubuntu:~$ redis-benchmark -c 100 -r 1000000000 -n 10000 -d 36 -q -t set,get,mset,hsetSET: 46511.63 requests per secondGET: 47846.89 requests per second<br>
+HSET: 47619.05 requests per second<br>
+MSET (10 keys): 31152.65 requests per second</p>
+<p>对于get与set，QPS均在46000。</p>
+<h1 id="汇总">汇总</h1>
+<p>本次对两个数据库性能的测试使用的不同工具，且使用的数据不同，不能完全横向对比，只能做数量级上的比较，综合网上的其他资料，MySQL读的性能大约是写的2<sub>3倍，Redis读写性能相当，均在MySQL读性能的3</sub>5倍。</p>
+<p>|</p>
+<table>
+<thead>
+<tr>
+<th><strong>MySQL</strong></th>
+<th><strong>Redis</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>读</strong></td>
+<td>7000~9000</td>
+</tr>
+<tr>
+<td><strong>写</strong></td>
+<td>1000~3000</td>
+</tr>
+</tbody>
+</table>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/dxuyyg_zn7g7o/" title="MySQL与Redis的benchmark">https://yulangz.github.io/post/dxuyyg_zn7g7o/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/"># 数据库</a>
+    
+      <a href="https://yulangz.github.io/tag/gCA1KI8OvG/"># MySQL</a>
+    
+      <a href="https://yulangz.github.io/tag/zfLIz9Ah6T/"># Redis</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="clion remote模式无代码补全（找不到Linux头文件）" href="https://yulangz.github.io/post/qcz5ki_ozd4q9/">clion remote模式无代码补全（找不到Linux头文件）</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="clion remote模式无代码补全（找不到Linux头文件）" href="https://yulangz.github.io/post/qcz5ki_ozd4q9/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="红黑树" href="https://yulangz.github.io/post/sw67dr_aapnau/">红黑树</a>
+        <a class="nav-mobile-next" title="红黑树" href="https://yulangz.github.io/post/sw67dr_aapnau/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

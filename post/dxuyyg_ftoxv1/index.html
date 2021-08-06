@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>《数据库系统概念》--第一、二章 | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="《数据库系统概念》--第一、二章" />
+  <meta name="keywords" content="数据库" />
 </head>
 
 <body>
@@ -255,8 +255,16 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#dml%E4%B8%8Eddl">DML与DDL</a></li>
+<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%9B%9B%E5%A4%A7%E7%89%B9%E6%80%A7">事务的四大特性</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%8E%9F%E5%AD%90%E6%80%A7atomicity">一、原子性（atomicity)</a></li>
+<li><a href="#%E4%BA%8C-%E4%B8%80%E8%87%B4%E6%80%A7consistency">二、一致性（consistency)</a></li>
+<li><a href="#%E4%B8%89-%E9%9A%94%E7%A6%BB%E6%80%A7isolation">三、隔离性（isolation）</a></li>
+<li><a href="#%E5%9B%9B-%E6%8C%81%E4%B9%85%E6%80%A7durability">四、持久性（durability）</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%BB%93%E6%9E%84">关系数据库的结构</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +532,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/dxuyyg_ftoxv1/">
+      《数据库系统概念》--第一、二章
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +541,109 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-02-13 08:20:32">2021-02-13</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/">
+        <span>数据库</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>4<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1157<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
-</ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+              <h2 id="dml与ddl">DML与DDL</h2>
+<p>ddl用于定义数据库，包括数据类型、断言、权限等一致性约束。ddl生成数据字典，包含元数据，即数据的数据。这是一种特殊的数据表，在读取与修改实际数据前，数据库会先参考数据字典。<br>
+dml用于操作数据库，广义上将查询语言与dml视为同义词。</p>
+<h2 id="事务的四大特性">事务的四大特性</h2>
+<h3 id="一-原子性atomicity">一、原子性（atomicity)</h3>
+<p>一个事务要么全部提交成功，要么全部失败回滚，不能只执行其中的一部分操作，这就是事务的原子性。</p>
+<h3 id="二-一致性consistency">二、一致性（consistency)</h3>
+<p>事务的执行不能破坏数据库数据的完整性和一致性，一个事务在执行之前和执行之后，数据库都必须处于一致性状态。<br>
+如果数据库系统在运行过程中发生故障，有些事务尚未完成就被迫中断，这些未完成的事务对数据库所作的修改有一部分已写入物理数据库，这是数据库就处于一种不正确的状态，也就是不一致的状态。<br>
+即在一次转账行为中，转账前与转账后资金的总和不变。</p>
+<h3 id="三-隔离性isolation">三、隔离性（isolation）</h3>
+<p>事务的隔离性是指在并发环境中，并发的事务时相互隔离的，一个事务的执行不能不被其他事务干扰。不同的事务并发操作相同的数据时，每个事务都有各自完成的数据空间，即一个事务内部的操作及使用的数据对其他并发事务时隔离的，并发执行的各个事务之间不能相互干扰。<br>
+在标准SQL规范中，定义了4个事务隔离级别，不同的隔离级别对事务的处理不同，分别是：未授权读取，授权读取，可重复读取和串行化</p>
+<ol>
+<li>
+<p>读未提交（Read Uncommited）。该隔离级别允许脏读取，其隔离级别最低；比如事务A和事务B同时进行，事务A在整个执行阶段，会将某数据的值从1开始一直加到10，然后进行事务提交，此时，事务B能够看到这个数据项在事务A操作过程中的所有中间值（如1变成2，2变成3等），而对这一系列的中间值的读取就是未授权读取</p>
+</li>
+<li>
+<p>授权读取也称为已提交读（Read Commited）。授权读取只允许获取已经提交的数据。比如事务A和事务B同时进行，事务A进行+1操作，此时，事务B无法看到这个数据项在事务A操作过程中的所有中间值，只能看到最终的10。另外，如果说有一个事务C，和事务A进行非常类似的操作，只是事务C是将数据项从10加到20，此时事务B也同样可以读取到20，即授权读取允许不可重复读取。</p>
+</li>
+<li>
+<p>可重复读（Repeatable Read)。就是保证在事务处理过程中，多次读取同一个数据时，其值都和事务开始时刻是一致的，因此该事务级别禁止不可重复读取和脏读取，但是有可能出现幻影数据。所谓幻影数据，就是指同样的事务操作，在前后两个时间段内执行对同一个数据项的读取，可能出现不一致的结果。在上面的例子中，可重复读取隔离级别能够保证事务B在第一次事务操作过程中，始终对数据项读取到1，但是在下一次事务操作中，即使事务B（注意，事务名字虽然相同，但是指的是另一个事务操作）采用同样的查询方式，就可能读取到10或20；</p>
+</li>
+<li>
+<p>串行化。是最严格的事务隔离级别，它要求所有事务被串行执行，即事务只能一个接一个的进行处理，不能并发执行。</p>
+</li>
+</ol>
+<h3 id="四-持久性durability">四、持久性（durability）</h3>
+<p>一旦事务提交，那么它对数据库中的对应数据的状态的变更就会永久保存到数据库中。--即使发生系统崩溃或机器宕机等故障，只要数据库能够重新启动，那么一定能够将其恢复到事务成功结束的状态</p>
+<h2 id="关系数据库的结构">关系数据库的结构</h2>
+<p>关系(relation)指代表，元组(tuple)指代行，属性(attribute)指代表中的列。<br>
+域(domain)指一个属性允许取值的集合。</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/dxuyyg_ftoxv1/" title="《数据库系统概念》--第一、二章">https://yulangz.github.io/post/dxuyyg_ftoxv1/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/ypgBCaEOh1/"># 数据库</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="链接" href="https://yulangz.github.io/post/xdsvqq_nhmggu/">链接</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="链接" href="https://yulangz.github.io/post/xdsvqq_nhmggu/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="python中的编码与解码" href="https://yulangz.github.io/post/xv6m6b_wg7shu/">python中的编码与解码</a>
+        <a class="nav-mobile-next" title="python中的编码与解码" href="https://yulangz.github.io/post/xv6m6b_wg7shu/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   

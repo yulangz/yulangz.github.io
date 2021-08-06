@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
-<title>关于 | 语阑gz</title>
+<title>CSAPP: datalab | 语阑gz</title>
 <link rel="shortcut icon" href="/favicon.ico?v=1628260444853">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
@@ -41,8 +41,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="CSAPP: datalab" />
+  <meta name="keywords" content="CSAPP" />
 </head>
 
 <body>
@@ -255,8 +255,25 @@
     <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li>
+<ul>
+<li><a href="#1bitxor">1.bitXor</a></li>
+<li><a href="#2tmin">2.tmin</a></li>
+<li><a href="#3istmax">3.isTmax</a></li>
+<li><a href="#4alloddbits">4.AllOddBits</a></li>
+<li><a href="#5negate">5.negate</a></li>
+<li><a href="#6isascciidigit">6.isAscciiDigit</a></li>
+<li><a href="#7conditional">7.conditional</a></li>
+<li><a href="#8islessorequal">8.isLessOrEqual</a></li>
+<li><a href="#9logicalneg">9.logicalNeg</a></li>
+<li><a href="#10howmanybits">10.howManyBits</a></li>
+<li><a href="#11floatscale2">11.floatScale2</a></li>
+<li><a href="#12floatfloat2int">12.floatFloat2Int</a></li>
+</ul>
+</li>
+<li><a href="#13floatpower2">13.floatPower2</a></li>
+<li><a href="#%E6%9C%80%E5%90%8E%E6%98%AF%E5%AE%8C%E6%95%B4%E6%96%87%E4%BB%B6">最后是完整文件</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </li>
 </ul>
@@ -524,8 +541,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://yulangz.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://yulangz.github.io/post/uscxh7_cc7kxq/">
+      CSAPP: datalab
     </a>
   </h1>
   <div class="post-meta">
@@ -533,37 +550,262 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2021-08-06 17:58:53">2021-08-06</span>
+      <span class="publish-time" data-t="2021-08-06 12:11:35">2021-08-06</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/">
+        <span>CSAPP</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>6<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>115<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1143<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+              <p>试验获取请到官网 <a href="http://csapp.cs.cmu.edu/3e/labs.html">CSAPP</a></p>
+<h3 id="1bitxor">1.bitXor</h3>
+<pre><code class="language-cpp">int bitXor(int x, int y) {
+  return (~(x&amp;y)) &amp; (~((~x)&amp;(~y)));
+}
+</code></pre>
 <ul>
-<li>本站的创作内容全部来源于<a href="https://www.yuque.com/yulan-updh1">我的语雀知识库</a>，欢迎大家访问</li>
-<li>我的创作通常会第一时间发布到语雀上，因此语雀中也会包含很多未分类的、草稿性质的文章</li>
-<li>每隔一定时间，我会将语雀上我认为优质的内容同步到本站</li>
+<li>左边表达式筛选出 <code>0,1 1,0 0,0</code> 三种情况得到1，右边表达式排除 <code>0,0</code> 得到1，二者一起得到 <code>0,1 1,0</code> 即异或</li>
 </ul>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p><a href="mailto:1301481108@qq.com">1301481108@qq.com</a></p>
+<h3 id="2tmin">2.tmin</h3>
+<pre><code class="language-cpp">int tmin(void) {
+  return 1&lt;&lt;31;
+}
+</code></pre>
+<ul>
+<li>很简单</li>
+</ul>
+<h3 id="3istmax">3.isTmax</h3>
+<pre><code class="language-cpp">int isTmax(int x) {
+  return !(((~(x+1))^x) | (!(~x)));
+}
+</code></pre>
+<ul>
+<li>或运算 <code>|</code> 左边筛选出 <code>0x7fffffff</code>  和 <code>0xffffffff</code>  得到全0 , 右边对于 <code>0x7fffffff</code> 得到全0， 对于 <code>0xffffffff</code>  得到1 ，经过或运算之后只有目标Tmax <code>0x7fffffff</code> 会得到0，取非之后返回</li>
+</ul>
+<h3 id="4alloddbits">4.AllOddBits</h3>
+<pre><code class="language-cpp">int allOddBits(int x) {
+  int allodd0 = (0x55&lt;&lt;24) + (0x55&lt;&lt;16) + (0x55&lt;&lt;8) +0x55;
+  return !(~(allodd0 | x));
+}
+</code></pre>
+<ul>
+<li>比较简单，用奇数位全0，偶数位全1去进行或运算即可</li>
+</ul>
+<h3 id="5negate">5.negate</h3>
+<pre><code class="language-cpp">int negate(int x) {
+  return (~x) + 1;
+}
+</code></pre>
+<ul>
+<li>x + ~x + 1 = 0</li>
+</ul>
+<h3 id="6isascciidigit">6.isAscciiDigit</h3>
+<pre><code class="language-cpp">int isAsciiDigit(int x) {
+  int a = (x&gt;&gt;3)^0x6;
+  int b = x^0x38;
+  int c = x^0x39;
+  return !a | !b | !c;
+}
+</code></pre>
+<ul>
+<li>a 筛选出 <code>0x30</code>  至 <code>0x37</code>  ，若符合 a 的值为 0 ，b 筛选 <code>0x38</code> ， c 筛选 <code>0x39</code></li>
+</ul>
+<h3 id="7conditional">7.conditional</h3>
+<pre><code class="language-cpp">int conditional(int x, int y, int z) {
+  int negative1 = ~1 + 1;	//-1
+  int control = !x + negative1;		//x=0 ,c=0 ;x!=0 ,c=0xffffffff 
+  return (y&amp;control) + (z&amp;(~control));
+}
+</code></pre>
+<ul>
+<li>想了好久，思路在代码里，关键点是 <code>0-1=0xffffffff</code></li>
+</ul>
+<h3 id="8islessorequal">8.isLessOrEqual</h3>
+<pre><code class="language-cpp">int isLessOrEqual(int x, int y) {
+  int negativex = ~x+1;
+  int a = !((!(x&gt;&gt;31))|(y&gt;&gt;31));	//x&lt;0 且 y&gt;=0
+  int b = (( !((x&gt;&gt;31)^(y&gt;&gt;31)) ) &amp; (!((y+negativex)&gt;&gt;31) | !(x^(1&lt;&lt;31)))); 
+  //			x,y异号			且 ( 	y-x&gt;=0			或   x=0xffffffff )
+  return a | b;
+}
+</code></pre>
+<ul>
+<li>这道题就是用来说明 <code>x&lt;=y</code>  不代表 <code>x-y&lt;=0</code> 的，Tmin 和 Tmax 两个边界很要命 ，还有运算可能溢出。</li>
+</ul>
+<h3 id="9logicalneg">9.logicalNeg</h3>
+<pre><code class="language-cpp">int logicalNeg(int x) {
+  return ((x|(~x+1))&gt;&gt;31)+1;;
+}
+</code></pre>
+<ul>
+<li>除了 0 和 Tmin 以外，所有数和其补码都是异号的，而 Tmin 的符号位为1，所以在和自己的补码逻辑或运算以后，只有 0 的符号位为 0 ，以此求解</li>
+</ul>
+<h3 id="10howmanybits">10.howManyBits</h3>
+<pre><code class="language-cpp">int howManyBits(int x) {
+ int shift1,shift2,shift4,shift8,shift16;
+ int sum;
+ int t=((!x)&lt;&lt;31)&gt;&gt;31;//x为0时，t（二进制）全为1，x不为0时，全为1
+ int t2=((!~x)&lt;&lt;31)&gt;&gt;31;//当x为-1时，t2全为1，否则，全为0
+ int op=x^((x&gt;&gt;31));//正数不变，负数取反
+ shift16=(!!(op&gt;&gt;16))&lt;&lt;4;//如果高十六位全为0，则0左移4位，不全为0，则1左移4（表示op要右移2^4位）位
+ op=op&gt;&gt;shift16;
+ shift8=(!!(op&gt;&gt;8))&lt;&lt;3;
+ op=op&gt;&gt;shift8;
+ shift4=(!!(op&gt;&gt;4))&lt;&lt;2;
+ op=op&gt;&gt;shift4;
+ shift2=(!!(op&gt;&gt;2))&lt;&lt;1;
+ op=op&gt;&gt;shift2;
+ shift1=(!!(op&gt;&gt;1));
+ op=op&gt;&gt;shift1;
+ sum=2+shift16+shift8+shift4+shift2+shift1;
+ return(t2&amp;1)|((~t2)&amp;((t&amp;1)|((~t)&amp;sum)));
+}
+</code></pre>
+<ul>
+<li>略有点复杂，最后参考了<a href="https://blog.csdn.net/tzh476/article/details/51284938">这篇 </a>，这个二分法挺巧妙的</li>
+</ul>
+<h3 id="11floatscale2">11.floatScale2</h3>
+<pre><code class="language-cpp">unsigned floatScale2(unsigned uf) {
+  int e = (uf&gt;&gt;23) &amp; 0xff;
+  int rte = e+1;
+  if(!e)//e=0
+	return (uf&amp;0xf0000000) + ((uf&amp;0x7fffff)&lt;&lt;1);
+  else if(!(e^0xff))
+	return uf;
+  else if(rte&amp;(1&lt;&lt;8))
+	return ((uf&gt;&gt;31)&lt;&lt;31) + (0xff&lt;&lt;23);
+  else
+    return (uf&amp;(0x807fffff)) + (rte&lt;&lt;23);
+}
+</code></pre>
+<ul>
+<li>规格化的浮点数乘2就是把阶码加一，非规格化和特殊值单独处理</li>
+</ul>
+<h3 id="12floatfloat2int">12.floatFloat2Int</h3>
+<pre><code class="language-cpp">int floatFloat2Int(unsigned uf)
+{
+  int e = (uf &gt;&gt; 23) &amp; 0xff;	//阶码
+  int f = uf &amp; 0x7fffff;		//尾码
+  int tag = uf &amp; 0x80000000;	//符号位
+  if (e &lt;= 126)		//小于0
+    return 0;
+  else if (e &gt; 157)	//上溢
+    return 0x80000000;
+  else		//范围内
+  {
+    int s = e - 127;
+    f = f + 0x800000;
+    if (s &gt;= 23)
+    {
+      int r = f &lt;&lt; (s - 23);
+      if (tag)
+        return -r;
+      else
+        return r;
+    }
+    else
+    {
+      int r = (f &gt;&gt; (23 - s));
+      if (tag)
+        return -r;
+      else
+        return r;
+    }
+  }
+}
+</code></pre>
+<ul>
+<li>题目不难，就是逻辑有点复杂，还要注意c/c++中的舍入是断尾法</li>
+</ul>
+<h2 id="13floatpower2">13.floatPower2</h2>
+<pre><code class="language-cpp">unsigned floatPower2(int x) {
+    unsigned INF = 0xff &lt;&lt; 23; // 阶码全1
+    int e = 127 + x;    // 得到阶码
+    if (x &lt; 0) // 阶数小于0直接返回0
+        return 0;
+    if (e &gt;= 255) // 阶码&gt;=255直接返回INF
+        return INF;
+    return e &lt;&lt; 23;
+    // 直接将阶码左移23位，尾数全0，规格化时尾数隐藏有1个1作为底数
+}
+</code></pre>
+<ul>
+<li>不难</li>
+</ul>
+<p>最后一题有个小插曲，就是最后一个题目测试时会提示死循环<br>
+<img src="http://static.yulan.net.cn/image/_a01801de3f48b76e31504865bbd88d91.png" alt="" loading="lazy"><br>
+但是逻辑是没有问题的，最后看了下测试文件的代码，在 <code>btest.c</code> 文件的开头限制了超时时间为10s，<br>
+<img src="http://static.yulan.net.cn/image/_0cee5ea6673b33f2f68d77f11ed05060.png" alt="" loading="lazy"><br>
+将TIMEOUT_LIMIT修改为100，测试通过<br>
+<img src="http://static.yulan.net.cn/image/_a8e69e3d6dc3f9adafaf54bca8eb3990.png" alt="" loading="lazy"></p>
+<h2 id="最后是完整文件">最后是完整文件</h2>
+<p><a href="http://static.yulan.net.cn/image/csapp_datalab.c">完整文件</a></p>
+<h2 id="小结">小结</h2>
+<p>慕名而来看了CSAPP，不得不说看了这本书写的真的很好，看完第二章我对浮点数的认知确实更清晰了，后续我做了其他lab之后，也会逐一发上来，欢迎大家关注。</p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      语阑gz
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://yulangz.github.io/post/uscxh7_cc7kxq/" title="CSAPP: datalab">https://yulangz.github.io/post/uscxh7_cc7kxq/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://yulangz.github.io/tag/Gr1xnj72j/"># CSAPP</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="CSAPP: Bomblab" href="https://yulangz.github.io/post/uscxh7_qulnpm/">CSAPP: Bomblab</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="CSAPP: Bomblab" href="https://yulangz.github.io/post/uscxh7_qulnpm/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="clion remote模式无代码补全（找不到Linux头文件）" href="https://yulangz.github.io/post/qcz5ki_ozd4q9/">clion remote模式无代码补全（找不到Linux头文件）</a>
+        <a class="nav-mobile-next" title="clion remote模式无代码补全（找不到Linux头文件）" href="https://yulangz.github.io/post/qcz5ki_ozd4q9/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   
