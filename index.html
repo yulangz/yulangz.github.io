@@ -5,11 +5,11 @@
   <meta charset="UTF-8" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="keywords" content="Gridea静态个人博客">
+<meta name="keywords" content="静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
 <title>语阑gz</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1628411867976">
+<link rel="shortcut icon" href="/favicon.ico?v=1628412573273">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 
@@ -72,8 +72,6 @@
           
             
             
-              
-            
             <li class="nav-item nav-item-active">
               
               
@@ -84,8 +82,6 @@
             </li>
           
             
-            
-              
             
             <li class="nav-item ">
               
@@ -98,8 +94,6 @@
           
             
             
-              
-            
             <li class="nav-item ">
               
               
@@ -111,8 +105,6 @@
           
             
             
-              
-            
             <li class="nav-item ">
               
               
@@ -122,16 +114,6 @@
               
             </li>
           
-          
-            
-              <li class="nav-item ">
-                <a href="/friends/" target="_self">
-                  
-                    <i class="fa fa-address-book"></i> 友情链接
-                  
-                </a>
-              </li>
-            
           
           
             <li id="fa_search" class="nav-item">
@@ -240,6 +222,8 @@
     </div>
   
 
+  
+
 
 
 </div>
@@ -324,10 +308,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="服务端">服务端</h2>
 <h3 id="severec">severe.c</h3>
+<pre><code class="language-c">// severe.c
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -408,9 +400,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="代码">代码</h2>
 <pre><code class="language-cpp">#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
 
                 
                   <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
@@ -495,9 +492,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
 
                 
                   <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
@@ -582,9 +584,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h3 id="7-1-panda-and-pp-milk-20分">7-1 Panda and PP Milk (20分)</h3>
 <p>这道题杀死了不少同学的心态，但是如果想到方法了就特别简单。<br>
+简单说下做法，一共对全表进行两次扫描，第一次从左到右，第二次从右到左，每次扫描时，如果后面熊猫比前面重，则供奶量+1（以2、3、4计，最后统一乘100)如果体重持平，则保持不变，体重减轻，则供奶量恢复为2，从左向右扫描满足所有熊猫看到自己左边的熊猫都会满意，从右向左满足右边熊猫，对每个熊猫取两次扫描中的较大值，即为答案。</p>
 
                 
               <p>
@@ -666,9 +673,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p><a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805472333250560">题目链接</a><br>
 题目不难读懂，并且不涉及什么算法，但是逻辑上非常繁琐，算法笔记上有非常详细的题意解释，这里就不赘述了。</p>
+<p>这里主要是写我用的一种模拟时间滴答的方法，逻辑上可能要简单一些。<br>
 
                 
               <p>
@@ -744,9 +756,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>最近看了《算法笔记》上面关于最短路径的部分，学习了一种之前没见过的算法：<strong>SPFA。</strong><br>
 理论上SPFA算法会比Dijkstra快，顾而找了一题测试一下。<br>
+使用PAT A1072题，因为这题求<strong>最短路径的部分很单纯，没有其他的权，而且测试点的复杂度够高，能够看出时间上的差别。</strong><br>
 
                 
               <p>
@@ -822,10 +839,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>这是本书的最后一个lab了，但总体上没有前面的malloclab和shelllab难，好好看书，多多参考tinyweb的代码，还是比较容易写出来的。</p>
 <h2 id="代码">代码</h2>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -900,9 +925,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>这次的实验要求我们实现一个简化版的shell，需要能够实现子程序的前台与后台运行以及切换，同时实现几条内建命令。<br>
 需要我们实现的内建命令包括以下4个：</p>
+<ul>
 
                 
               <p>
@@ -978,9 +1008,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><blockquote>
 <p><a href="http://csapp.cs.cmu.edu/3e/cachelab.pdf">实验手册</a>：包含了实验指导和评分规则<br>
+<a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">实验ppt</a>对上课内容的回顾和对实验细节的讲解，很值得一看</p>
 
                 
               <p>
@@ -1056,9 +1091,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>这个实验要求在5个有不同安全漏洞的代码上进行攻击(一开始我还以为是要修复漏洞...)，总共有两种攻击方式：</p>
 <ul>
+<li>Code Injection Attacks（缓冲区溢出攻击）</li>
 
                 
               <p>
@@ -1134,10 +1174,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>Bomblab是CSAPP第三章的配套lab，主要任务是通过反汇编解谜。<br>
 反汇编涉及到GDB的使用，可以参考<a href="http://csapp.cs.cmu.edu/2e/docs/gdbnotes-x86-64.pdf">这里</a><br>
+实验开始首先使用 <code>objdump -d bomb &gt; bomb.txt</code> 将反汇编文件重定向到txt方便查看。</p>
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -1212,10 +1260,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>试验获取请到官网 <a href="http://csapp.cs.cmu.edu/3e/labs.html">CSAPP</a></p>
 <h3 id="1bitxor">1.bitXor</h3>
+<pre><code class="language-cpp">int bitXor(int x, int y) {
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -1290,9 +1346,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>一直用clion做远程开发，不管是颜值还是自动补全都挺舒服，但是今天遇到一个问题，就是clion找不到Linux中的库文件，所以就没有代码补全，但是编译是正常的。更具体点，找得到 <code>unistd.h</code>但是找不到<code>sys/types.h</code>。<br>
 ​</p>
+<h2 id="解决办法">解决办法</h2>
 
                 
                   <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
@@ -1383,9 +1444,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h1 id="环境信息">环境信息</h1>
 <p>腾讯云学生机，1核Intel(R) Xeon(R) CPU E5-26xx v4 CPU，2G内存<br>
+MySQL版本为 mysql  Ver 8.0.23 for Linux on x86_64 (MySQL Community Server - GPL)<br>
 
                 
               <p>
@@ -1461,9 +1527,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><blockquote>
 <p>本文参考邓俊辉《数据结构（第3版）》</p>
+</blockquote>
 
                 
               <p>

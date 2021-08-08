@@ -5,11 +5,11 @@
   <meta charset="UTF-8" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="keywords" content="Gridea静态个人博客">
+<meta name="keywords" content="静态个人博客">
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
 <title>语阑gz</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1628411867976">
+<link rel="shortcut icon" href="/favicon.ico?v=1628412573273">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 
@@ -72,8 +72,6 @@
           
             
             
-              
-            
             <li class="nav-item nav-item-active">
               
               
@@ -84,8 +82,6 @@
             </li>
           
             
-            
-              
             
             <li class="nav-item ">
               
@@ -98,8 +94,6 @@
           
             
             
-              
-            
             <li class="nav-item ">
               
               
@@ -111,8 +105,6 @@
           
             
             
-              
-            
             <li class="nav-item ">
               
               
@@ -122,16 +114,6 @@
               
             </li>
           
-          
-            
-              <li class="nav-item ">
-                <a href="/friends/" target="_self">
-                  
-                    <i class="fa fa-address-book"></i> 友情链接
-                  
-                </a>
-              </li>
-            
           
           
             <li id="fa_search" class="nav-item">
@@ -240,6 +222,8 @@
     </div>
   
 
+  
+
 
 
 </div>
@@ -318,9 +302,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="数据转储">数据转储</h2>
 <p>简而言之，就是备份。</p>
+<h3 id="海量全量转储与增量转储">海量（全量）转储与增量转储</h3>
 
                 
               <p>
@@ -396,9 +385,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="不错的参考httpswwwzhihucomquestion24696366">不错的参考<a href="https://www.zhihu.com/question/24696366">https://www.zhihu.com/question/24696366</a></h2>
 <h2 id="码和主属性">码和主属性</h2>
+<p>若有X，属性的全集U完全函数依赖与X，则X是一个码。<br>
 
                 
               <p>
@@ -474,9 +468,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="acid">ACID</h2>
 <p>事务具有4个特征，分别是原子性、一致性、隔离性和持久性，简称事务的ACID特性；</p>
+<h3 id="一-原子性atomicity">一、原子性（atomicity)</h3>
 
                 
               <p>
@@ -552,9 +551,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>查询优化的一般性准则：</p>
 <ul>
+<li>尽早执行选择操作(where)</li>
 
                 
               <p>
@@ -630,9 +634,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>b+树的一些参考<br>
 <a href="https://www.cnblogs.com/nanlinghan/p/10315653.html">b+树概念</a><br>
+<a href="https://www.jianshu.com/p/2dd90b541694">b+树概念与争议</a><br>
 
                 
               <p>
@@ -708,10 +717,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="应用安全问题">应用安全问题</h2>
 <h3 id="sql注入">SQL注入</h3>
+<pre><code class="language-cpp">String sql = &quot;select * from user_table where username=
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -786,9 +803,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="连接">连接</h2>
 <p>语法: table1 (natural) (left)(right) join table2 (on ..)<br>
+左连接保证左边全部一定出现（实际上是在做笛卡尔积的时候给右边加上一行全为null的行）<br>
 
                 
               <p>
@@ -864,9 +886,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="实体集">实体集</h2>
 <h3 id="实体">实体</h3>
+<p>实体指现实世界中可以区别与其他事务或对象的一个事务或对象。（人、书、课程...）</p>
 
                 
               <p>
@@ -942,10 +969,18 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="函数">函数</h2>
 <p>Mysql创建函数</p>
+<pre><code class="language-sql">CREATE FUNCTION dept_count (dept_name VARCHAR ( 20 )) 
 
+                
+                  <!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+                  </code></pre>
                 
               <p>
             
@@ -1020,9 +1055,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="典型的elf可重定位文件格式">典型的ELF可重定位文件格式</h2>
 <p><img src="http://static.yulan.net.cn/image/image_922e4d911e04d440260a5a6aec4c5280.png" alt="image.png" loading="lazy"><br>
+示例代码</p>
 
                 
               <p>
@@ -1098,9 +1138,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><h2 id="dml与ddl">DML与DDL</h2>
 <p>ddl用于定义数据库，包括数据类型、断言、权限等一致性约束。ddl生成数据字典，包含元数据，即数据的数据。这是一种特殊的数据表，在读取与修改实际数据前，数据库会先参考数据字典。<br>
+dml用于操作数据库，广义上将查询语言与dml视为同义词。</p>
 
                 
               <p>
@@ -1176,9 +1221,14 @@
               
               
             
+              
+              
+              
+            
             
               <p><p>为了彻底闹明白python的编码问题，特分享下文，希望对大家熟悉python的编码问题带来些帮助</p>
 <h3 id="1从字节说起">1.从字节说起：</h3>
+<p>一个字节包括八个比特位，每个比特位表示0或1，一个字节即可表示从00000000到11111111共2^8=256个数字。</p>
 
                 
               <p>
