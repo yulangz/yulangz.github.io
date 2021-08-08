@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://yulan.net.cn</id>
+    <id>https://.</id>
     <title>语阑gz</title>
-    <updated>2021-08-08T09:04:04.795Z</updated>
+    <updated>2021-08-08T09:06:45.540Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://yulan.net.cn"/>
-    <link rel="self" href="https://yulan.net.cn/atom.xml"/>
+    <link rel="alternate" href="https://."/>
+    <link rel="self" href="https://./atom.xml"/>
     <subtitle>独语斜阑</subtitle>
-    <logo>https://yulan.net.cn/images/avatar.png</logo>
-    <icon>https://yulan.net.cn/favicon.ico</icon>
+    <logo>https://./images/avatar.png</logo>
+    <icon>https://./favicon.ico</icon>
     <rights>All rights reserved 2021, 语阑gz</rights>
     <entry>
         <title type="html"><![CDATA[linux服务端--3. libevent实现回显服务器与客户端]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_rga2qz/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_rga2qz/">
+        <id>https://./post/xdsvqq_rga2qz/</id>
+        <link href="https://./post/xdsvqq_rga2qz/">
         </link>
         <updated>2021-08-06T06:12:37.000Z</updated>
         <content type="html"><![CDATA[<h2 id="服务端">服务端</h2>
@@ -340,8 +340,8 @@ int main()
     </entry>
     <entry>
         <title type="html"><![CDATA[linux服务端--2. epoll 实现回显服务器]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_xthbax/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_xthbax/">
+        <id>https://./post/xdsvqq_xthbax/</id>
+        <link href="https://./post/xdsvqq_xthbax/">
         </link>
         <updated>2021-08-06T06:10:25.000Z</updated>
         <content type="html"><![CDATA[<h2 id="代码">代码</h2>
@@ -513,8 +513,8 @@ int main()
     </entry>
     <entry>
         <title type="html"><![CDATA[linux服务端--1. select实现回显服务器]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_ymoehs/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_ymoehs/">
+        <id>https://./post/xdsvqq_ymoehs/</id>
+        <link href="https://./post/xdsvqq_ymoehs/">
         </link>
         <updated>2021-08-06T06:08:19.000Z</updated>
         <content type="html"><![CDATA[<pre><code class="language-c">#include &lt;stdio.h&gt;
@@ -644,8 +644,8 @@ int main()
     </entry>
     <entry>
         <title type="html"><![CDATA[PAT 2020年秋考解答]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_kb5gab/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_kb5gab/">
+        <id>https://./post/sw67dr_kb5gab/</id>
+        <link href="https://./post/sw67dr_kb5gab/">
         </link>
         <updated>2021-08-06T05:52:32.000Z</updated>
         <content type="html"><![CDATA[<h3 id="7-1-panda-and-pp-milk-20分">7-1 Panda and PP Milk (20分)</h3>
@@ -1048,8 +1048,8 @@ int main() {
     </entry>
     <entry>
         <title type="html"><![CDATA[PAT1026 Table Tennis (30分)时间戳法]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_iy8tyk/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_iy8tyk/">
+        <id>https://./post/sw67dr_iy8tyk/</id>
+        <link href="https://./post/sw67dr_iy8tyk/">
         </link>
         <updated>2021-08-06T05:50:59.000Z</updated>
         <content type="html"><![CDATA[<p><a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805472333250560">题目链接</a><br>
@@ -1288,8 +1288,8 @@ int main() {
     </entry>
     <entry>
         <title type="html"><![CDATA[Dijkstra算法与SPFA算法]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_hpnu4t/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_hpnu4t/">
+        <id>https://./post/sw67dr_hpnu4t/</id>
+        <link href="https://./post/sw67dr_hpnu4t/">
         </link>
         <updated>2021-08-06T05:48:53.000Z</updated>
         <content type="html"><![CDATA[<p>最近看了《算法笔记》上面关于最短路径的部分，学习了一种之前没见过的算法：<strong>SPFA。</strong><br>
@@ -1455,8 +1455,8 @@ int main() {
     </entry>
     <entry>
         <title type="html"><![CDATA[CSAPP：proxylab]]></title>
-        <id>https://yulan.net.cn/post/uscxh7_cwdngk/</id>
-        <link href="https://yulan.net.cn/post/uscxh7_cwdngk/">
+        <id>https://./post/uscxh7_cwdngk/</id>
+        <link href="https://./post/uscxh7_cwdngk/">
         </link>
         <updated>2021-08-06T05:47:14.000Z</updated>
         <content type="html"><![CDATA[<p>这是本书的最后一个lab了，但总体上没有前面的malloclab和shelllab难，好好看书，多多参考tinyweb的代码，还是比较容易写出来的。</p>
@@ -1966,8 +1966,8 @@ void evict()
     </entry>
     <entry>
         <title type="html"><![CDATA[CSAPP: shelllab]]></title>
-        <id>https://yulan.net.cn/post/uscxh7_mhapqg/</id>
-        <link href="https://yulan.net.cn/post/uscxh7_mhapqg/">
+        <id>https://./post/uscxh7_mhapqg/</id>
+        <link href="https://./post/uscxh7_mhapqg/">
         </link>
         <updated>2021-08-06T05:45:05.000Z</updated>
         <content type="html"><![CDATA[<p>这次的实验要求我们实现一个简化版的shell，需要能够实现子程序的前台与后台运行以及切换，同时实现几条内建命令。<br>
@@ -2252,8 +2252,8 @@ void sigtstp_handler(int sig)
     </entry>
     <entry>
         <title type="html"><![CDATA[CSAPP: cachelab]]></title>
-        <id>https://yulan.net.cn/post/uscxh7_mezrog/</id>
-        <link href="https://yulan.net.cn/post/uscxh7_mezrog/">
+        <id>https://./post/uscxh7_mezrog/</id>
+        <link href="https://./post/uscxh7_mezrog/">
         </link>
         <updated>2021-08-06T05:41:41.000Z</updated>
         <content type="html"><![CDATA[<blockquote>
@@ -2649,8 +2649,8 @@ miss高达1183，远大于300的目标。<br>
     </entry>
     <entry>
         <title type="html"><![CDATA[CSAPP: Attacklab]]></title>
-        <id>https://yulan.net.cn/post/uscxh7_ainkg2/</id>
-        <link href="https://yulan.net.cn/post/uscxh7_ainkg2/">
+        <id>https://./post/uscxh7_ainkg2/</id>
+        <link href="https://./post/uscxh7_ainkg2/">
         </link>
         <updated>2021-08-06T05:35:26.000Z</updated>
         <content type="html"><![CDATA[<p>这个实验要求在5个有不同安全漏洞的代码上进行攻击(一开始我还以为是要修复漏洞...)，总共有两种攻击方式：</p>
