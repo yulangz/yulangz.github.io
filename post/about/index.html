@@ -9,7 +9,7 @@
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
 <title>关于 | 语阑gz</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1628953876955">
+<link rel="shortcut icon" href="/favicon.ico?v=1628956100051">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 
@@ -28,11 +28,25 @@
   integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
 
 
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
-  integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
-  integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
-  onload="renderMathInElement(document.body);"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ["\\(", "\\)"]],
+      displayMath: [['$$', '$$'], ["\\[", "\\]"]]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'a', 'annotation', 'annotation-xml'],
+      ignoreHtmlClass: 'tex2jax_ignore|crayon-.*', // 'crayon-' 开头的类，属于Wordpress代码高亮库，这部分不需要处理，否则会导致显示不正确,这部分是正则式，多条之间用'|'分割
+      processHtmlClass: 'tex2jax_process'
+    },
+    //禁用右键菜单	
+    renderActions: {
+      addMenu: [0, '', '']
+    }
+  };
+</script>
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 
 
@@ -1089,7 +1103,8 @@ public:
     }
 };
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;时间复杂度$$O(n&lt;sup&gt;2)$$，空间复杂度$$O(n&lt;/sup&gt;2)$$&lt;/p&gt;
+&lt;p&gt;时间复杂度 $$O(n^2)$$&lt;br&gt;
+空间复杂度 $$O(n^2)$$&lt;/p&gt;
 ">1583. 统计不开心的朋友 2021-08-14</a>
       </div>
       
@@ -1167,7 +1182,7 @@ public:
     }
 };
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;个人估算的时间复杂度为到之间。&lt;/p&gt;
+&lt;p&gt;时间复杂度不超过 $$O(n^2 \log n)$$&lt;/p&gt;
 ">446. 等差数列划分 II - 子序列 2021-08-11</a>
       </div>
       
@@ -1189,7 +1204,8 @@ public:
     }
 };
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;时间复杂度在之内，其中m是&lt;code&gt;primes&lt;/code&gt;数组的长度。空间复杂度。&lt;/p&gt;
+&lt;p&gt;时间复杂度在 $$O(nm\log nm)$$&lt;br&gt;
+空间复杂度 $$O(nm)$$&lt;/p&gt;
 &lt;h2 id=&#34;动态规划&#34;&gt;动态规划&lt;/h2&gt;
 &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
 public:
@@ -1210,7 +1226,8 @@ public:
     }
 };
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;时间复杂度，空间复杂度&lt;/p&gt;
+&lt;p&gt;时间复杂度 $$O(nm)$$&lt;br&gt;
+空间复杂度 $$O(n+m)$$&lt;/p&gt;
 ">313.超级丑数 2021-08-09</a>
       </div>
       

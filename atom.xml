@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yulan.net.cn</id>
     <title>语阑gz</title>
-    <updated>2021-08-14T15:12:06.173Z</updated>
+    <updated>2021-08-14T15:49:58.904Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yulan.net.cn"/>
     <link rel="self" href="https://yulan.net.cn/atom.xml"/>
@@ -15,7 +15,7 @@
         <id>https://yulan.net.cn/post/erlm2m_rki0v5/</id>
         <link href="https://yulan.net.cn/post/erlm2m_rki0v5/">
         </link>
-        <updated>2021-08-14T05:18:29.000Z</updated>
+        <updated>2021-08-14T07:46:58.000Z</updated>
         <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
 private:
     bool x_is_unhappy_for_u(int x, int y, int u, int v, vector&lt;vector&lt;int&gt; &gt; &amp;love_score) {
@@ -63,7 +63,8 @@ public:
     }
 };
 </code></pre>
-<p>时间复杂度$$O(n<sup>2)$$，空间复杂度$$O(n</sup>2)$$</p>
+<p>时间复杂度 $$O(n^2)$$<br>
+空间复杂度 $$O(n^2)$$</p>
 ]]></content>
     </entry>
     <entry>
@@ -71,7 +72,7 @@ public:
         <id>https://yulan.net.cn/post/erlm2m_gkvvpd/</id>
         <link href="https://yulan.net.cn/post/erlm2m_gkvvpd/">
         </link>
-        <updated>2021-08-13T01:33:59.000Z</updated>
+        <updated>2021-08-14T07:46:46.000Z</updated>
         <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
 public:
     int countDigitOne(int n) {
@@ -103,7 +104,7 @@ public:
         <id>https://yulan.net.cn/post/erlm2m_gque6k/</id>
         <link href="https://yulan.net.cn/post/erlm2m_gque6k/">
         </link>
-        <updated>2021-08-11T05:27:33.000Z</updated>
+        <updated>2021-08-14T07:46:08.000Z</updated>
         <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
 private:
     unordered_map&lt;long long, vector&lt;int&gt; &gt; m;
@@ -147,7 +148,7 @@ public:
     }
 };
 </code></pre>
-<p>个人估算的时间复杂度为到之间。</p>
+<p>时间复杂度不超过 $$O(n^2 \log n)$$</p>
 ]]></content>
     </entry>
     <entry>
@@ -155,7 +156,7 @@ public:
         <id>https://yulan.net.cn/post/erlm2m_nbgg8l/</id>
         <link href="https://yulan.net.cn/post/erlm2m_nbgg8l/">
         </link>
-        <updated>2021-08-08T23:28:52.000Z</updated>
+        <updated>2021-08-14T07:45:45.000Z</updated>
         <content type="html"><![CDATA[<h2 id="暴力法">暴力法</h2>
 <pre><code class="language-cpp">class Solution {
 public:
@@ -172,7 +173,8 @@ public:
     }
 };
 </code></pre>
-<p>时间复杂度在之内，其中m是<code>primes</code>数组的长度。空间复杂度。</p>
+<p>时间复杂度在 $$O(nm\log nm)$$<br>
+空间复杂度 $$O(nm)$$</p>
 <h2 id="动态规划">动态规划</h2>
 <pre><code class="language-cpp">class Solution {
 public:
@@ -193,7 +195,8 @@ public:
     }
 };
 </code></pre>
-<p>时间复杂度，空间复杂度</p>
+<p>时间复杂度 $$O(nm)$$<br>
+空间复杂度 $$O(n+m)$$</p>
 ]]></content>
     </entry>
     <entry>
