@@ -9,7 +9,7 @@
 <meta name="description" content="独语斜阑">
 <meta name="theme-color" content="#000">
 <title>《数据库系统概念》--第七章 | 语阑gz</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1629011335838">
+<link rel="shortcut icon" href="/favicon.ico?v=1630247141394">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 
@@ -208,7 +208,7 @@
     <div class="sidebar-item-box">
       <a href="/archives/">
         
-        <span class="site-item-stat-count">31</span>
+        <span class="site-item-stat-count">42</span>
         <span class="site-item-stat-name language" data-lan="article">文章</span>
       </a>
     </div>
@@ -1186,6 +1186,413 @@
       <hr>
     </div>
     <div class="result" id="result">
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_ugz5wq/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+public:
+    int numRescueBoats(vector&amp;lt;int&amp;gt;&amp;amp; people, int limit) {
+        sort(people.begin(), people.end());
+        int count = 0;
+        vector&amp;lt;bool&amp;gt; used(people.size(), false);
+        for (int i = (int) people.size() - 1; i &amp;gt;= 0; --i) {
+            if (used[i])
+                continue;
+            ++count;
+            auto pt = upper_bound(people.begin(), people.begin() + i, limit - people[i]);
+            if (pt == people.begin())
+                continue;
+            do {
+                --pt;
+                if (!used[pt - people.begin()]) {
+                    used[pt - people.begin()] = true;
+                    break;
+                }
+            } while (pt != people.begin());
+        }
+        return count;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">881. 救生艇 2021-08-26</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_tmg8zs/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    vector&amp;lt;vector&amp;lt;int&amp;gt; &amp;gt; ans;
+    vector&amp;lt;int&amp;gt; path;
+
+    void DFS(int node, vector&amp;lt;vector&amp;lt;int&amp;gt;&amp;gt; &amp;amp;G) {
+        if (node == G.size() - 1) {
+            path.push_back(node);
+            ans.push_back(path);
+            path.pop_back();
+            return;
+        }
+
+        path.push_back(node);
+        for (auto i : G[node]) {
+            DFS(i, G);
+        }
+        path.pop_back();
+    }
+
+public:
+    vector&amp;lt;vector&amp;lt;int&amp;gt;&amp;gt; allPathsSourceTarget(vector&amp;lt;vector&amp;lt;int&amp;gt;&amp;gt; &amp;amp;graph) {
+        DFS(0, graph);
+        return ans;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">797. 所有可能的路径 2021-08-25</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_cdiz9f/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    const int NOT_CONNECTED = 10000000;
+public:
+    int findCheapestPrice(int n, vector&amp;lt;vector&amp;lt;int&amp;gt;&amp;gt; &amp;amp;flights, int src, int dst, int k) {
+        vector&amp;lt;vector&amp;lt;int&amp;gt; &amp;gt; G(n, vector&amp;lt;int&amp;gt;(n, NOT_CONNECTED));
+        for (auto &amp;amp;flight : flights) {
+            G[flight[0]][flight[1]] = flight[2];
+        }
+        for (int i = 0; i &amp;lt; n; ++i)
+            G[i][i] = 0;
+        vector&amp;lt;vector&amp;lt;int&amp;gt; &amp;gt; dp(k + 2, vector&amp;lt;int&amp;gt;(n, NOT_CONNECTED));
+        dp[0][src] = 0;
+        for (int i = 1; i &amp;lt;= k + 1; ++i) {
+            for (int j = 0; j &amp;lt; n; ++j) {
+                for (int l = 0; l &amp;lt; n; ++l) {
+                    dp[i][j] = min(dp[i][j], dp[i - 1][l] + G[l][j]);
+                }
+            }
+        }
+        return dp[k + 1][dst] == NOT_CONNECTED ? -1 : dp[k + 1][dst];
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">787. K 站中转内最便宜的航班 2021-08-24</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_iaa622/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+public:
+    bool escapeGhosts(vector&amp;lt;vector&amp;lt;int&amp;gt;&amp;gt;&amp;amp; ghosts, vector&amp;lt;int&amp;gt;&amp;amp; target) {
+        int steps = abs(target[0]) + abs(target[1]);
+        for (auto ghost : ghosts) {
+            if (abs(ghost[0] - target[0]) + abs(ghost[1] - target[1]) &amp;lt;= steps)
+                return false;
+        }
+        return true;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">789. 逃脱阻碍者 2021-08-22</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_vaxcsq/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    inline int digital_length(int a) {
+        int count = 0;
+        while (a &amp;gt; 0) {
+            ++count;
+            a /= 10;
+        }
+        return count;
+    }
+
+    inline int put_num(vector&amp;lt;char&amp;gt; &amp;amp;chars, int start, int num) {
+        int len = digital_length(num);
+        for (int i = 1; i &amp;lt;= len; ++i) {
+            chars[start + len - i] = &#39;0&#39; + (num % 10);
+            num /= 10;
+        }
+        return len;
+    }
+
+public:
+    int compress(vector&amp;lt;char&amp;gt; &amp;amp;chars) {
+        char pre;
+        int count;
+        int ans = 0;
+        pre = chars[0];
+        count = 1;
+        int i, j;
+        for (i = 1, j = 0; i &amp;lt; chars.size(); ++i) {
+            if (chars[i] == pre)
+                ++count;
+            else {
+                chars[j++] = pre;
+                ans += 1;
+                if (count &amp;gt; 1) {
+                    int len = put_num(chars, j, count);
+                    j += len;
+                    ans += len;
+                }
+                count = 1;
+                pre = chars[i];
+            }
+        }
+        chars[j++] = pre;
+        ans += 1;
+        if (count &amp;gt; 1) {
+            int len = put_num(chars, j, count);
+            ans += len;
+        }
+        return ans;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">443. 压缩字符串 2021-08-21</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_gy90w7/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+public:
+    string reverseStr(string s, int k) {
+        auto it = s.begin();
+        while (it + 2 * k &amp;lt; s.end()) {
+            reverse(it, it + k);
+            it += 2 * k;
+        }
+        if (s.end() - it &amp;gt;= k)
+            reverse(it, it + k);
+        else
+            reverse(it, s.end());
+        return s;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">541. 反转字符串 II 2021-08-20</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_omq5ic/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    set&amp;lt;char&amp;gt; vowels = {&#39;a&#39;, &#39;e&#39;, &#39;i&#39;, &#39;o&#39;, &#39;u&#39;, &#39;A&#39;, &#39;E&#39;, &#39;I&#39;, &#39;O&#39;, &#39;U&#39;};
+public:
+    string reverseVowels(string s) {
+        int p1 = 0, p2 = s.length() - 1;
+        while (p1 &amp;lt; p2) {
+            while (p1 &amp;lt; p2 &amp;amp;&amp;amp; vowels.count(s[p1]) == 0) {
+                ++p1;
+            }
+            while (p1 &amp;lt; p2 &amp;amp;&amp;amp; vowels.count(s[p2]) == 0) {
+                --p2;
+            }
+            if (p1 &amp;lt; p2)
+                swap(s[p1], s[p2]);
+            ++p1;
+            --p2;
+        }
+        return s;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">345. 反转字符串中的元音字母 2021-08-19</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_whqg9c/"" data-c="
+          &lt;h2 id=&#34;dp&#34;&gt;DP&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    static constexpr int CEIL = 1000000007;
+public:
+    int checkRecord(int n) {
+        vector&amp;lt;vector&amp;lt;long long&amp;gt; &amp;gt; dp(n, vector&amp;lt;long long&amp;gt;(6, 0));
+        // dp[i][0~2]表示在第i天，总A数为0，连续L数为0/1/2时的总组合数，
+        // dp[i][3~5]表示在第i天，总A数为1，连续L数为0/1/2时的总组合数
+
+        dp[0][0] = 1; // 第一天为P
+        dp[0][1] = 1; // 第一天为L
+        dp[0][3] = 1; // 第一天为A
+        for (int i = 1; i &amp;lt; n; ++i) {
+            // 第i天为P
+            for (int j = 0; j &amp;lt; 3; ++j) {
+                dp[i][0] = (dp[i][0] + dp[i - 1][j]) % CEIL;
+            }
+            for (int j = 3; j &amp;lt; 6; ++j) {
+                dp[i][3] = (dp[i][3] + dp[i - 1][j]) % CEIL;
+            }
+
+            // 第i天为A
+            for (int j = 0; j &amp;lt; 3; ++j) {
+                dp[i][3] = (dp[i][3] + dp[i - 1][j]) % CEIL;
+            }
+
+            // 第i天为L
+            dp[i][1] = (dp[i][1] + dp[i - 1][0]) % CEIL;
+            dp[i][2] = (dp[i][2] + dp[i - 1][1]) % CEIL;
+
+            dp[i][4] = (dp[i][4] + dp[i - 1][3]) % CEIL;
+            dp[i][5] = (dp[i][5] + dp[i - 1][4]) % CEIL;
+        }
+        long long count = 0;
+        for (int i = 0; i &amp;lt; 6; ++i) {
+            count = (count + dp[n - 1][i]) % CEIL;
+        }
+        return count;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;优化空间复杂度&#34;&gt;优化空间复杂度&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    static constexpr int CEIL = 1000000007;
+public:
+    int checkRecord(int n) {
+        vector&amp;lt;long long&amp;gt; dp1(6, 0), dp2(6, 0);
+
+        dp1[0] = 1; // 第一天为P
+        dp1[1] = 1; // 第一天为L
+        dp1[3] = 1; // 第一天为A
+        for (int i = 1; i &amp;lt; n; ++i) {
+            // 第i天为P
+            for (int j = 0; j &amp;lt; 3; ++j) {
+                dp2[0] = (dp2[0] + dp1[j]) % CEIL;
+            }
+            for (int j = 3; j &amp;lt; 6; ++j) {
+                dp2[3] = (dp2[3] + dp1[j]) % CEIL;
+            }
+
+            // 第i天为A
+            for (int j = 0; j &amp;lt; 3; ++j) {
+                dp2[3] = (dp2[3] + dp1[j]) % CEIL;
+            }
+
+            // 第i天为L
+            dp2[1] = (dp2[1] + dp1[0]) % CEIL;
+            dp2[2] = (dp2[2] + dp1[1]) % CEIL;
+
+            dp2[4] = (dp2[4] + dp1[3]) % CEIL;
+            dp2[5] = (dp2[5] + dp1[4]) % CEIL;
+
+            dp1.swap(dp2);
+            fill(dp2.begin(), dp2.end(), 0);
+        }
+        long long count = 0;
+        for (int i = 0; i &amp;lt; 6; ++i) {
+            count = (count + dp1[i]) % CEIL;
+        }
+        return count;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;优化后时间复杂度为&lt;/p&gt;
+&lt;p class=&#39;katex-block&#39;&gt;&lt;span class=&#34;katex-display&#34;&gt;&lt;span class=&#34;katex&#34;&gt;&lt;span class=&#34;katex-mathml&#34;&gt;&lt;math&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;O&lt;/mi&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&#34;application/x-tex&#34;&gt;O(n)
+&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;&lt;span class=&#34;katex-html&#34; aria-hidden=&#34;true&#34;&gt;&lt;span class=&#34;base&#34;&gt;&lt;span class=&#34;strut&#34; style=&#34;height:1em;vertical-align:-0.25em;&#34;&gt;&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34; style=&#34;margin-right:0.02778em;&#34;&gt;O&lt;/span&gt;&lt;span class=&#34;mopen&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;mclose&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;空间复杂度为&lt;/p&gt;
+&lt;p class=&#39;katex-block&#39;&gt;&lt;span class=&#34;katex-display&#34;&gt;&lt;span class=&#34;katex&#34;&gt;&lt;span class=&#34;katex-mathml&#34;&gt;&lt;math&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;O&lt;/mi&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&#34;application/x-tex&#34;&gt;O(1)
+&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;&lt;span class=&#34;katex-html&#34; aria-hidden=&#34;true&#34;&gt;&lt;span class=&#34;base&#34;&gt;&lt;span class=&#34;strut&#34; style=&#34;height:1em;vertical-align:-0.25em;&#34;&gt;&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34; style=&#34;margin-right:0.02778em;&#34;&gt;O&lt;/span&gt;&lt;span class=&#34;mopen&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mord&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;mclose&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+">552. 学生出勤记录 II 2021-08-18</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_hqc1dh/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+public:
+    bool checkRecord(string s) {
+        int countA = 0;
+        int countL = 0;
+        for (char c : s) {
+            if (c == &#39;A&#39;) {
+                ++countA;
+                if (countA == 2)
+                    return false;
+            }
+                
+            if (c == &#39;L&#39;) {
+                ++countL;
+                if (countL == 3)
+                    return false;
+            }
+            else
+                countL = 0;
+        }
+        return true;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">551. 学生出勤记录 I 2021-08-17</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_gvrog8/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    vector&amp;lt;bool&amp;gt; used;
+    int n;
+
+    int DFS(int ind) {
+        if (ind == n + 1) return 1;
+        int count = 0;
+        for (int i = 1; i &amp;lt;= n; ++i) {
+            if (ind % i == 0 || i % ind == 0)
+                if (!used[i]) {
+                    used[i] = true;
+                    count += DFS(ind + 1);
+                    used[i] = false;
+                }
+        }
+        return count;
+    }
+
+public:
+    int countArrangement(int n_) {
+        this-&amp;gt;n = n_;
+        used.resize(n + 1, false);
+        return DFS(1);
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">526. 优美的排列 2021-08-16</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_rhngo5/"" data-c="
+          &lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;class Solution {
+private:
+    const int CEIL = 1000000007;
+    int m, n;
+    vector&amp;lt;vector&amp;lt;map&amp;lt;int, int&amp;gt; &amp;gt; &amp;gt; cache;
+
+    int DFS(int x, int y, int step) {
+        if (x &amp;lt; 0 || y &amp;lt; 0 || x &amp;gt;= m || y &amp;gt;= n)
+            return 1;
+        if (step == 0)
+            return 0;
+        if (cache[x][y].count(step))
+            return cache[x][y][step];
+        int count = 0;
+        count = (count + DFS(x + 1, y, step - 1)) % CEIL;
+        count = (count + DFS(x - 1, y, step - 1)) % CEIL;
+        count = (count + DFS(x, y + 1, step - 1)) % CEIL;
+        count = (count + DFS(x, y - 1, step - 1)) % CEIL;
+        cache[x][y][step] = count;
+        return count;
+    }
+
+public:
+    int findPaths(int m_, int n_, int maxMove, int startRow, int startColumn) {
+        m = m_;
+        n = n_;
+        cache.resize(m, vector&amp;lt;map&amp;lt;int, int&amp;gt; &amp;gt;(n));
+        return DFS(startRow, startColumn, maxMove);
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+">576. 出界的路径数 2021-08-15</a>
+      </div>
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://yulan.net.cn/post/erlm2m_rki0v5/"" data-c="

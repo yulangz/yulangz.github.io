@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yulan.net.cn</id>
     <title>语阑gz</title>
-    <updated>2021-08-15T07:08:59.712Z</updated>
+    <updated>2021-08-29T14:29:24.344Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yulan.net.cn"/>
     <link rel="self" href="https://yulan.net.cn/atom.xml"/>
@@ -11,1635 +11,404 @@
     <icon>https://yulan.net.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, 语阑gz</rights>
     <entry>
-        <title type="html"><![CDATA[1583. 统计不开心的朋友 2021-08-14]]></title>
-        <id>https://yulan.net.cn/post/erlm2m_rki0v5/</id>
-        <link href="https://yulan.net.cn/post/erlm2m_rki0v5/">
+        <title type="html"><![CDATA[881. 救生艇 2021-08-26]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_ugz5wq/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_ugz5wq/">
         </link>
-        <updated>2021-08-14T07:46:58.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
-private:
-    bool x_is_unhappy_for_u(int x, int y, int u, int v, vector&lt;vector&lt;int&gt; &gt; &amp;love_score) {
-        if (love_score[x][u] &gt; love_score[x][y] &amp;&amp; love_score[u][x] &gt; love_score[u][v])
-            return true;
-        return false;
-    }
-
-public:
-    int unhappyFriends(int n, vector&lt;vector&lt;int&gt;&gt; &amp;preferences, vector&lt;vector&lt;int&gt;&gt; &amp;pairs) {
-        vector&lt;vector&lt;int&gt; &gt; love_score(n, vector&lt;int&gt;(n));
-        for (int i = 0; i &lt; n; ++i) {
-            for (int j = 0; j &lt; n - 1; ++j) {
-                love_score[i][preferences[i][j]] = n - j;
-            }
-        }
-
-        int count = 0;
-        vector&lt;bool&gt; un_happy(n, false);
-        for (int i = 0; i &lt; n / 2; ++i) {
-            for (int j = i + 1; j &lt; n / 2; ++j) {
-                int x = pairs[i][0];
-                int y = pairs[i][1];
-                int u = pairs[j][0];
-                int v = pairs[j][1];
-
-                if (x_is_unhappy_for_u(x, y, u, v, love_score) ||
-                        x_is_unhappy_for_u(x, y, v, u, love_score))
-                    un_happy[x] = true;
-                if (x_is_unhappy_for_u(y, x, u, v, love_score) ||
-                        x_is_unhappy_for_u(y, x, v, u, love_score))
-                    un_happy[y] = true;
-                if (x_is_unhappy_for_u(u, v, x, y, love_score) ||
-                        x_is_unhappy_for_u(u, v, y, x, love_score))
-                    un_happy[u] = true;
-                if (x_is_unhappy_for_u(v, u, x, y, love_score) ||
-                        x_is_unhappy_for_u(v, u, y, x, love_score))
-                    un_happy[v] = true;
-            }
-        }
-
-        for (bool i : un_happy)
-            if (i) ++count;
-        return count;
-    }
-};
-</code></pre>
-<p>时间复杂度 $$O(n^2)$$<br>
-空间复杂度 $$O(n^2)$$</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[233. 数字 1 的个数 2021-08-13]]></title>
-        <id>https://yulan.net.cn/post/erlm2m_gkvvpd/</id>
-        <link href="https://yulan.net.cn/post/erlm2m_gkvvpd/">
-        </link>
-        <updated>2021-08-14T07:46:46.000Z</updated>
+        <updated>2021-08-26T07:14:49.000Z</updated>
         <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
 public:
-    int countDigitOne(int n) {
+    int numRescueBoats(vector&lt;int&gt;&amp; people, int limit) {
+        sort(people.begin(), people.end());
         int count = 0;
-        int high, low;
-        long long digit;
-        high = n;
-        low = 0;
-        digit = 1;
-        while (high &gt; 0) {
-            int i = high % 10;
-            high /= 10;
-            count += (high * digit);
-            if (i &gt; 1)
-                count += digit;
-            else if (i == 1)
-                count += (low + 1);
-            digit *= 10;
-            low = n % digit;
-        }
-        return count;
-    }
-};
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[446. 等差数列划分 II - 子序列 2021-08-11]]></title>
-        <id>https://yulan.net.cn/post/erlm2m_gque6k/</id>
-        <link href="https://yulan.net.cn/post/erlm2m_gque6k/">
-        </link>
-        <updated>2021-08-14T07:46:08.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
-private:
-    unordered_map&lt;long long, vector&lt;int&gt; &gt; m;
-    vector&lt;int&gt; nums;
-    vector&lt;unordered_map&lt;long long, int&gt; &gt; cache;
-
-    int DFS(int start, long long diff) {
-        if (cache[start].count(diff))
-            return cache[start][diff];
-        long long target = (long long) nums[start] + diff;
-        auto it = m.find(target);
-        int count = 0;
-        if (it != m.end()) {
-            auto &amp;positions = it-&gt;second;
-            auto pos_it = upper_bound(positions.begin(), positions.end(), start);
-            count += (positions.end() - pos_it);
-            while (pos_it != positions.end()) {
-                count += DFS(*pos_it, diff);
-                ++pos_it;
-            }
-        }
-        cache[start][diff] = count;
-        return count;
-    }
-
-public:
-    int numberOfArithmeticSlices(vector&lt;int&gt; &amp;nums_) {
-        nums = nums_;
-        cache.resize(nums.size());
-        for (int i = 0; i &lt; nums.size(); ++i) {
-            m[nums[i]].push_back(i);
-        }
-        int count = 0;
-        for (int i = 0; i &lt; nums.size(); ++i) {
-            for (int j = i + 1; j &lt; nums.size(); ++j) {
-                count += DFS(j, (long long) nums[j] - nums[i]);
-            }
-        }
-
-        return count;
-    }
-};
-</code></pre>
-<p>时间复杂度不超过 $$O(n^2 \log n)$$</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[313.超级丑数 2021-08-09]]></title>
-        <id>https://yulan.net.cn/post/erlm2m_nbgg8l/</id>
-        <link href="https://yulan.net.cn/post/erlm2m_nbgg8l/">
-        </link>
-        <updated>2021-08-14T07:45:45.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="暴力法">暴力法</h2>
-<pre><code class="language-cpp">class Solution {
-public:
-    int nthSuperUglyNumber(int n, vector&lt;int&gt;&amp; primes) {
-        set&lt;long long&gt; nums;
-        int count = 1;
-        nums.insert(1);
-        auto it = nums.begin();
-        for (; count &lt; n; ++count, ++it) {
-            for (auto p : primes)
-                nums.insert(*it * p);
-        }
-        return *it;
-    }
-};
-</code></pre>
-<p>时间复杂度在 $$O(nm\log nm)$$<br>
-空间复杂度 $$O(nm)$$</p>
-<h2 id="动态规划">动态规划</h2>
-<pre><code class="language-cpp">class Solution {
-public:
-    int nthSuperUglyNumber(int n, vector&lt;int&gt; &amp;primes) {
-        vector&lt;int&gt; next(primes.size(), 0);
-        vector&lt;int&gt; dp(n);
-        dp[0] = 1;
-        for (int i = 1; i &lt; n; ++i) {
-            int minum = INT32_MAX;
-            for (int j = 0; j &lt; primes.size(); ++j)
-                minum = min(dp[next[j]] * primes[j], minum);
-            for (int j = 0; j &lt; primes.size(); ++j)
-                if (minum == dp[next[j]] * primes[j])
-                    ++next[j];
-            dp[i] = minum;
-        }
-        return dp[n - 1];
-    }
-};
-</code></pre>
-<p>时间复杂度 $$O(nm)$$<br>
-空间复杂度 $$O(n+m)$$</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[linux服务端--3. libevent实现回显服务器与客户端]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_rga2qz/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_rga2qz/">
-        </link>
-        <updated>2021-08-06T06:12:37.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="服务端">服务端</h2>
-<h3 id="severec">severe.c</h3>
-<pre><code class="language-c">// severe.c
-
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;event2/event.h&gt;
-#include &lt;event2/listener.h&gt;
-#include &lt;event2/bufferevent.h&gt;
-#include &quot;callbacks.h&quot;
-
-int main()
-{
-    // 创建event base
-    struct event_base* base = NULL;
-    base = event_base_new();
-    if(base == NULL){
-        perror(&quot;event base new error&quot;);
-        exit(1);
-    }
-
-    // 填写套接字地址
-    struct sockaddr_in saddr;
-    memset(&amp;saddr,0, sizeof(saddr));
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(9999);
-    saddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    // 创建listern_cb回调函数的参数
-    struct CallBackArgs* args = malloc(sizeof(struct CallBackArgs));
-    args-&gt;base = base;
-
-    // 申请套接字、绑定、监听
-    struct evconnlistener* evl = NULL;
-    evl = evconnlistener_new_bind(base,
-                                  listen_cb,
-                                  (void *)args,
-                                  LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
-                                  -1,
-                                  (struct sockaddr*)&amp;saddr,
-                                  sizeof(saddr));
-    if (evl == NULL){
-        perror(&quot;event listener new bind error&quot;);
-        exit(1);
-    }
-
-    // 开始运行
-    int code;
-    code = event_base_dispatch(base);
-    if(code == -1){
-        perror(&quot;event base dispatch error&quot;);
-        exit(1);
-    }
-
-    // 资源关闭
-    evconnlistener_free(evl);
-    free(args);
-    event_base_free(base);
-    return 0;
-}
-</code></pre>
-<h3 id="callbacksh">callbacks.h</h3>
-<pre><code class="language-c">// callbacks.h
-
-#ifndef CLIBEVENT_CALLBACKS_H
-#define CLIBEVENT_CALLBACKS_H
-
-#include &lt;event2/event.h&gt;
-#include &lt;event2/listener.h&gt;
-#include &lt;event2/bufferevent.h&gt;
-
-/* 自定义回调参数数据结构 */
-struct CallBackArgs
-{
-    struct event_base* base;
-};
-
-/** 监听listen回调函数
- * type: evconnlistener_cb
- * */
-void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
-               int socklen, void * args);
-
-/**
-   read回调函数
-   type: bufferevent_data_cb
-*/
-void read_cb(struct bufferevent *bfev, void *args);
-
-/**
- * write回调函数
- * type: bufferevent_data_cb
- * */
-void write_cb(struct bufferevent *bfev, void *args);
-
-/**
- * event回调函数
- * type: bufferevent_event_cb
- * */
-void event_cb(struct bufferevent *bfev, short what, void *args);
-
-#endif //CLIBEVENT_CALLBACKS_H
-
-</code></pre>
-<h3 id="callbacksc">callbacks.c</h3>
-<pre><code class="language-c">// callbacks.c
-
-#include &quot;callbacks.h&quot;
-#include &lt;string.h&gt;
-#include &lt;ctype.h&gt;
-#include &lt;stdlib.h&gt;
-void listen_cb(struct evconnlistener * evl, evutil_socket_t fd, struct sockaddr * caddr,
-        int socklen, void * args)
-{
-    // 获取参数
-    struct CallBackArgs* cb_args = (struct CallBackArgs*) args;
-
-    // 创建buffer event
-    struct bufferevent* bfev = NULL;
-    bfev = bufferevent_socket_new(cb_args-&gt;base,fd,BEV_OPT_CLOSE_ON_FREE);
-    if(bfev == NULL){
-        perror(&quot;buffer socket new error&quot;);
-        return;
-    }
-
-    // 启用读写事件
-    int code;
-    code = bufferevent_enable(bfev,EV_READ | EV_WRITE);
-    if(code == -1){
-        perror(&quot;buffer event enable error&quot;);
-        bufferevent_free(bfev);
-        return;
-    }
-
-    // 注册回调函数
-    bufferevent_setcb(bfev,
-                      read_cb,
-                      write_cb,
-                      event_cb,
-                      NULL);
-}
-
-void read_cb(struct bufferevent *bfev, void *args)
-{
-    //接收数据
-    char buff[1024] = {0};
-    int len = bufferevent_read(bfev,buff, sizeof(buff));
-    printf(&quot;接收到了数据:%s&quot;,buff);
-
-    // 处理数据
-    int i;
-    for(i = 0;i&lt;len ;++i){
-        buff[i] = toupper(buff[i]);
-    }
-
-    // 发送数据
-    int code;
-    code = bufferevent_write(bfev,buff, strlen(buff)+1);
-    if(code == -1){
-        perror(&quot;buffer write error&quot;);
-        return;
-    }
-    printf(&quot;我发回了数据:%s&quot;,buff);
-}
-
-void write_cb(struct bufferevent *bfev, void *args)
-{
-    printf(&quot;我的数据发送完毕\n&quot;);
-}
-
-void event_cb(struct bufferevent *bfev, short what, void *args)
-{
-    // 出现错误，释放资源，不做额外处理
-    if(args)
-        free(args);
-    bufferevent_free(bfev);
-    printf(&quot;关闭 buffer event\n&quot;);
-}
-</code></pre>
-<h2 id="客户端">客户端</h2>
-<pre><code class="language-c">// 发送一次数据并受到服务器返回后就退出event循环，结束程序
-
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;event2/event.h&gt;
-#include &lt;event2/bufferevent.h&gt;
-#include &lt;arpa/inet.h&gt;
-
-void read_cb(struct bufferevent *bfev, void *args)
-{
-    char buff[1024] = {0};
-    int len = bufferevent_read(bfev, buff, sizeof(buff));
-    printf(&quot;从服务器接收到了数据:%s&quot;, buff);
-    bufferevent_free(bfev);
-}
-
-void write_cb(struct bufferevent *bfev, void *args)
-{
-    printf(&quot;数据已发送&quot;);
-}
-
-void event_cb(struct bufferevent *bfev, short what, void *args)
-{
-    if (what &amp; BEV_EVENT_CONNECTED)
-    {
-        printf(&quot;连接建立完成\n&quot;);
-        return;
-    }
-
-    if (what &amp; BEV_EVENT_ERROR)
-    {
-        printf(&quot;出现错误事件\n&quot;);
-        perror(&quot;&quot;);
-        if (args != NULL)
-            free(args);
-        bufferevent_free(bfev);
-        exit(1);
-    }
-    if (what &amp; BEV_EVENT_EOF)
-    {
-        printf(&quot;连接已断开\n&quot;);
-        if (args != NULL)
-            free(args);
-        bufferevent_free(bfev);
-        exit(0);
-    }
-}
-
-void std_cb(evutil_socket_t fd, short what, void *sock_bev)
-{
-    char buff[1024] = {0};
-    int len = read(fd, buff, sizeof(buff));
-    struct bufferevent *bev = (struct bufferevent *)sock_bev;
-    int code;
-    code = bufferevent_write(bev, buff, strlen(buff) + 1);
-    if (code == -1)
-    {
-        perror(&quot;write to buffer event error&quot;);
-        exit(1);
-    }
-}
-
-int main()
-{
-    struct event_base *base = NULL;
-    base = event_base_new();
-    if (base == NULL)
-    {
-        perror(&quot;base new error&quot;);
-        exit(1);
-    }
-
-    // 要连接的服务器信息
-    struct sockaddr_in serv;
-    memset(&amp;serv, 0, sizeof(serv));
-    serv.sin_family = AF_INET;
-    serv.sin_port = htons(9999);
-    inet_pton(AF_INET, &quot;127.0.0.1&quot;, &amp;serv.sin_addr.s_addr);
-
-    // 创建套接字
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (fd &lt; 0)
-    {
-        perror(&quot;create socket erroe&quot;);
-        exit(1);
-    }
-    printf(&quot;套接字创建完成\n&quot;);
-    // 创建本次通信的bufferevent
-    struct bufferevent *bev = NULL;
-    bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
-
-    int code;
-    code = bufferevent_socket_connect(bev, (struct sockaddr *)&amp;serv, sizeof(serv));
-    if (code == -1)
-    {
-        perror(&quot;connect error&quot;);
-        exit(1);
-    }
-
-    bufferevent_setcb(bev, read_cb, write_cb, event_cb, NULL);
-
-    code = bufferevent_enable(bev, EV_READ | EV_WRITE);
-    if (code == -1)
-    {
-        perror(&quot;enable error&quot;);
-        exit(1);
-    }
-
-    // 创建std输入事件
-    struct event *ev = NULL;
-    ev = event_new(base, STDIN_FILENO, EV_READ, std_cb, (void *)bev);
-    if (ev == NULL)
-    {
-        perror(&quot;创建std event error&quot;);
-        exit(1);
-    }
-
-    code = event_add(ev, NULL);
-    if (code == -1)
-    {
-        perror(&quot;event add error&quot;);
-        exit(1);
-    }
-    // 开始运行
-    code = event_base_dispatch(base);
-    if (code == -1)
-    {
-        perror(&quot;dispatch error&quot;);
-        exit(1);
-    }
-    //printf(&quot;event base start\n&quot;);
-
-    event_base_free(base);
-    printf(&quot;event base free\n&quot;);
-    return 0;
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[linux服务端--2. epoll 实现回显服务器]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_xthbax/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_xthbax/">
-        </link>
-        <updated>2021-08-06T06:10:25.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="代码">代码</h2>
-<pre><code class="language-cpp">#include &lt;stdio.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;netdb.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;netinet/in.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;string.h&gt;
-#include &lt;ctype.h&gt;
-#include &lt;sys/epoll.h&gt;
-
-int main()
-{
-    int lfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (lfd == -1)
-    {
-        perror(&quot;socket error&quot;);
-        exit(1);
-    }
-
-    //设置端口复用
-    int opt = 1;
-    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&amp;opt, sizeof(opt));
-
-    struct sockaddr_in serv_addr;
-    memset(&amp;serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(9317);
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    int ret = bind(lfd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr));
-    if (ret == -1)
-    {
-        perror(&quot;bind error&quot;);
-        exit(1);
-    }
-
-    ret = listen(lfd, 64);
-    if (ret == -1)
-    {
-        perror(&quot;listen error&quot;);
-        exit(1);
-    }
-
-    struct sockaddr_in client_addr;
-    socklen_t cli_addr_len = sizeof(struct sockaddr_in);
-
-    //
-    struct epoll_event events[2000];
-
-    // 创建epoll实例
-    int epfd = epoll_create(2000);
-
-    //把监听事件挂到epoll红黑树上
-    struct epoll_event event_l;
-    event_l.events = EPOLLIN;
-    event_l.data.fd = lfd;
-    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, lfd, &amp;event_l)) &lt; 0)
-    {
-        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
-        exit(1);
-    }
-
-    while (1)
-    {
-        // 有事件发送的epoll_event结构体会复制到events上，ret为事件总数
-        int ret = epoll_wait(epfd, events, sizeof(events) / sizeof(events[0]), -1);
-        if (ret &lt; 0)
-        {
-            fprintf(stderr, &quot;epoll wait error: %s\n&quot;, strerror(errno));
-            exit(1);
-        }
-
-        int k;
-        for (k = 0; k &lt; ret; k++)
-        {
-            // 读事件
-            if (events[k].events &amp; EPOLLIN)
-            {
-                // tfd: this fd
-                int tfd = events[k].data.fd;
-
-                if (tfd == lfd)
-                {
-                    // 处理监听套接字的事件
-                    int cfd = accept(lfd, (struct sockaddr *)&amp;client_addr, &amp;cli_addr_len);
-                    if (cfd &lt; 0)
-                    {
-                        fprintf(stderr, &quot;accept error: %s\n&quot;, strerror(errno));
-                    }
-
-                    // 把客户端fd挂到epoll红黑树上
-                    struct epoll_event tmp;
-                    tmp.events = EPOLLIN;
-                    tmp.data.fd = cfd;
-                    if ((epoll_ctl(epfd, EPOLL_CTL_ADD, cfd, &amp;tmp)) &lt; 0)
-                    {
-                        fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
-                        exit(1);
-                    }
-                }
-                else
-                {
-                    // 客户端fd的事件
-                    char buff[1024];
-                    int rec_len, i;
-                    if ((rec_len = recv(tfd, buff, sizeof(buff), 0)) &lt; 0)
-                    {
-                        fprintf(stderr, &quot;read error: %s\n&quot;, strerror(errno));
-                        exit(1);
-                    }
-                    else if (rec_len == 0)
-                    {
-                        // 客户端关闭连接
-                        if ((epoll_ctl(epfd, EPOLL_CTL_DEL, tfd, NULL)) &lt; 0)
-                        {
-                            fprintf(stderr, &quot;epoll ctl error: %s\n&quot;, strerror(errno));
-                            exit(1);
-                        }
-                        close(tfd);
-                    }
-                    else
-                    {
-                        printf(&quot;%s&quot;, buff);
-                        for (i = 0; i &lt; rec_len; ++i)
-                        {
-                            buff[i] = toupper(buff[i]);
-                        }
-                        send(tfd, buff, rec_len, 0);
-                    }
-                }
-            }
-        }
-    }
-    close(epfd);
-    close(lfd);
-    return 0;
-}
-</code></pre>
-<h2 id="epoll的一点小问题">epoll的一点小问题</h2>
-<p>如果某个fd被关闭，并且这次关闭是真正地释放了资源，而不是减少引用技术，那么这个fd会自动从eopll中删除，这时再调用epoll_ctl(EPOLL_CTL_DEL)可能会报错。</p>
-<blockquote>
-<pre><code>   Q6  Will closing a file descriptor cause it  to  be  removed  from  all
-</code></pre>
-</blockquote>
-<pre><code>       epoll sets automatically?
-
-   A6  Yes,  but  be aware of the following point.  A file descriptor is a
-       reference to an open file description (see  [open(2)](http://man.he.net/man2/open)).   Whenever  a
-       descriptor  is duplicated via [dup(2)](http://man.he.net/man2/dup), [dup2(2)](http://man.he.net/man2/dup2), [fcntl(2)](http://man.he.net/man2/fcntl) F_DUPFD, or
-       [fork(2)](http://man.he.net/man2/fork), a new file descriptor referring  to  the  same  open  file
-       description  is  created.   An  open  file description continues to
-       exist until all file descriptors referring to it have been  closed.
-       A  file  descriptor is removed from an epoll set only after all the
-       file descriptors referring to the underlying open file  description
-       have been closed (or before if the descriptor is explicitly removed
-       using [epoll_ctl(2)](http://man.he.net/man2/epoll_ctl) EPOLL_CTL_DEL).  This means that  even  after  a
-       file  descriptor  that  is  part  of  an epoll set has been closed,
-       events may be reported for  that  file  descriptor  if  other  file
-       descriptors  referring  to  the  same  underlying  file description
-       remain open.
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[linux服务端--1. select实现回显服务器]]></title>
-        <id>https://yulan.net.cn/post/xdsvqq_ymoehs/</id>
-        <link href="https://yulan.net.cn/post/xdsvqq_ymoehs/">
-        </link>
-        <updated>2021-08-06T06:08:19.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-c">#include &lt;stdio.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;netdb.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;netinet/in.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;string.h&gt;
-#include &lt;ctype.h&gt;
-#include &lt;sys/select.h&gt;
-
-int main()
-{
-    // 创建监听套接字
-    int lfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (lfd == -1)
-    {
-        perror(&quot;socket error&quot;);
-        exit(1);
-    }
-
-    // 设置端口复用
-    int opt = 1;
-    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&amp;opt, sizeof(opt));
-
-    //IP地址与端口号信息
-    struct sockaddr_in serv_addr;
-    memset(&amp;serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(9317);
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    // 绑定、监听
-    int ret = bind(lfd, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr));
-    if (ret == -1)
-    {
-        perror(&quot;bind error&quot;);
-        exit(1);
-    }
-
-    ret = listen(lfd, 64);
-    if (ret == -1)
-    {
-        perror(&quot;listen error&quot;);
-        exit(1);
-    }
-
-    // 用来接收客户端ip信息
-    struct sockaddr_in client_addr;
-    socklen_t cli_addr_len = sizeof(struct sockaddr_in);
-
-    // select用的两个事件数组
-    fd_set reads, temps;
-    // 最大的事件fd
-    int max_fd;
-    // 初始化reads事件表
-    FD_ZERO(&amp;reads);
-    // 设置内核监视监听套接字
-    FD_SET(lfd, &amp;reads);
-    max_fd = lfd;
-
-    while (1)
-    {
-        // 复制reads表传参，保留原reads表不变，因为select会修改传进去的表
-        temps = reads;
-
-        int ret = select(max_fd + 1, &amp;temps, NULL, NULL, NULL);
-        if (ret &lt; 0)
-        {
-            fprintf(stderr, &quot;select error: %s\n&quot;, strerror(errno));
-            exit(1);
-        }
-
-        // 监听套接字有事件
-        if (FD_ISSET(lfd, &amp;temps))
-        {
-            int cfd;
-            if ((cfd = accept(lfd, (struct sockaddr *)&amp;client_addr, &amp;cli_addr_len)) &lt; 0)
-            {
-                fprintf(stderr, &quot;accept error: %s\n&quot;, strerror(errno));
-                exit(1);
-            }
-            // 新套接字（客户套接字）加入reads表
-            FD_SET(cfd, &amp;reads);
-            max_fd = max_fd &gt; cfd ? max_fd : cfd;
-        }
-        int k;
-        for (k = lfd + 1; k &lt;= max_fd; k++)
-        {
-            // 客户端有事件，处理
-            if (FD_ISSET(k, &amp;temps))
-            {
-                char buff[1024];
-                int rec_len, i;
-                if ((rec_len = recv(k, buff, sizeof(buff), 0)) &lt; 0)
-                {
-                    fprintf(stderr, &quot;read error: %s\n&quot;, strerror(errno));
-                    exit(1);
-                }
-                else if (rec_len == 0)
-                {
-                    // 客户端关闭连接
-                    close(k);
-                    FD_CLR(k, &amp;reads);
-                }
-                else
-                {
-                    for (i = 0; i &lt; rec_len; ++i)
-                    {
-                        buff[i] = toupper(buff[i]);
-                    }
-                    send(k, buff, rec_len, 0);
-                }
-            }
-        }
-    }
-    close(lfd);
-    return 0;
-}
-
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[PAT 2020年秋考解答]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_kb5gab/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_kb5gab/">
-        </link>
-        <updated>2021-08-06T05:52:32.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="7-1-panda-and-pp-milk-20分">7-1 Panda and PP Milk (20分)</h3>
-<p>这道题杀死了不少同学的心态，但是如果想到方法了就特别简单。<br>
-简单说下做法，一共对全表进行两次扫描，第一次从左到右，第二次从右到左，每次扫描时，如果后面熊猫比前面重，则供奶量+1（以2、3、4计，最后统一乘100)如果体重持平，则保持不变，体重减轻，则供奶量恢复为2，从左向右扫描满足所有熊猫看到自己左边的熊猫都会满意，从右向左满足右边熊猫，对每个熊猫取两次扫描中的较大值，即为答案。</p>
-<table>
-<thead>
-<tr>
-<th>体重</th>
-<th>180</th>
-<th>160</th>
-<th>100</th>
-<th>150</th>
-<th>145</th>
-<th>142</th>
-<th>138</th>
-<th>138</th>
-<th>140</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>左向右</td>
-<td>2</td>
-<td>2</td>
-<td>2</td>
-<td>3</td>
-<td>2</td>
-<td>2</td>
-<td>2</td>
-<td>2</td>
-<td>3</td>
-</tr>
-<tr>
-<td>右向左</td>
-<td>4</td>
-<td>3</td>
-<td>2</td>
-<td>5</td>
-<td>4</td>
-<td>3</td>
-<td>2</td>
-<td>2</td>
-<td>2</td>
-</tr>
-<tr>
-<td>最终供奶量</td>
-<td>4</td>
-<td>3</td>
-<td>2</td>
-<td>5</td>
-<td>4</td>
-<td>3</td>
-<td>2</td>
-<td>2</td>
-<td>3</td>
-</tr>
-</tbody>
-</table>
-<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
-
-using namespace std;
-
-const int NMAX = 10005;
-const int WMAX = 205;
-
-int main() {
-    int n, wight[NMAX], milk_l[NMAX], milk_r[NMAX];
-    cin &gt;&gt; n;
-    for (int i = 0; i &lt; n; i++) {
-        cin &gt;&gt; wight[i];
-    }
-    int pre, now_milk;
-    now_milk = 2;
-    pre = WMAX;
-    for (int i = 0; i &lt; n; i++) {
-        // 左向右扫
-        if (wight[i] &gt; pre) {
-            now_milk++;
-        } else if (wight[i] == pre) { ; //体重相等供奶量保持不变
-        } else {
-            now_milk = 2;
-        }
-        milk_l[i] = now_milk;
-        pre = wight[i];
-    }
-
-    now_milk = 2;
-    pre = WMAX;
-    for (int i = n - 1; i &gt;= 0; i--) {
-        // 右向左扫
-        if (wight[i] &gt; pre) {
-            now_milk++;
-        } else if (wight[i] == pre) { ;
-        } else {
-            now_milk = 2;
-        }
-        milk_r[i] = now_milk;
-        pre = wight[i];
-    }
-    int sum = 0;
-    for (int i = 0; i &lt; n; i++) {
-        sum += max(milk_l[i], milk_r[i]); // 取较大者
-    }
-    cout &lt;&lt; sum * 100;
-    return 0;
-}
-</code></pre>
-<p>至于这题是怎么想到的？我也不知道。可能是考场上的灵光一现吧，要是换个时间再来一次，我可能也想不到这样做了。</p>
-<h3 id="7-2-how-many-ways-to-buy-a-piece-of-land-25分">7-2 How Many Ways to Buy a Piece of Land (25分)</h3>
-<p>比较简单</p>
-<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
-
-using namespace std;
-
-const int NMAX = 10005;
-
-int main() {
-    int n, m;
-    int pieces[NMAX];
-    cin &gt;&gt; n &gt;&gt; m;
-    for (int i = 0; i &lt; n; i++) {
-        cin &gt;&gt; pieces[i];
-    }
-    int ans = 0;
-    int i = 0, j = 0;
-    int total = 0;
-    while (i &lt; n) {
-        while (j &lt; n &amp;&amp; total + pieces[j] &lt;= m) {
-            total += pieces[j++];
-        }
-        ans += j - i;
-        total -= pieces[i++];
-    }
-    cout &lt;&lt; ans;
-    return 0;
-}
-</code></pre>
-<h3 id="7-3-left-view-of-binary-tree-25分">7-3 Left-View of Binary Tree (25分)</h3>
-<p>先建树，再层序遍历，考基本功了</p>
-<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
-
-using namespace std;
-
-const int NMAX = 25;
-
-struct TNode {
-    int val;
-    int level;
-    TNode *left;
-    TNode *right;
-};
-
-int pre[NMAX], in[NMAX];
-
-TNode *new_node(int val) {
-    TNode *node = new TNode;
-    node-&gt;val = val;
-    node-&gt;level = -1;
-    node-&gt;left = node-&gt;right = nullptr;
-    return node;
-}
-
-TNode *built_tree(int in_s, int in_e, int pre_s, int pre_e) {
-    if (in_s &gt; in_e)
-        return nullptr;
-    int mid;
-    for (mid = in_s; mid &lt;= in_e; mid++) {
-        if (in[mid] == pre[pre_s])
-            break;
-    }
-
-    TNode *node = new_node(pre[pre_s]);
-    node-&gt;left = built_tree(in_s, mid - 1, pre_s + 1, pre_s + mid - in_s);
-    node-&gt;right = built_tree(mid + 1, in_e, pre_s + mid - in_s + 1, pre_e);
-    return node;
-}
-
-
-vector&lt;int&gt; ans;
-
-void level_travel(TNode *node) {
-    queue&lt;TNode *&gt; q;
-    int now_level = 0;
-    node-&gt;level = 1;
-    q.push(node);
-    while (!q.empty()) {
-        node = q.front();
-        q.pop();
-        if (node-&gt;level != now_level) {
-            ans.push_back(node-&gt;val);
-            now_level = node-&gt;level;
-        }
-
-        if (node-&gt;left) {
-            node-&gt;left-&gt;level = node-&gt;level + 1;
-            q.push(node-&gt;left);
-        }
-        if (node-&gt;right) {
-            node-&gt;right-&gt;level = node-&gt;level + 1;
-            q.push(node-&gt;right);
-        }
-    }
-}
-
-int main() {
-    int n;
-    cin &gt;&gt; n;
-    for (int i = 0; i &lt; n; i++) {
-        cin &gt;&gt; in[i];
-    }
-    for (int i = 0; i &lt; n; i++) {
-        cin &gt;&gt; pre[i];
-    }
-    TNode *root = built_tree(0, n - 1, 0, n - 1);
-
-    level_travel(root);
-    int l = ans.size();
-    if (l &gt; 0) {
-        cout &lt;&lt; ans[0];
-    }
-    for (int i = 1; i &lt; l; i++) {
-        cout &lt;&lt; &quot; &quot; &lt;&lt; ans[i];
-    }
-    return 0;
-}
-</code></pre>
-<h3 id="7-4-professional-ability-test-30分">7-4 Professional Ability Test (30分)</h3>
-<p>先判断是否有环（推荐拓扑排序，DFS也许），然后djs算法，纯考基本功，代码量有点大</p>
-<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
-
-using namespace std;
-
-const int NMAX = 1005;
-const int MAX_DIS = 500;
-
-struct Edge {
-    int v;
-    int score, daijinquan;
-
-    Edge() {};
-
-    Edge(int _v, int _score, int _daijinquan) {
-        v = _v;
-        score = _score;
-        daijinquan = _daijinquan;
-    }
-};
-
-vector&lt;Edge&gt; graph[NMAX];
-int in[NMAX], in_buff[NMAX];
-int n, m;
-
-void not_consist() {
-    // 有环，直接判断
-    cout &lt;&lt; &quot;Impossible.&quot; &lt;&lt; endl;
-    int k;
-    cin &gt;&gt; k;
-    while (k--) {
-        int node;
-        cin &gt;&gt; node;
-        if (in[node] == 0)
-            printf(&quot;You may take test %d directly.
-&quot;, node);
-        else
-            printf(&quot;Error.
-&quot;);
-    }
-}
-
-//vector&lt;int&gt; pre[NMAX];
-int pre[NMAX];
-
-void Dijkstra() {
-    bool visited[NMAX];
-    int dis_score[NMAX];
-    int dis_daijinquan[NMAX];
-    fill(visited, visited + NMAX, false);
-    fill(dis_score, dis_score + NMAX, MAX_DIS);
-    fill(dis_daijinquan, dis_daijinquan + NMAX, 0);
-    //dis_score[n]=0;
-    //int node;
-    for (Edge e:graph[n]) {
-        dis_score[e.v] = dis_daijinquan[e.v] = 0;
-        pre[e.v] = n;
-    }
-    while (true) {
-        int min_node = n;
-        int min_dis = MAX_DIS;
-        for (int i = 0; i &lt; n; i++) {
-            if (visited[i])
+        vector&lt;bool&gt; used(people.size(), false);
+        for (int i = (int) people.size() - 1; i &gt;= 0; --i) {
+            if (used[i])
                 continue;
-
-            if (dis_score[i] &lt; min_dis) {
-                min_dis = dis_score[i];
-                min_node = i;
-            } else if (dis_score[i] == min_dis) {
-                if (dis_daijinquan[i] &gt; dis_daijinquan[min_node])
-                    min_node = i;
-            }
+            ++count;
+            auto pt = upper_bound(people.begin(), people.begin() + i, limit - people[i]);
+            if (pt == people.begin())
+                continue;
+            do {
+                --pt;
+                if (!used[pt - people.begin()]) {
+                    used[pt - people.begin()] = true;
+                    break;
+                }
+            } while (pt != people.begin());
         }
-        if (min_node == n)
-            break;
-        visited[min_node] = true;
-        for (Edge e:graph[min_node]) {
-            if (min_dis + e.score &lt; dis_score[e.v]) {
-                pre[e.v] = min_node;
-                dis_score[e.v] = min_dis + e.score;
-                dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
-            } else if (min_dis + e.score == dis_score[e.v]) {
-                if (dis_daijinquan[min_node] + e.daijinquan &gt; dis_daijinquan[e.v]) {
-                    pre[e.v] = min_node;
-                    dis_daijinquan[e.v] = dis_daijinquan[min_node] + e.daijinquan;
+        return count;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[797. 所有可能的路径 2021-08-25]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_tmg8zs/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_tmg8zs/">
+        </link>
+        <updated>2021-08-25T05:24:15.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+private:
+    vector&lt;vector&lt;int&gt; &gt; ans;
+    vector&lt;int&gt; path;
+
+    void DFS(int node, vector&lt;vector&lt;int&gt;&gt; &amp;G) {
+        if (node == G.size() - 1) {
+            path.push_back(node);
+            ans.push_back(path);
+            path.pop_back();
+            return;
+        }
+
+        path.push_back(node);
+        for (auto i : G[node]) {
+            DFS(i, G);
+        }
+        path.pop_back();
+    }
+
+public:
+    vector&lt;vector&lt;int&gt;&gt; allPathsSourceTarget(vector&lt;vector&lt;int&gt;&gt; &amp;graph) {
+        DFS(0, graph);
+        return ans;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[787. K 站中转内最便宜的航班 2021-08-24]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_cdiz9f/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_cdiz9f/">
+        </link>
+        <updated>2021-08-24T07:57:26.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+private:
+    const int NOT_CONNECTED = 10000000;
+public:
+    int findCheapestPrice(int n, vector&lt;vector&lt;int&gt;&gt; &amp;flights, int src, int dst, int k) {
+        vector&lt;vector&lt;int&gt; &gt; G(n, vector&lt;int&gt;(n, NOT_CONNECTED));
+        for (auto &amp;flight : flights) {
+            G[flight[0]][flight[1]] = flight[2];
+        }
+        for (int i = 0; i &lt; n; ++i)
+            G[i][i] = 0;
+        vector&lt;vector&lt;int&gt; &gt; dp(k + 2, vector&lt;int&gt;(n, NOT_CONNECTED));
+        dp[0][src] = 0;
+        for (int i = 1; i &lt;= k + 1; ++i) {
+            for (int j = 0; j &lt; n; ++j) {
+                for (int l = 0; l &lt; n; ++l) {
+                    dp[i][j] = min(dp[i][j], dp[i - 1][l] + G[l][j]);
                 }
             }
         }
+        return dp[k + 1][dst] == NOT_CONNECTED ? -1 : dp[k + 1][dst];
     }
-}
-
-void consist() {
-    // 无环 Djs算法
-    cout &lt;&lt; &quot;Okay.&quot; &lt;&lt; endl;
-    Dijkstra();
-    int k;
-    cin &gt;&gt; k;
-    for (int i = 0; i &lt; k; i++) {
-        int dst;
-        cin &gt;&gt; dst;
-
-        if (pre[dst] == n) {
-            printf(&quot;You may take test %d directly.
-&quot;, dst);
-        } else {
-            vector&lt;int&gt; path;
-            while (dst != n) {
-                path.push_back(dst);
-                dst = pre[dst];
-            }
-            int l = path.size();
-            printf(&quot;%d&quot;, path[l - 1]);
-            for (int j = l - 2; j &gt;= 0; j--) {
-                printf(&quot;-&gt;%d&quot;, path[j]);
-            }
-            printf(&quot;
-&quot;);
-        }
-    }
-}
-
-bool check() {
-    // 判断是否有环
-    bool visited[NMAX];
-    fill(visited, visited + NMAX, false);
-    for (int i = 0; i &lt; n; i++) {
-        int node = 0;
-        for (; node &lt; n; node++) {
-            if (!visited[node] &amp;&amp; in[node] == 0) {
-                break;
-            }
-        }
-        if (node == n)
-            break;
-        visited[node] = true;
-        for (Edge t:graph[node]) {
-            in[t.v]--;
-        }
-    }
-    for (int i = 0; i &lt; n; i++) {
-        if (in[i])
-            return false;
-    }
-    return true;
-}
-
-int main() {
-
-    cin &gt;&gt; n &gt;&gt; m;
-    for (int i = 0; i &lt; m; i++) {
-        int u, v, s, d;
-        cin &gt;&gt; u &gt;&gt; v &gt;&gt; s &gt;&gt; d;
-        in[v]++;
-        in_buff[v]++;// 入读保存两份，一份用来判环，一份判断是否是启示节点（一开始入读就是0的节点）
-        graph[u].push_back(Edge(v, s, d));
-    }
-
-    for (int i = 0; i &lt; n; i++) {
-        if (in[i] == 0) {
-            // 用节点n作为总起始节点，连接所有起始入度为零的节点，将图变成单源的
-            graph[n].push_back(Edge(i, 0, 0));
-        }
-    }
-    if (check())
-        consist();
-    else
-        not_consist();
-    return 0;
-}
+};
 </code></pre>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[PAT1026 Table Tennis (30分)时间戳法]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_iy8tyk/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_iy8tyk/">
+        <title type="html"><![CDATA[789. 逃脱阻碍者 2021-08-22]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_iaa622/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_iaa622/">
         </link>
-        <updated>2021-08-06T05:50:59.000Z</updated>
-        <content type="html"><![CDATA[<p><a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805472333250560">题目链接</a><br>
-题目不难读懂，并且不涉及什么算法，但是逻辑上非常繁琐，算法笔记上有非常详细的题意解释，这里就不赘述了。</p>
-<p>这里主要是写我用的一种模拟时间滴答的方法，逻辑上可能要简单一些。<br>
-主要就是将题目中的时间 <code>08:00:00</code> - <code>21:00:00</code> 以每秒一个间隔，总共 <code>13*60*60=46800</code> 个时钟滴答，在每一个始终滴答到来的时候，依次处理玩家到达事件、桌子使用计时减1事件、空桌子安排玩家使用事件。<br>
-这样思考总体上逻辑简洁一些。</p>
-<p><strong>具体的看代码</strong> ：</p>
-<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
-using namespace std;
-#define MAXPEOPLE 10005
-#define MAXTABLE 105
-#define TIME2SECOND(h,m,s) ((((h) - 8) * 3600) + ((m) * 60) + (s))
-#define MINUTE2SECOND(m) ((m) * 60)
-#define MAXTIMESTAMP 46800
-
-
-int second2minute(int s)
-{
-	//秒数转分钟，并且舍入
-	int m = s / 60;
-	if ((s % 60) &gt;= 30)
-		m++;
-	return m;
-}
-
-void printTime(int second)
-{
-	//根据秒数打印时间
-	int h, m, s;
-	h = second / 3600 + 8;
-	second = second % 3600;
-	m = second / 60;
-	second = second % 60;
-	s = second;
-	printf(&quot;%02d:%02d:%02d &quot;, h, m, s);
-}
-
-struct People
-{
-	int arrTime = 0;	//到达时间
-	int needTime = 0;	//需要的时间
-	int serverTime = -1;	//服务开始时间
-	bool VIP = false;		//是否是VIP
-	bool servered = false;	//是否已被服务
+        <updated>2021-08-21T23:48:17.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+public:
+    bool escapeGhosts(vector&lt;vector&lt;int&gt;&gt;&amp; ghosts, vector&lt;int&gt;&amp; target) {
+        int steps = abs(target[0]) + abs(target[1]);
+        for (auto ghost : ghosts) {
+            if (abs(ghost[0] - target[0]) + abs(ghost[1] - target[1]) &lt;= steps)
+                return false;
+        }
+        return true;
+    }
 };
-
-int n, tableNum, viptableNum, minemptytable;	//记录数、桌子总数，vip桌子总数，索引号最小的空桌子的索引
-int timeStamp;	//时间戳,8:00:00为0,21:00:00为46800
-int serverIndex, arriveIndex;	//当前未服务玩家的索引、当前可服务玩家索引  [serverIndex,arriveIndex)为当前时间
-								//可服务但尚未服务的玩家
-queue&lt;int&gt; VIPwaitIndex;		//在等待中的vip玩家
-People playpairs[MAXPEOPLE];	//玩家记录
-int tables[MAXTABLE] = { 0 };	//当前桌子还要用多久，0代表空桌子
-
-bool isVIP[MAXTABLE] = { false };	//记录桌子是不是VIP桌
-int serverNum[MAXTABLE] = { 0 };	//每个桌子服务过的人数
-vector&lt;int&gt; VIPtable;		//记录vip桌子的索引
-
-void dealServerIndex();
-void handelTableUse()
-{
-	//在每一个时钟滴答到来时，将正在使用的桌子的使用时间减少1，如果减少后为0，则该桌子为空，考虑更新minemptytable
-	int i;
-	for (i = 0; i &lt; tableNum; i++) {
-		if (tables[i] &gt; 0)
-			tables[i]--;
-		if (tables[i] == 0)
-			if (i &lt; minemptytable)	//考虑更新minemptytable
-				minemptytable = i;
-	}
-}
-
-void serverPeople(int peopleIndex, int tableIndex)
-{
-	//服务playpairs中索引号为peopleIndex的玩家，使用的桌子为tableIndex
-	playpairs[peopleIndex].servered = true;	//标记已服务
-	playpairs[peopleIndex].serverTime = timeStamp;	//记录服务时间
-	tables[tableIndex] = playpairs[peopleIndex].needTime;	//开始桌子时间的倒计时
-	serverNum[tableIndex]++;	//记录该桌子的服务人数
-	while (minemptytable &lt; tableNum &amp;&amp; tables[minemptytable]&gt;0) {
-		//更新minemptytable，这里一定要用while，因为空桌子不是连续的
-		minemptytable++;
-	}
-	dealServerIndex();
-}
-
-void dealServerIndex()
-{
-	//更新待服务玩家索引serverIndex，这里一定要用while，因为可能存在有的玩家因为VIP插队的原因已经被服务了
-	while (playpairs[serverIndex].servered) {
-		serverIndex++;
-	}
-}
-
-void dealVIPtable()
-{
-	//处理空的VIP专属桌子
-	for (int t : VIPtable) {
-		if (tables[t] == 0 &amp;&amp; !VIPwaitIndex.empty()) {
-			//桌子为空且有VIP玩家在等待，则服务这个玩家
-			int p = VIPwaitIndex.front();
-			VIPwaitIndex.pop();
-			serverPeople(p, t);
-		}
-	}
-}
-
-void handelEmptyTable()
-{
-	//在每一个时钟滴答，把桌子的使用倒计时-1后，处理所有的空桌子
-	dealVIPtable();	//首先处理VIP桌子，因为如果等待队列中的第一人是VIP，
-					//且同时存在VIP桌子和普通桌子时，优先选择VIP桌子
-
-	//按序处理所有空桌子
-	while (minemptytable &lt; tableNum &amp;&amp; serverIndex &lt; arriveIndex) {
-		if (playpairs[serverIndex].VIP) {
-			//如果排在第一的是一个VIP玩家，则他一定没有VIP桌子可用了，所以他用了一个普通桌子，
-			//因此不会在dealVIPtable()中出对，故要移出VIP等待队列
-			VIPwaitIndex.pop();
-		}
-		serverPeople(serverIndex, minemptytable);
-	}
-}
-
-void handelPeopleArrive()
-{
-	//在每一个时钟滴答，如果到了下一个玩家到来的时间，就将arriveIndex++，代表到达了
-	//一个新的玩家，并考虑他是不是VIP，是则加入VIP等待队列
-	if (playpairs[arriveIndex].arrTime == timeStamp) {
-		if (playpairs[arriveIndex].VIP) {
-			VIPwaitIndex.push(arriveIndex);
-		}
-		arriveIndex++;
-	}
-}
-
-int main() {
-	int h, m, s, i, need, tag;
-	scanf(&quot;%d&quot;, &amp;n);
-	for (i = 0; i &lt; n; i++) {
-		//玩家信息输入
-		scanf(&quot;%d:%d:%d %d %d&quot;, &amp;h, &amp;m, &amp;s, &amp;need, &amp;tag);
-		if (need &gt; 120) {
-			need = 120;
-		}
-		playpairs[i].arrTime = TIME2SECOND(h, m, s);
-		playpairs[i].needTime = MINUTE2SECOND(need);
-		if (tag == 1)
-			playpairs[i].VIP = true;
-	}
-	scanf(&quot;%d %d&quot;, &amp;tableNum,&amp;viptableNum);
-	for (i = 0; i &lt; viptableNum; i++) {
-		//桌子信息输入
-		int v;
-		scanf(&quot;%d&quot;, &amp;v);
-		VIPtable.push_back(--v);	//将桌子索引转为0开始
-		isVIP[v] = true;
-	}
-
-	//按照玩家到达时间升序排列
-	sort(playpairs, playpairs + n, [](People&amp; a, People&amp; b) {return a.arrTime &lt; b.arrTime; });
-
-	serverIndex = 0;
-	minemptytable = 0;
-	arriveIndex = 0;
-	for (timeStamp = 0; timeStamp &lt; MAXTIMESTAMP; timeStamp++) {
-		//每一个时间戳，首先处理玩家到达事件，再处理桌子使用计时减1事件，最后处理
-		//空桌子使用事件，三者的顺序不能颠倒
-		handelPeopleArrive();
-		handelTableUse();
-		handelEmptyTable();
-		if (serverIndex == arriveIndex == n)	
-			//所有玩家都已经服务了
-			break;
-	}
-
-	for (i = serverIndex; i &lt; arriveIndex; i++) {
-		//在[serverIndex,arriveIndex)中，可能存在因为VIP插队而已被服务的玩家，故要
-		//把该玩家提前，这样最后在[0,serverIndex)中的就是全部服务过的玩家
-		if (playpairs[i].servered) {
-			playpairs[serverIndex++] = playpairs[i];
-		}
-	}
-
-	//根据服务时间升序排列
-	sort(playpairs, playpairs + serverIndex, [](People&amp; a, People&amp; b) {return a.serverTime &lt; b.serverTime; });
-	
-	//答案输出
-	for (i = 0; i &lt; serverIndex; i++) {
-		printTime(playpairs[i].arrTime);
-		printTime(playpairs[i].serverTime);
-		printf(&quot;%d\n&quot;, second2minute(playpairs[i].serverTime - playpairs[i].arrTime));
-	}
-	printf(&quot;%d&quot;, serverNum[0]);
-	for (i = 1; i &lt; tableNum; i++) {
-		printf(&quot; %d&quot;, serverNum[i]);
-	}
-
-	return 0;
-}
-
-
-/*
-//input
-2
-08:00:00 10 1
-08:05:00 10 1
-3 2
-2 3
-
-//output
-08:00:00 08:00:00 0
-08:05:00 08:05:00 0
-0 1 1
-*/
-
-
-/*
-//input
-2
-20:00:00 60 0
-20:30:00 10 1
-1 1
-1
-
-//output
-20:00:00 20:00:00 0
-1
-*/
 </code></pre>
-<p>最下面是算法笔记上给出的几组测试数据。<br>
-<img src="http://static.yulan.net.cn/image/_fd5b180732b660f13e5fc326933e6bb1.png" alt="" loading="lazy"><br>
-这种方法虽然外层循环有46800次，但是内层大部分时间只是一个简单的判断，没有实际操作，所以耗时并不高。</p>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Dijkstra算法与SPFA算法]]></title>
-        <id>https://yulan.net.cn/post/sw67dr_hpnu4t/</id>
-        <link href="https://yulan.net.cn/post/sw67dr_hpnu4t/">
+        <title type="html"><![CDATA[443. 压缩字符串 2021-08-21]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_vaxcsq/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_vaxcsq/">
         </link>
-        <updated>2021-08-06T05:48:53.000Z</updated>
-        <content type="html"><![CDATA[<p>最近看了《算法笔记》上面关于最短路径的部分，学习了一种之前没见过的算法：<strong>SPFA。</strong><br>
-理论上SPFA算法会比Dijkstra快，顾而找了一题测试一下。<br>
-使用PAT A1072题，因为这题求<strong>最短路径的部分很单纯，没有其他的权，而且测试点的复杂度够高，能够看出时间上的差别。</strong><br>
-<a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805396953219072">题目链接</a></p>
-<h2 id="速度对比重点看测试点4">速度对比（重点看测试点4）</h2>
-<h3 id="dijkstra速度">Dijkstra速度</h3>
-<figure data-type="image" tabindex="1"><img src="http://static.yulan.net.cn/image/image_3dfbda0886ef9d9aefa1315db1cb7f78.png" alt="image.png" loading="lazy"></figure>
-<h3 id="spfa">SPFA</h3>
-<p><img src="http://static.yulan.net.cn/image/image_78d365c8596c6ebefa6224fa455883c0.png" alt="image.png" loading="lazy"><br>
-多次提交对比，Dijkstra算法都在50ms左右，而SPFA一直在10ms左右，可见SPFA确实比Dijkstra快不少，而且思路也不复杂，以后可以多多使用。</p>
-<h2 id="代码如下">代码如下</h2>
-<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
-#include&lt;unordered_map&gt;
-using namespace std;
-#define MAXNODE 1015
-#define INF 0x3ffffff
-#define G2index(G) ((n)+(G))
-#define index2G(index) ((index)-(G))
+        <updated>2021-08-21T05:03:29.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+private:
+    inline int digital_length(int a) {
+        int count = 0;
+        while (a &gt; 0) {
+            ++count;
+            a /= 10;
+        }
+        return count;
+    }
 
-struct Node
-{
-	int v, dis;//目标与距离
+    inline int put_num(vector&lt;char&gt; &amp;chars, int start, int num) {
+        int len = digital_length(num);
+        for (int i = 1; i &lt;= len; ++i) {
+            chars[start + len - i] = '0' + (num % 10);
+            num /= 10;
+        }
+        return len;
+    }
+
+public:
+    int compress(vector&lt;char&gt; &amp;chars) {
+        char pre;
+        int count;
+        int ans = 0;
+        pre = chars[0];
+        count = 1;
+        int i, j;
+        for (i = 1, j = 0; i &lt; chars.size(); ++i) {
+            if (chars[i] == pre)
+                ++count;
+            else {
+                chars[j++] = pre;
+                ans += 1;
+                if (count &gt; 1) {
+                    int len = put_num(chars, j, count);
+                    j += len;
+                    ans += len;
+                }
+                count = 1;
+                pre = chars[i];
+            }
+        }
+        chars[j++] = pre;
+        ans += 1;
+        if (count &gt; 1) {
+            int len = put_num(chars, j, count);
+            ans += len;
+        }
+        return ans;
+    }
 };
-
-int dis[MAXNODE];
-int n, m, k, dmax;
-bool used[MAXNODE], inqueue[MAXNODE];
-vector&lt;Node&gt; graph[MAXNODE];
-
-void Dijkstra(int start)
-{
-	fill(dis, dis + MAXNODE, INF);
-	fill(used, used + MAXNODE, false);
-	dis[start] = 0;
-
-	for (int i = 0; i &lt; n + m - 1; i++) {
-		int minnode = -1, mindis = INF;
-		for (int j = 1; j &lt;= n + m; j++) {
-			if (!used[j] &amp;&amp; dis[j] &lt; mindis) {
-				minnode = j;
-				mindis = dis[j];
-			}
-		}
-		if (minnode == -1)
-			return;
-
-		used[minnode] = true;
-		int tdis = dis[minnode];
-		for (Node node : graph[minnode]) {
-			if (tdis + node.dis &lt; dis[node.v]) {
-				dis[node.v] = tdis + node.dis;
-			}
-		}
-	}
-}
-
-void SPFA(int start)
-{
-	fill(dis, dis + MAXNODE, INF);
-	fill(inqueue, inqueue + MAXNODE, false);
-	dis[start] = 0;
-
-	int tdis = 0;
-	queue&lt;int&gt; q;
-	for (Node node : graph[start]) {
-		if (tdis + node.dis &lt; dis[node.v]) {
-			dis[node.v] = node.dis + tdis;
-			q.push(node.v);
-			inqueue[node.v] = true;
-		}
-	}
-	while (!q.empty()) {
-		int nodeid = q.front();
-		q.pop();
-		inqueue[nodeid] = false;
-		for (Node node : graph[nodeid]) {
-			tdis = dis[nodeid];
-			if (tdis + node.dis &lt; dis[node.v]) {
-				dis[node.v] = node.dis + tdis;
-				if (!inqueue[node.v]) {
-					q.push(node.v);
-					inqueue[node.v] = true;
-				}
-			}
-		}
-	}
-}
-
-struct Ans
-{
-	int Gid, mindis, totaldis;
-};
-vector&lt;Ans&gt; ans;
-
-void getans(int Gid)
-{
-	int totaldis, mindis;
-	mindis = INF;
-	totaldis = 0;
-	for (int i = 1; i &lt;= n; i++) {
-		if (dis[i] &gt; dmax)
-			return;
-		if (dis[i] &lt; mindis) {
-			mindis = dis[i];
-		}
-		totaldis += dis[i];
-	}
-	ans.push_back(Ans{ Gid,mindis,totaldis });
-}
-
-int main() {
-	scanf(&quot;%d%d%d%d&quot;, &amp;n, &amp;m, &amp;k, &amp;dmax);
-	for (int i = 0; i &lt; k; i++) {
-		int c1, c2, dd;
-		char cs1[10], cs2[10];
-		scanf(&quot;%s%s%d&quot;, cs1, cs2, &amp;dd);
-		if (cs1[0] == 'G') {
-			c1 = G2index(atoi(cs1 + 1));
-		}
-		else {
-			c1 = atoi(cs1);
-		}
-
-		if (cs2[0] == 'G') {
-			c2 = G2index(atoi(cs2 + 1));
-		}
-		else {
-			c2 = atoi(cs2);
-		}
-		graph[c1].push_back(Node{ c2, dd });
-		graph[c2].push_back(Node{ c1, dd });
-	}
-	for (int i = 1; i &lt;= m; i++) {
-		//Dijkstra(G2index(i));
-		SPFA(G2index(i));
-		getans(i);
-	}
-
-	Ans myans;
-	myans.Gid = -1;
-	myans.totaldis = INF;
-	myans.mindis = 0;
-	for (Ans a : ans) {
-		if (a.mindis &gt; myans.mindis)
-			myans = a;
-		else if (a.mindis == myans.mindis) {
-			if (a.totaldis &lt; myans.totaldis)
-				myans = a;
-		}
-	}
-	if (myans.Gid == -1) {
-		printf(&quot;No Solution&quot;);
-		return 0;
-	}
-	printf(&quot;G%d\n%.1lf %.1lf&quot;, myans.Gid, (double)myans.mindis, (double)myans.totaldis / n);
-	return 0;
-}
 </code></pre>
-<p>代码思路就不写了，大家可以看算法笔记。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[541. 反转字符串 II 2021-08-20]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_gy90w7/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_gy90w7/">
+        </link>
+        <updated>2021-08-19T23:31:30.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+public:
+    string reverseStr(string s, int k) {
+        auto it = s.begin();
+        while (it + 2 * k &lt; s.end()) {
+            reverse(it, it + k);
+            it += 2 * k;
+        }
+        if (s.end() - it &gt;= k)
+            reverse(it, it + k);
+        else
+            reverse(it, s.end());
+        return s;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[345. 反转字符串中的元音字母 2021-08-19]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_omq5ic/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_omq5ic/">
+        </link>
+        <updated>2021-08-19T05:31:22.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+private:
+    set&lt;char&gt; vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
+public:
+    string reverseVowels(string s) {
+        int p1 = 0, p2 = s.length() - 1;
+        while (p1 &lt; p2) {
+            while (p1 &lt; p2 &amp;&amp; vowels.count(s[p1]) == 0) {
+                ++p1;
+            }
+            while (p1 &lt; p2 &amp;&amp; vowels.count(s[p2]) == 0) {
+                --p2;
+            }
+            if (p1 &lt; p2)
+                swap(s[p1], s[p2]);
+            ++p1;
+            --p2;
+        }
+        return s;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[552. 学生出勤记录 II 2021-08-18]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_whqg9c/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_whqg9c/">
+        </link>
+        <updated>2021-08-18T01:38:03.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="dp">DP</h2>
+<pre><code class="language-cpp">class Solution {
+private:
+    static constexpr int CEIL = 1000000007;
+public:
+    int checkRecord(int n) {
+        vector&lt;vector&lt;long long&gt; &gt; dp(n, vector&lt;long long&gt;(6, 0));
+        // dp[i][0~2]表示在第i天，总A数为0，连续L数为0/1/2时的总组合数，
+        // dp[i][3~5]表示在第i天，总A数为1，连续L数为0/1/2时的总组合数
+
+        dp[0][0] = 1; // 第一天为P
+        dp[0][1] = 1; // 第一天为L
+        dp[0][3] = 1; // 第一天为A
+        for (int i = 1; i &lt; n; ++i) {
+            // 第i天为P
+            for (int j = 0; j &lt; 3; ++j) {
+                dp[i][0] = (dp[i][0] + dp[i - 1][j]) % CEIL;
+            }
+            for (int j = 3; j &lt; 6; ++j) {
+                dp[i][3] = (dp[i][3] + dp[i - 1][j]) % CEIL;
+            }
+
+            // 第i天为A
+            for (int j = 0; j &lt; 3; ++j) {
+                dp[i][3] = (dp[i][3] + dp[i - 1][j]) % CEIL;
+            }
+
+            // 第i天为L
+            dp[i][1] = (dp[i][1] + dp[i - 1][0]) % CEIL;
+            dp[i][2] = (dp[i][2] + dp[i - 1][1]) % CEIL;
+
+            dp[i][4] = (dp[i][4] + dp[i - 1][3]) % CEIL;
+            dp[i][5] = (dp[i][5] + dp[i - 1][4]) % CEIL;
+        }
+        long long count = 0;
+        for (int i = 0; i &lt; 6; ++i) {
+            count = (count + dp[n - 1][i]) % CEIL;
+        }
+        return count;
+    }
+};
+</code></pre>
+<h2 id="优化空间复杂度">优化空间复杂度</h2>
+<pre><code class="language-cpp">class Solution {
+private:
+    static constexpr int CEIL = 1000000007;
+public:
+    int checkRecord(int n) {
+        vector&lt;long long&gt; dp1(6, 0), dp2(6, 0);
+
+        dp1[0] = 1; // 第一天为P
+        dp1[1] = 1; // 第一天为L
+        dp1[3] = 1; // 第一天为A
+        for (int i = 1; i &lt; n; ++i) {
+            // 第i天为P
+            for (int j = 0; j &lt; 3; ++j) {
+                dp2[0] = (dp2[0] + dp1[j]) % CEIL;
+            }
+            for (int j = 3; j &lt; 6; ++j) {
+                dp2[3] = (dp2[3] + dp1[j]) % CEIL;
+            }
+
+            // 第i天为A
+            for (int j = 0; j &lt; 3; ++j) {
+                dp2[3] = (dp2[3] + dp1[j]) % CEIL;
+            }
+
+            // 第i天为L
+            dp2[1] = (dp2[1] + dp1[0]) % CEIL;
+            dp2[2] = (dp2[2] + dp1[1]) % CEIL;
+
+            dp2[4] = (dp2[4] + dp1[3]) % CEIL;
+            dp2[5] = (dp2[5] + dp1[4]) % CEIL;
+
+            dp1.swap(dp2);
+            fill(dp2.begin(), dp2.end(), 0);
+        }
+        long long count = 0;
+        for (int i = 0; i &lt; 6; ++i) {
+            count = (count + dp1[i]) % CEIL;
+        }
+        return count;
+    }
+};
+</code></pre>
+<p>优化后时间复杂度为</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></span></p>
+<p>空间复杂度为</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">O(1)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[551. 学生出勤记录 I 2021-08-17]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_hqc1dh/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_hqc1dh/">
+        </link>
+        <updated>2021-08-17T05:24:05.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+public:
+    bool checkRecord(string s) {
+        int countA = 0;
+        int countL = 0;
+        for (char c : s) {
+            if (c == 'A') {
+                ++countA;
+                if (countA == 2)
+                    return false;
+            }
+                
+            if (c == 'L') {
+                ++countL;
+                if (countL == 3)
+                    return false;
+            }
+            else
+                countL = 0;
+        }
+        return true;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[526. 优美的排列 2021-08-16]]></title>
+        <id>https://yulan.net.cn/post/erlm2m_gvrog8/</id>
+        <link href="https://yulan.net.cn/post/erlm2m_gvrog8/">
+        </link>
+        <updated>2021-08-15T20:50:00.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-cpp">class Solution {
+private:
+    vector&lt;bool&gt; used;
+    int n;
+
+    int DFS(int ind) {
+        if (ind == n + 1) return 1;
+        int count = 0;
+        for (int i = 1; i &lt;= n; ++i) {
+            if (ind % i == 0 || i % ind == 0)
+                if (!used[i]) {
+                    used[i] = true;
+                    count += DFS(ind + 1);
+                    used[i] = false;
+                }
+        }
+        return count;
+    }
+
+public:
+    int countArrangement(int n_) {
+        this-&gt;n = n_;
+        used.resize(n + 1, false);
+        return DFS(1);
+    }
+};
+</code></pre>
 ]]></content>
     </entry>
 </feed>
